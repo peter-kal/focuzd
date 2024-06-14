@@ -1,16 +1,32 @@
 # focuzd
 
-A new Flutter project.
+A new pomodoro app, built with Flutter, the goal is to make a feature-equivalent to Pomotroid. Pomotroid uses electron, which makes it pretty heavy, slow to start, and resource intensive. Flutter will solve these issues while also looking nice, and later more features as well as more platforms will be added. 
 
-## Getting Started
+ ### For release 1.0
+  - [ ] Feature equivelant to pomotroid
+    - [ ] start pomodoro sessions
+    - [ ] show time remaining 
+    - [ ] show how many sessions you have done in this round 
+    - [ ] reset the session 
+    - [ ] skip the session
+    - [ ] change color when to break
 
-This project is a starting point for a Flutter application.
+    - [ ] change the time lentgh of focus time 
+    - [ ] change the time lentgh of break 
+    - [ ] change the time lentgh of long break
+    - [ ] change the number of rounds
+    - [ ] reset changes to default
 
-A few resources to get you started if this is your first Flutter project:
+    - [ ] make the window be always on top(opt in) 
+    - [ ] have desktop notifications
+    - [ ] autostart work timer 
+    - [ ] autostart break timer 
+    - [ ] have ticking sounds (opt in)
+    - [ ] memorise the setting's changes
+  - [ ] publish to snapstore
+  
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+ ### for release 2.0(still thinking)
+   - [ ] add statistics and analytics
+       
+    
