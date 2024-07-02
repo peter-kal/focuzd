@@ -2,7 +2,7 @@
 
 A new pomodoro app, built with Flutter, the goal is to make a feature-equivalent to Pomotroid. Pomotroid uses electron, which makes it pretty heavy, slow to start, and resource intensive. Flutter will solve these issues while also looking nice, and later more features as well as more platforms will be added. 
 
-![main page](screenshots/screenshot_wip_focuzds.png)
+![main page](screenshots/screenshot_wip_focuzd.png)
 
  ### For release 1.0
   - [ ] Feature equivelant to pomotroid
