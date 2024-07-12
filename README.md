@@ -30,6 +30,7 @@ A new pomodoro app, built with Flutter, the goal is to make a feature-equivalent
     - [ ] make sounds when changing state(opt-in)  
   
   - [ ] publish to snapstore
+  - [ ] solve the bloc-db problem
   
 
  ### for release 2.0(still thinking)
