@@ -1,21 +1,26 @@
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:equatable/equatable.dart';
+import 'package:focuzd/data/settings_storage/db_setings.dart';
 part 'pomodoro_event.dart';
 part 'pomodoro_state.dart';
 
 class PomodoroBloc extends Bloc<PomodoroEvent, PomodoroState> {
-  PomodoroBloc()
-      : super(const WorkPomodoroState(
-            selectedWorkDuration: Duration(minutes: 25),
-            isRunning: false,
-            timesRunWork: 1)) {
+  PomodoroBloc() : super(PomodoroInitial()) {
     int timesRunB = 0;
     int timesRunLB = 0;
     int timesRunW = 1;
     Duration remainingTimeGiven = Duration.zero;
     on<UpdateRemainingTime>((event, emit) {
       remainingTimeGiven = event.remainingTime;
+    });
+    on<Start>((event, emit) async {
+      final selected = await SettingsDataProvider().readVar();
+      emit(WorkPomodoroState(
+          selectedWorkDuration:
+              Duration(minutes: selected.selectedWorkDurationStored!),
+          isRunning: false,
+          timesRunWork: timesRunW));
     });
     on<Pause>((event, emit) {
       final stateGiven = event.stateGiven;
@@ -57,20 +62,24 @@ class PomodoroBloc extends Bloc<PomodoroEvent, PomodoroState> {
       }
     });
 
-    on<Next>((event, emit) {
+    on<Next>((event, emit) async {
+      final selected = await SettingsDataProvider().readVar();
       final stateGiven = event.stateGiven;
+
       switch (stateGiven) {
         case WorkPomodoroState _:
           switch (stateGiven.timesRunWork) {
             case == 4:
               emit(LongBreakPomodoroState(
-                  selectedLongBreakDuration: const Duration(minutes: 15),
+                  selectedLongBreakDuration:
+                      Duration(minutes: selected.selectedLongBreakDuration!),
                   isRunning: true,
                   timesRunLongBreak: timesRunLB + 1));
               break;
             case <= 3:
               emit(BreakPomodoroState(
-                  selectedBreakDuration: const Duration(minutes: 5),
+                  selectedBreakDuration:
+                      Duration(minutes: selected.selectedBreakDurationStored!),
                   isRunning: true,
                   timesRunBreak: timesRunB + 1));
               break;
@@ -81,7 +90,8 @@ class PomodoroBloc extends Bloc<PomodoroEvent, PomodoroState> {
           switch (stateGiven.timesRunBreak) {
             case <= 3:
               emit(WorkPomodoroState(
-                  selectedWorkDuration: const Duration(minutes: 25),
+                  selectedWorkDuration:
+                      Duration(minutes: selected.selectedWorkDurationStored!),
                   isRunning: true,
                   timesRunWork: timesRunW + 1)); // here is the problem
               break;
@@ -89,7 +99,8 @@ class PomodoroBloc extends Bloc<PomodoroEvent, PomodoroState> {
           break;
         case LongBreakPomodoroState _:
           emit(WorkPomodoroState(
-              selectedWorkDuration: const Duration(minutes: 25),
+              selectedWorkDuration:
+                  Duration(minutes: selected.selectedWorkDurationStored!),
               isRunning: true,
               timesRunWork: timesRunW + 1));
 
@@ -98,26 +109,33 @@ class PomodoroBloc extends Bloc<PomodoroEvent, PomodoroState> {
       }
     });
 
-    on<Restart>((event, emit) {
+    on<Restart>((event, emit) async {
+      final selected = await SettingsDataProvider().readVar();
       final stateGiven = event.stateGiven;
       switch (stateGiven) {
         case WorkPomodoroState _:
+          emit(PomodoroInitial());
           emit(WorkPomodoroState(
-              selectedWorkDuration: const Duration(minutes: 25),
+              selectedWorkDuration:
+                  Duration(minutes: selected.selectedWorkDurationStored!),
               isRunning: true,
               timesRunWork: stateGiven.timesRunWork));
           break;
         case BreakPomodoroState _:
+          emit(PomodoroInitial());
           emit(BreakPomodoroState(
-              selectedBreakDuration: const Duration(minutes: 5),
+              selectedBreakDuration:
+                  Duration(minutes: selected.selectedBreakDurationStored!),
               isRunning: true,
               timesRunBreak: stateGiven.timesRunBreak));
           break;
         case LongBreakPomodoroState _:
-          LongBreakPomodoroState(
-              selectedLongBreakDuration: const Duration(minutes: 15),
+          emit(PomodoroInitial());
+          emit(LongBreakPomodoroState(
+              selectedLongBreakDuration:
+                  Duration(minutes: selected.selectedLongBreakDuration!),
               isRunning: true,
-              timesRunLongBreak: stateGiven.timesRunLongBreak);
+              timesRunLongBreak: stateGiven.timesRunLongBreak));
           break;
         default:
       }

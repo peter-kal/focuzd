@@ -11,7 +11,7 @@ sealed class PomodoroState extends Equatable {
 class BreakPomodoroState extends PomodoroState {
   final Duration selectedBreakDuration;
   final bool isRunning;
-  final double timesRunBreak;
+  final int timesRunBreak;
 
   const BreakPomodoroState(
       {required this.selectedBreakDuration,
@@ -19,26 +19,26 @@ class BreakPomodoroState extends PomodoroState {
       required this.timesRunBreak});
 
   @override
-  List<Object> get props => [selectedBreakDuration, isRunning];
+  List<Object> get props => [selectedBreakDuration, isRunning, timesRunBreak];
 }
 
 class WorkPomodoroState extends PomodoroState {
   final Duration selectedWorkDuration;
   final bool isRunning;
-  final double timesRunWork;
+  final int timesRunWork;
 
   const WorkPomodoroState(
       {required this.selectedWorkDuration,
       required this.isRunning,
       required this.timesRunWork});
   @override
-  List<Object> get props => [selectedWorkDuration, isRunning];
+  List<Object> get props => [selectedWorkDuration, isRunning, timesRunWork];
 }
 
 class LongBreakPomodoroState extends PomodoroState {
   final Duration selectedLongBreakDuration;
   final bool isRunning;
-  final double timesRunLongBreak;
+  final int timesRunLongBreak;
 
   const LongBreakPomodoroState(
       {required this.selectedLongBreakDuration,
@@ -46,7 +46,8 @@ class LongBreakPomodoroState extends PomodoroState {
       required this.timesRunLongBreak});
 
   @override
-  List<Object> get props => [selectedLongBreakDuration, isRunning];
+  List<Object> get props =>
+      [selectedLongBreakDuration, isRunning, timesRunLongBreak];
 }
 
 final class PomodoroInitial extends PomodoroState {}

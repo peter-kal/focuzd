@@ -8,7 +8,7 @@ part 'page_navigation_state.dart';
 class PageNavigationBloc
     extends Bloc<PageNavigationEvent, PageNavigationState> {
   PageNavigationBloc() : super(PageNavigationInitial()) {
-    on<MainPageEvent>((event, emit) {
+    on<MainPageEvent>((event, emit) async {
       emit(MainPageState());
     });
     on<SettingsPageEvent>((event, emit) {

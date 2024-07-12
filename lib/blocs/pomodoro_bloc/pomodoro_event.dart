@@ -8,6 +8,8 @@ sealed class PomodoroEvent extends Equatable {
   List<Object> get props => [];
 }
 
+class Start extends PomodoroEvent {}
+
 class Pause extends PomodoroEvent {
   const Pause({required this.stateGiven});
   final PomodoroState stateGiven;
