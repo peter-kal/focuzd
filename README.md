@@ -9,13 +9,13 @@ A new pomodoro app, built with Flutter, the goal is to make a feature-equivalent
     - [x] start pomodoro sessions
     - [x] show time remaining 
     - [ ] show how many sessions you have done in this round 
-    - [ ] reset the session 
+    - [x] reset the session 
     - [x] skip the session
     - [ ] change color when to break
 
-    - [ ] change the time lentgh of focus time 
-    - [ ] change the time lentgh of break 
-    - [ ] change the time lentgh of long break
+    - [x] change the time lentgh of focus time 
+    - [x] change the time lentgh of break 
+    - [x] change the time lentgh of long break
     - [ ] change the number of rounds
     - [ ] reset changes to default
 
@@ -24,7 +24,7 @@ A new pomodoro app, built with Flutter, the goal is to make a feature-equivalent
     - [x] autostart work timer 
     - [x] autostart break timer 
     - [ ] have ticking sounds (opt in)
-    - [ ] memorise the setting's changes
+    - [x] memorise the setting's changes
   - [ ] publish to snapstore
   
 
