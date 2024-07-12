@@ -27,7 +27,6 @@ A new pomodoro app, built with Flutter, the goal is to make a feature-equivalent
     - [x] memorise the setting's changes
     - [ ] make the window be always on top(opt in) 
     - [ ] reset changes to default
-    - [ ] change color when to break
     - [ ] make sounds when changing state(opt-in)  
   
   - [ ] publish to snapstore
