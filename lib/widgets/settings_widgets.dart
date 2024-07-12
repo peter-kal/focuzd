@@ -19,7 +19,6 @@ class TileWithSliderAndInfo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return YaruTile(
       style: YaruTileStyle.banner,
       title: Text(textInfo),

@@ -12,7 +12,6 @@ class SettingsDataProvider {
   Future<void> edit(var changedVar, int whatChangedVar) async {
     final isar = await db;
     isar.writeTxn(() async {
-      var isar = await db;
       var defaults = await isar.settingsVariables.get(1);
       switch (whatChangedVar) {
         case 1: // always on top
@@ -31,8 +30,6 @@ class SettingsDataProvider {
         case 5: //long break
           defaults!.selectedLongBreakDuration = changedVar;
           break;
-
-        default:
       }
 
       isar.settingsVariables.put(defaults!);

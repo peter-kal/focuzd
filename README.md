@@ -8,23 +8,28 @@ A new pomodoro app, built with Flutter, the goal is to make a feature-equivalent
   - [ ] Feature equivelant to pomotroid
     - [x] start pomodoro sessions
     - [x] show time remaining 
-    - [ ] show how many sessions you have done in this round 
+    - [x] show how many sessions you have done in this round 
+    - [x] go to the next session
     - [x] reset the session 
     - [x] skip the session
-    - [ ] change color when to break
+    
 
     - [x] change the time lentgh of focus time 
     - [x] change the time lentgh of break 
     - [x] change the time lentgh of long break
-    - [ ] change the number of rounds
-    - [ ] reset changes to default
+    - [x] change the number of rounds
+   
 
-    - [ ] make the window be always on top(opt in) 
+    
     - [x] have desktop notifications
     - [x] autostart work timer 
     - [x] autostart break timer 
-    - [ ] have ticking sounds (opt in)
     - [x] memorise the setting's changes
+    - [ ] make the window be always on top(opt in) 
+    - [ ] reset changes to default
+    - [ ] change color when to break
+    - [ ] make sounds when changing state(opt-in)  
+  
   - [ ] publish to snapstore
   
 

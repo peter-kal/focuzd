@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+import 'package:flutter_spinbox/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:focuzd/blocs/page_navigation_bloc/page_navigation_bloc.dart';
@@ -50,6 +50,16 @@ class _SettingsPageState extends State<SettingsPage> {
                             valueChanged: 5,
                             valueRequested:
                                 state.selectedLongBreakDuration.toDouble()),
+                        SpinBox(
+                          value: state.requestedNumberOfSessions,
+                          step: 1.0,
+                          onChanged: (value) {
+                            print("value: $value");
+                            BlocProvider.of<RepoBloc>(context).add(
+                                UpdateSettingVariables(
+                                    selectedToChange: 2, changedVar: value));
+                          },
+                        ),
                         YaruCheckboxListTile(
                             value: state.windowOnTop,
                             title: const Text("Window Always On Top"),
@@ -60,7 +70,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                   UpdateSettingVariables(
                                       selectedToChange: 1,
                                       changedVar: newValue));
-                            })
+                            }),
                       ],
                     ),
                   ),

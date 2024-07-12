@@ -12,27 +12,33 @@ class BreakPomodoroState extends PomodoroState {
   final Duration selectedBreakDuration;
   final bool isRunning;
   final int timesRunBreak;
+  final int requestedRounds;
 
   const BreakPomodoroState(
       {required this.selectedBreakDuration,
       required this.isRunning,
+      required this.requestedRounds,
       required this.timesRunBreak});
 
   @override
-  List<Object> get props => [selectedBreakDuration, isRunning, timesRunBreak];
+  List<Object> get props =>
+      [selectedBreakDuration, isRunning, timesRunBreak, requestedRounds];
 }
 
 class WorkPomodoroState extends PomodoroState {
   final Duration selectedWorkDuration;
   final bool isRunning;
   final int timesRunWork;
+  final int requestedRounds;
 
   const WorkPomodoroState(
       {required this.selectedWorkDuration,
       required this.isRunning,
+      required this.requestedRounds,
       required this.timesRunWork});
   @override
-  List<Object> get props => [selectedWorkDuration, isRunning, timesRunWork];
+  List<Object> get props =>
+      [selectedWorkDuration, isRunning, timesRunWork, requestedRounds];
 }
 
 class LongBreakPomodoroState extends PomodoroState {

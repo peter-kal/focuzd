@@ -17,20 +17,24 @@ class PomodoroBloc extends Bloc<PomodoroEvent, PomodoroState> {
     on<Start>((event, emit) async {
       final selected = await SettingsDataProvider().readVar();
       emit(WorkPomodoroState(
+          requestedRounds: selected.requestedNumberOfSessions!.toInt(),
           selectedWorkDuration:
               Duration(minutes: selected.selectedWorkDurationStored!),
           isRunning: false,
           timesRunWork: timesRunW));
     });
+
     on<Pause>((event, emit) {
       final stateGiven = event.stateGiven;
       if (stateGiven is WorkPomodoroState) {
         emit(WorkPomodoroState(
+            requestedRounds: stateGiven.requestedRounds,
             selectedWorkDuration: remainingTimeGiven,
             isRunning: false,
             timesRunWork: stateGiven.timesRunWork));
       } else if (stateGiven is BreakPomodoroState) {
         emit(BreakPomodoroState(
+            requestedRounds: stateGiven.requestedRounds,
             selectedBreakDuration: remainingTimeGiven,
             isRunning: false,
             timesRunBreak: stateGiven.timesRunBreak));
@@ -46,11 +50,13 @@ class PomodoroBloc extends Bloc<PomodoroEvent, PomodoroState> {
       final stateGiven = event.stateGiven;
       if (stateGiven is WorkPomodoroState) {
         emit(WorkPomodoroState(
+            requestedRounds: stateGiven.requestedRounds,
             selectedWorkDuration: stateGiven.selectedWorkDuration,
             isRunning: true,
             timesRunWork: stateGiven.timesRunWork));
       } else if (stateGiven is BreakPomodoroState) {
         emit(BreakPomodoroState(
+            requestedRounds: stateGiven.requestedRounds,
             selectedBreakDuration: stateGiven.selectedBreakDuration,
             isRunning: true,
             timesRunBreak: stateGiven.timesRunBreak));
@@ -62,53 +68,6 @@ class PomodoroBloc extends Bloc<PomodoroEvent, PomodoroState> {
       }
     });
 
-    on<Next>((event, emit) async {
-      final selected = await SettingsDataProvider().readVar();
-      final stateGiven = event.stateGiven;
-
-      switch (stateGiven) {
-        case WorkPomodoroState _:
-          switch (stateGiven.timesRunWork) {
-            case == 4:
-              emit(LongBreakPomodoroState(
-                  selectedLongBreakDuration:
-                      Duration(minutes: selected.selectedLongBreakDuration!),
-                  isRunning: true,
-                  timesRunLongBreak: timesRunLB + 1));
-              break;
-            case <= 3:
-              emit(BreakPomodoroState(
-                  selectedBreakDuration:
-                      Duration(minutes: selected.selectedBreakDurationStored!),
-                  isRunning: true,
-                  timesRunBreak: timesRunB + 1));
-              break;
-            default:
-          }
-          break;
-        case BreakPomodoroState _:
-          switch (stateGiven.timesRunBreak) {
-            case <= 3:
-              emit(WorkPomodoroState(
-                  selectedWorkDuration:
-                      Duration(minutes: selected.selectedWorkDurationStored!),
-                  isRunning: true,
-                  timesRunWork: timesRunW + 1)); // here is the problem
-              break;
-          }
-          break;
-        case LongBreakPomodoroState _:
-          emit(WorkPomodoroState(
-              selectedWorkDuration:
-                  Duration(minutes: selected.selectedWorkDurationStored!),
-              isRunning: true,
-              timesRunWork: timesRunW + 1));
-
-          break;
-        default:
-      }
-    });
-
     on<Restart>((event, emit) async {
       final selected = await SettingsDataProvider().readVar();
       final stateGiven = event.stateGiven;
@@ -116,6 +75,7 @@ class PomodoroBloc extends Bloc<PomodoroEvent, PomodoroState> {
         case WorkPomodoroState _:
           emit(PomodoroInitial());
           emit(WorkPomodoroState(
+              requestedRounds: stateGiven.requestedRounds,
               selectedWorkDuration:
                   Duration(minutes: selected.selectedWorkDurationStored!),
               isRunning: true,
@@ -124,6 +84,7 @@ class PomodoroBloc extends Bloc<PomodoroEvent, PomodoroState> {
         case BreakPomodoroState _:
           emit(PomodoroInitial());
           emit(BreakPomodoroState(
+              requestedRounds: stateGiven.requestedRounds,
               selectedBreakDuration:
                   Duration(minutes: selected.selectedBreakDurationStored!),
               isRunning: true,
@@ -138,6 +99,43 @@ class PomodoroBloc extends Bloc<PomodoroEvent, PomodoroState> {
               timesRunLongBreak: stateGiven.timesRunLongBreak));
           break;
         default:
+      }
+    });
+
+    on<Next>((event, emit) async {
+      final selected = await SettingsDataProvider().readVar();
+      var stateGiven = event.stateGiven;
+
+      if (stateGiven is WorkPomodoroState) {
+        if (stateGiven.requestedRounds == stateGiven.timesRunWork) {
+          timesRunLB++;
+          emit(LongBreakPomodoroState(
+              selectedLongBreakDuration:
+                  Duration(minutes: selected.selectedLongBreakDuration!),
+              isRunning: true,
+              timesRunLongBreak: timesRunLB));
+        } else if (stateGiven.timesRunWork < stateGiven.requestedRounds) {
+          timesRunB++;
+          emit(BreakPomodoroState(
+              requestedRounds: stateGiven.requestedRounds, // from work to break
+              selectedBreakDuration:
+                  Duration(minutes: selected.selectedBreakDurationStored!),
+              isRunning: true,
+              timesRunBreak: timesRunB));
+        }
+      } else if (stateGiven is BreakPomodoroState) {
+        if (stateGiven.timesRunBreak <= stateGiven.requestedRounds) {
+          timesRunW++;
+          emit(WorkPomodoroState(
+              selectedWorkDuration:
+                  Duration(minutes: selected.selectedWorkDurationStored!),
+              isRunning: true,
+              requestedRounds: stateGiven.requestedRounds,
+              timesRunWork: timesRunW));
+        }
+      } else if (stateGiven is LongBreakPomodoroState) {
+        timesRunW = 1;
+        add(Start());
       }
     });
   }

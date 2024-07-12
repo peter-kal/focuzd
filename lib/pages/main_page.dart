@@ -3,8 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:focuzd/blocs/page_navigation_bloc/page_navigation_bloc.dart';
 import 'package:focuzd/blocs/pomodoro_bloc/pomodoro_bloc.dart';
-import 'package:focuzd/blocs/repo_bloc/repo_bloc.dart';
-import 'package:focuzd/data/settings_storage/db_setings.dart';
 import 'package:focuzd/widgets/countdown_widgets.dart';
 import 'package:yaru/yaru.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -78,7 +76,8 @@ class _MainPageState extends State<MainPage> {
               child: BlocBuilder<PomodoroBloc, PomodoroState>(
                 builder: (context, state) {
                   if (state is WorkPomodoroState) {
-                    return Text("${state.timesRunWork} / 4");
+                    return Text(
+                        "${state.timesRunWork} / ${state.requestedRounds}");
                   } else {
                     return const CircularProgressIndicator();
                   }

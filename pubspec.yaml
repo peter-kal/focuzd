@@ -32,6 +32,8 @@ dependencies:
   equatable: ^2.0.5
   flutter_timer_countdown: ^1.0.7
   desktop_notifications: ^0.6.3
+  flutter_spinner_time_picker: ^0.2.1
+  flutter_spinbox: ^0.13.1
      
   
 

@@ -10,9 +10,11 @@ class RepoBloc extends Bloc<RepoEvent, RepoState> {
   RepoBloc() : super(RepoInitial()) {
     on<RepoEvent>((event, emit) {});
     on<EmitStateWithDBVars>(
-      (event, Emitter<RepoState> emit) async {
+      (event, emit) async {
         final settings = await SettingsDataProvider().readVar();
+        print("rounds: ${settings.requestedNumberOfSessions}");
 
+        emit(RepoInitial());
         emit(RepoVariablesGivenState(
             requestedNumberOfSessions: settings.requestedNumberOfSessions!,
             selectedBreakDurationStored: settings.selectedBreakDurationStored!,
@@ -25,6 +27,7 @@ class RepoBloc extends Bloc<RepoEvent, RepoState> {
       (event, emit) async {
         await SettingsDataProvider()
             .edit(event.changedVar, event.selectedToChange);
+
         add(EmitStateWithDBVars());
       },
     );
