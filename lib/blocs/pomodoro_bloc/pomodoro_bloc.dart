@@ -135,6 +135,8 @@ class PomodoroBloc extends Bloc<PomodoroEvent, PomodoroState> {
         }
       } else if (stateGiven is LongBreakPomodoroState) {
         timesRunW = 1;
+        timesRunB = 0;
+        timesRunLB = 0;
         add(Start());
       }
     });
