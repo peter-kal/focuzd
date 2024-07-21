@@ -2,7 +2,11 @@
 
 A new pomodoro app, built with Flutter, the goal is to make a feature-equivalent to Pomotroid. Pomotroid uses electron, which makes it pretty heavy, slow to start, and resource intensive. Flutter will solve these issues while also looking nice, and later more features as well as more platforms will be added. 
 
-![main page](screenshots/screenshot_wip_focuzd.png)
+# Light Mode 
+![main page](screenshots/focuzd_edge_wip_screenshot_dark.png)
+# Dark Mode 
+![main page](screenshots/focuzd_edge_wip_screenshot_light.png)
+
 
  ### For release 1.0
   - [ ] Feature equivelant to pomotroid
@@ -30,7 +34,11 @@ A new pomodoro app, built with Flutter, the goal is to make a feature-equivalent
     - [ ] make sounds when changing state(opt-in)  
   
   - [ ] publish to snapstore
+    - [ ] snap the app(ideally in core24)
+    - [ ] publish the edge-beta
+    - [ ] publish in stable                                                                       
   - [ ] solve the bloc-db problem
+  - [ ] make the TimerCountdown with the TimeToCountdownWidget same-looking
   
 
  ### for release 2.0(still thinking)
