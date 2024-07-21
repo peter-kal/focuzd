@@ -40,6 +40,7 @@ class PomodoroBloc extends Bloc<PomodoroEvent, PomodoroState> {
             timesRunBreak: stateGiven.timesRunBreak));
       } else if (stateGiven is LongBreakPomodoroState) {
         emit(LongBreakPomodoroState(
+            requestedRounds: stateGiven.requestedRounds,
             selectedLongBreakDuration: remainingTimeGiven,
             isRunning: false,
             timesRunLongBreak: stateGiven.timesRunLongBreak));
@@ -62,6 +63,7 @@ class PomodoroBloc extends Bloc<PomodoroEvent, PomodoroState> {
             timesRunBreak: stateGiven.timesRunBreak));
       } else if (stateGiven is LongBreakPomodoroState) {
         emit(LongBreakPomodoroState(
+            requestedRounds: stateGiven.requestedRounds,
             selectedLongBreakDuration: stateGiven.selectedLongBreakDuration,
             isRunning: true,
             timesRunLongBreak: stateGiven.timesRunLongBreak));
@@ -93,6 +95,7 @@ class PomodoroBloc extends Bloc<PomodoroEvent, PomodoroState> {
         case LongBreakPomodoroState _:
           emit(PomodoroInitial());
           emit(LongBreakPomodoroState(
+              requestedRounds: stateGiven.requestedRounds,
               selectedLongBreakDuration:
                   Duration(minutes: selected.selectedLongBreakDuration!),
               isRunning: true,
@@ -110,6 +113,7 @@ class PomodoroBloc extends Bloc<PomodoroEvent, PomodoroState> {
         if (stateGiven.requestedRounds == stateGiven.timesRunWork) {
           timesRunLB++;
           emit(LongBreakPomodoroState(
+              requestedRounds: stateGiven.requestedRounds,
               selectedLongBreakDuration:
                   Duration(minutes: selected.selectedLongBreakDuration!),
               isRunning: true,

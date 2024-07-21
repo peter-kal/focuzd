@@ -45,15 +45,21 @@ class LongBreakPomodoroState extends PomodoroState {
   final Duration selectedLongBreakDuration;
   final bool isRunning;
   final int timesRunLongBreak;
+  final int requestedRounds;
 
   const LongBreakPomodoroState(
       {required this.selectedLongBreakDuration,
       required this.isRunning,
+      required this.requestedRounds,
       required this.timesRunLongBreak});
 
   @override
-  List<Object> get props =>
-      [selectedLongBreakDuration, isRunning, timesRunLongBreak];
+  List<Object> get props => [
+        selectedLongBreakDuration,
+        isRunning,
+        timesRunLongBreak,
+        requestedRounds
+      ];
 }
 
 final class PomodoroInitial extends PomodoroState {}

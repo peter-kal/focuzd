@@ -27,6 +27,7 @@ class _MainPageState extends State<MainPage> {
               height: 70,
               width: 70,
               child: BlocBuilder<PomodoroBloc, PomodoroState>(
+                // play and pause button
                 builder: (context, state) {
                   if (state is WorkPomodoroState) {
                     return YaruIconButton(
@@ -52,7 +53,9 @@ class _MainPageState extends State<MainPage> {
                                 .add(Resume(stateGiven: state));
                       },
                       icon: Icon(
-                          state.isRunning ? Icons.pause : Icons.play_arrow),
+                        state.isRunning ? Icons.pause : Icons.play_arrow,
+                        color: Theme.of(context).primaryColor,
+                      ),
                     );
                   } else if (state is LongBreakPomodoroState) {
                     return YaruIconButton(
@@ -64,7 +67,9 @@ class _MainPageState extends State<MainPage> {
                                 .add(Resume(stateGiven: state));
                       },
                       icon: Icon(
-                          state.isRunning ? Icons.pause : Icons.play_arrow),
+                        state.isRunning ? Icons.pause : Icons.play_arrow,
+                        color: Theme.of(context).primaryColor,
+                      ),
                     );
                   } else {
                     return const YaruCircularProgressIndicator();
@@ -78,6 +83,12 @@ class _MainPageState extends State<MainPage> {
                   if (state is WorkPomodoroState) {
                     return Text(
                         "${state.timesRunWork} / ${state.requestedRounds}");
+                  } else if (state is BreakPomodoroState) {
+                    return Text(
+                        "${state.timesRunBreak} / ${state.requestedRounds}");
+                  } else if (state is LongBreakPomodoroState) {
+                    return Text(
+                        "${state.requestedRounds} / ${state.requestedRounds}");
                   } else {
                     return const CircularProgressIndicator();
                   }
