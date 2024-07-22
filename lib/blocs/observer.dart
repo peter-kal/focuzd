@@ -7,11 +7,10 @@ class MyBlocObserver extends BlocObserver {
   @override
   void onEvent(Bloc bloc, Object? event) {
     super.onEvent(bloc, event);
-    if (event is! UpdateRemainingTime) {
-      print(
-        "event ${event.toString()}",
-      );
-    }
+
+    print(
+      "event ${event.toString()}",
+    );
   }
 
   @override
