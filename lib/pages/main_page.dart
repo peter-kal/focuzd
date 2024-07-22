@@ -90,7 +90,7 @@ class _MainPageState extends State<MainPage> {
                     return SelectableText(
                         "${state.requestedRounds} / ${state.requestedRounds}");
                   } else {
-                    return const CircularProgressIndicator();
+                    return const YaruCircularProgressIndicator();
                   }
                 },
               ),
