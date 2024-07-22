@@ -81,13 +81,13 @@ class _MainPageState extends State<MainPage> {
               child: BlocBuilder<PomodoroBloc, PomodoroState>(
                 builder: (context, state) {
                   if (state is WorkPomodoroState) {
-                    return Text(
+                    return SelectableText(
                         "${state.timesRunWork} / ${state.requestedRounds}");
                   } else if (state is BreakPomodoroState) {
-                    return Text(
+                    return SelectableText(
                         "${state.timesRunBreak} / ${state.requestedRounds}");
                   } else if (state is LongBreakPomodoroState) {
-                    return Text(
+                    return SelectableText(
                         "${state.requestedRounds} / ${state.requestedRounds}");
                   } else {
                     return const CircularProgressIndicator();
