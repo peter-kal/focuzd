@@ -1,0 +1,14 @@
+[Desktop Entry]
+Encoding=UTF-8
+
+Version=1.0
+Type=Application
+Name=Focuzd
+
+
+Terminal=false
+Exec=focuzd
+
+Keywords=Pomodoro;
+Comment=A pomodoro app.
+Categories=Productivity;
