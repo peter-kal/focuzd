@@ -34,14 +34,16 @@ A new pomodoro app, built with Flutter, the goal is to make a feature-equivalent
     - [ ] make sounds when changing state(opt-in)  
   
   - [ ] publish to snapstore
-    - [ ] snap the app(ideally in core24)
+    - [ ] snap the app(unfortunately in core22 for now)
     - [ ] publish the edge-beta
     - [ ] publish in stable                                                                       
   - [ ] solve the bloc-db problem
   - [ ] make the TimerCountdown with the TimeToCountdownWidget same-looking
+  - [ ] revamp settings page to be more user-friendly 
+  - [ ] fix issue, Next() not working properly when not skipping
   
 
  ### for release 2.0(still thinking)
    - [ ] add statistics and analytics
        
-    
+
