@@ -2,11 +2,11 @@ name: focuzd
 title: Focuzd
 base: core22 
 version: "0.1"
-license: MPL-2.0
-source-code: https://github.com/peter-kal/passie
-website: https://github.com/peter-kal/passie
-issues: https://github.com/peter-kal/passie/issues
-icon: snap/gui/passieicon2.png
+license: GPL-3.0                                                                                          
+source-code: https://github.com/peter-kal/focuzd
+website: https://github.com/peter-kal/focuzd
+issues: https://github.com/peter-kal/focuzd/issues
+
 
 summary: A pomodoro app.
 description: |
@@ -27,7 +27,7 @@ architectures:
 parts:
  flutter-git:
     source: https://github.com/flutter/flutter.git
-    source-tag: 3.19.5
+    source-tag: 3.22.3
     source-depth: 1
     plugin: nil
     override-build: |
