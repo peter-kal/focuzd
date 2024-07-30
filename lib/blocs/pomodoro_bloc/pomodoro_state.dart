@@ -1,65 +1,36 @@
 part of 'pomodoro_bloc.dart';
 
 @immutable
-sealed class PomodoroState extends Equatable {
-  const PomodoroState();
-
+sealed class PomodoroTimerState extends Equatable {
+  const PomodoroTimerState(this.duration, this.workTimes);
+  final int duration;
+  final int workTimes;
   @override
-  List<Object> get props => [];
+  List<Object> get props => [duration, workTimes];
 }
 
-class BreakPomodoroState extends PomodoroState {
-  final Duration selectedBreakDuration;
-  final bool isRunning;
-  final int timesRunBreak;
-  final int requestedRounds;
-
-  const BreakPomodoroState(
-      {required this.selectedBreakDuration,
-      required this.isRunning,
-      required this.requestedRounds,
-      required this.timesRunBreak});
+final class TimerInitial extends PomodoroTimerState {
+  const TimerInitial(super.duration, super.workTimes);
 
   @override
-  List<Object> get props =>
-      [selectedBreakDuration, isRunning, timesRunBreak, requestedRounds];
+  String toString() => 'TimerInitial { duration: $duration }';
 }
 
-class WorkPomodoroState extends PomodoroState {
-  final Duration selectedWorkDuration;
-  final bool isRunning;
-  final int timesRunWork;
-  final int requestedRounds;
-
-  const WorkPomodoroState(
-      {required this.selectedWorkDuration,
-      required this.isRunning,
-      required this.requestedRounds,
-      required this.timesRunWork});
-  @override
-  List<Object> get props =>
-      [selectedWorkDuration, isRunning, timesRunWork, requestedRounds];
-}
-
-class LongBreakPomodoroState extends PomodoroState {
-  final Duration selectedLongBreakDuration;
-  final bool isRunning;
-  final int timesRunLongBreak;
-  final int requestedRounds;
-
-  const LongBreakPomodoroState(
-      {required this.selectedLongBreakDuration,
-      required this.isRunning,
-      required this.requestedRounds,
-      required this.timesRunLongBreak});
+final class TimerRunPause extends PomodoroTimerState {
+  const TimerRunPause(super.duration, super.workTimes);
 
   @override
-  List<Object> get props => [
-        selectedLongBreakDuration,
-        isRunning,
-        timesRunLongBreak,
-        requestedRounds
-      ];
+  String toString() =>
+      'TimerRunPause { duration: $duration , workTImes: $workTimes}';
 }
 
-final class PomodoroInitial extends PomodoroState {}
+final class TimerRunInProgress extends PomodoroTimerState {
+  const TimerRunInProgress(super.duration, super.workTimes);
+
+  @override
+  String toString() => 'TimerRunInProgress { duration: $duration }';
+}
+
+final class TimerRunComplete extends PomodoroTimerState {
+  const TimerRunComplete() : super(0, 0);
+}

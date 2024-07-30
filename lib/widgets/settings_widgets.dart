@@ -35,3 +35,22 @@ class TileWithSliderAndInfo extends StatelessWidget {
     );
   }
 }
+
+class SettingsCardSpinBox extends StatelessWidget {
+  const SettingsCardSpinBox({required this.value});
+  final double value;
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+        child: Row(
+      children: [
+        YaruIconButton(
+            icon: Icon(Icons.minimize_outlined,
+                color: Theme.of(context).primaryColor)),
+        Text(value.toString()),
+        YaruIconButton(
+            icon: Icon(Icons.add, color: Theme.of(context).primaryColor)),
+      ],
+    ));
+  }
+}

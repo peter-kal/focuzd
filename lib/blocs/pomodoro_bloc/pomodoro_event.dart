@@ -1,47 +1,36 @@
 part of 'pomodoro_bloc.dart';
 
 @immutable
-sealed class PomodoroEvent extends Equatable {
-  const PomodoroEvent();
-
-  @override
-  List<Object> get props => [];
+sealed class PomodoroTimerEvent {
+  const PomodoroTimerEvent();
 }
 
-class Start extends PomodoroEvent {}
-
-class Pause extends PomodoroEvent {
-  const Pause({required this.stateGiven});
-  final PomodoroState stateGiven;
-  @override
-  List<Object> get props => [stateGiven];
+final class TimerStarted extends PomodoroTimerEvent {
+  const TimerStarted({required this.duration});
+  final int duration;
 }
 
-class Resume extends PomodoroEvent {
-  const Resume({required this.stateGiven});
-  final PomodoroState stateGiven;
-
-  @override
-  List<Object> get props => [stateGiven];
+final class TimerInit extends PomodoroTimerEvent {
+  const TimerInit();
 }
 
-class Next extends PomodoroEvent {
-  const Next({required this.stateGiven});
-  final PomodoroState stateGiven;
-  @override
-  List<Object> get props => [stateGiven];
+final class TimerPaused extends PomodoroTimerEvent {
+  const TimerPaused();
 }
 
-class Restart extends PomodoroEvent {
-  const Restart({required this.stateGiven});
-  final PomodoroState stateGiven;
-  @override
-  List<Object> get props => [stateGiven];
+final class TimerResumed extends PomodoroTimerEvent {
+  const TimerResumed();
 }
 
-class UpdateRemainingTime extends PomodoroEvent {
-  const UpdateRemainingTime({required this.remainingTime});
-  final Duration remainingTime;
-  @override
-  List<Object> get props => [remainingTime];
+class TimerReset extends PomodoroTimerEvent {
+  const TimerReset();
+}
+
+class _TimerTicked extends PomodoroTimerEvent {
+  const _TimerTicked({required this.duration});
+  final int duration;
+}
+
+class NextPomodoroTimer extends PomodoroTimerEvent {
+  const NextPomodoroTimer();
 }

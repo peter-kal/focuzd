@@ -1,13 +1,11 @@
 /// Custom [BlocObserver] which observes all bloc and cubit instances.
 
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:focuzd/blocs/pomodoro_bloc/pomodoro_bloc.dart';
 
 class MyBlocObserver extends BlocObserver {
   @override
   void onEvent(Bloc bloc, Object? event) {
     super.onEvent(bloc, event);
-
     print(
       "event ${event.toString()}",
     );

@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:focuzd/blocs/page_navigation_bloc/page_navigation_bloc.dart';
 import 'package:focuzd/blocs/pomodoro_bloc/pomodoro_bloc.dart';
+import 'package:focuzd/blocs/pomodoro_bloc/ticker.dart';
 import 'package:focuzd/blocs/repo_bloc/repo_bloc.dart';
 import 'package:focuzd/pages/main_page.dart';
 import 'package:focuzd/pages/settings_page.dart';
@@ -23,7 +24,8 @@ Future<void> main() async {
       create: (context) => PageNavigationBloc()..add(const MainPageEvent()),
     ),
     BlocProvider(create: (context) => RepoBloc()..add(EmitStateWithDBVars())),
-    BlocProvider(create: (context) => PomodoroBloc()..add(Start()))
+    BlocProvider(
+        create: (context) => PomodoroBloc(ticker: Ticker())..add(TimerInit()))
   ], child: const FocuzdApp()));
 }
 

@@ -24,6 +24,8 @@ class _SettingsPageState extends State<SettingsPage> {
           if (state is RepoVariablesGivenState) {
             return ListView(
               children: [
+                SettingsCardSpinBox(
+                    value: state.selectedWorkDurationStored.toDouble()),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Card(
