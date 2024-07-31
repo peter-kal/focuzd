@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinbox/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:focuzd/blocs/page_navigation_bloc/page_navigation_bloc.dart';
-import 'package:focuzd/blocs/repo_bloc/repo_bloc.dart';
+import 'package:focuzd/blocs/blocs.dart';
 import 'package:focuzd/widgets/settings_widgets.dart';
 import 'package:yaru/yaru.dart';
 
