@@ -13,14 +13,17 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
-  num? countingWorkRounds(times) {
+  int? countingWorkRounds(int times) {
     if (times == 1) {
       return 1;
     } else if (times != 1 && (times % 2) == 0) {
-      return times / 2;
+      double timeshalf = times / 2;
+
+      return timeshalf.toInt();
     } else if (times != 1 && (times % 2) != 0) {
       num newnum = times - (times / 2.1);
-      return newnum.round();
+      var newint = newnum.round().toInt();
+      return newint;
     }
     return null;
   }
