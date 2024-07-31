@@ -2,35 +2,36 @@ part of 'pomodoro_bloc.dart';
 
 @immutable
 sealed class PomodoroTimerState extends Equatable {
-  const PomodoroTimerState(this.duration, this.workTimes);
+  const PomodoroTimerState(this.duration, this.runTimes, this.reqRounds);
   final int duration;
-  final int workTimes;
+  final int runTimes;
+  final double reqRounds;
   @override
-  List<Object> get props => [duration, workTimes];
+  List<Object> get props => [duration, runTimes];
 }
 
 final class TimerInitial extends PomodoroTimerState {
-  const TimerInitial(super.duration, super.workTimes);
+  const TimerInitial(super.duration, super.runTimes, super.reqRounds);
 
   @override
   String toString() => 'TimerInitial { duration: $duration }';
 }
 
 final class TimerRunPause extends PomodoroTimerState {
-  const TimerRunPause(super.duration, super.workTimes);
+  const TimerRunPause(super.duration, super.runTimes, super.reqRounds);
 
   @override
   String toString() =>
-      'TimerRunPause { duration: $duration , workTImes: $workTimes}';
+      'TimerRunPause { duration: $duration , workTImes: $runTimes}';
 }
 
 final class TimerRunInProgress extends PomodoroTimerState {
-  const TimerRunInProgress(super.duration, super.workTimes);
+  const TimerRunInProgress(super.duration, super.runTimes, super.reqRounds);
 
   @override
   String toString() => 'TimerRunInProgress { duration: $duration }';
 }
 
 final class TimerRunComplete extends PomodoroTimerState {
-  const TimerRunComplete() : super(0, 0);
+  const TimerRunComplete() : super(0, 0, 0);
 }

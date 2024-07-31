@@ -14,7 +14,6 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage> {
   num? countingWorkRounds(times) {
-    print(times);
     if (times == 1) {
       return 1;
     } else if (times != 1 && (times % 2) == 0) {
@@ -53,8 +52,8 @@ class _MainPageState extends State<MainPage> {
                             }),
                       ),
                       SizedBox(
-                          child:
-                              Text("${countingWorkRounds(state.workTimes)}")),
+                          child: SelectableText(
+                              "${countingWorkRounds(state.runTimes)} / ${state.reqRounds.toInt()}")),
                       Column(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
@@ -91,8 +90,8 @@ class _MainPageState extends State<MainPage> {
                             }),
                       ),
                       SizedBox(
-                          child:
-                              Text("${countingWorkRounds(state.workTimes)}")),
+                          child: SelectableText(
+                              "${countingWorkRounds(state.runTimes)} / ${state.reqRounds.toInt()}")),
                       Column(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
@@ -131,8 +130,8 @@ class _MainPageState extends State<MainPage> {
                             }),
                       ),
                       SizedBox(
-                          child:
-                              Text("${countingWorkRounds(state.workTimes)}")),
+                          child: SelectableText(
+                              "${countingWorkRounds(state.runTimes)} / ${state.reqRounds.toInt()}")),
                       Column(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
@@ -181,7 +180,7 @@ class _MainPageState extends State<MainPage> {
         final secondsStr = (dur % 60).floor().toString().padLeft(2, '0');
         return Text(
           "$minutesStr : $secondsStr",
-          style: TextStyle(fontSize: 40),
+          style: const TextStyle(fontSize: 40),
         );
       })),
     );
