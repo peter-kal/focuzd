@@ -85,7 +85,7 @@ class _MainPageState extends State<MainPage> {
                     ],
                   TimerRunInProgress() => [
                       SizedBox(
-                        width: 70,
+                        width: 50,
                         height: 70,
                         child: YaruIconButton(
                             icon: Icon(
@@ -99,13 +99,17 @@ class _MainPageState extends State<MainPage> {
                             }),
                       ),
                       SizedBox(
-                          child: SelectableText(
-                              "${countingWorkRounds(state.runTimes)} / ${state.reqRounds.toInt()}")),
+                          child: YaruSection(
+                              child: SelectableText(
+                                  "${countingWorkRounds(state.runTimes)} / ${state.reqRounds.toInt()}"))),
                       Column(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
                           YaruIconButton(
-                            icon: const Icon(Icons.restart_alt),
+                            icon: Icon(
+                              Icons.restart_alt,
+                              color: Theme.of(context).primaryColor,
+                            ),
                             onPressed: () {
                               context
                                   .read<PomodoroBloc>()
@@ -113,7 +117,10 @@ class _MainPageState extends State<MainPage> {
                             },
                           ),
                           YaruIconButton(
-                            icon: const Icon(Icons.skip_next),
+                            icon: Icon(
+                              Icons.skip_next,
+                              color: Theme.of(context).primaryColor,
+                            ),
                             onPressed: () {
                               context
                                   .read<PomodoroBloc>()
@@ -125,7 +132,7 @@ class _MainPageState extends State<MainPage> {
                     ],
                   TimerRunPause() => [
                       SizedBox(
-                        width: 70,
+                        width: 50,
                         height: 70,
                         child: YaruIconButton(
                             icon: Icon(
@@ -139,13 +146,17 @@ class _MainPageState extends State<MainPage> {
                             }),
                       ),
                       SizedBox(
-                          child: SelectableText(
-                              "${countingWorkRounds(state.runTimes)} / ${state.reqRounds.toInt()}")),
+                          child: YaruSection(
+                              child: SelectableText(
+                                  "${countingWorkRounds(state.runTimes)} / ${state.reqRounds.toInt()}"))),
                       Column(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
                           YaruIconButton(
-                            icon: const Icon(Icons.restart_alt),
+                            icon: Icon(
+                              Icons.restart_alt,
+                              color: Theme.of(context).primaryColor,
+                            ),
                             onPressed: () {
                               context
                                   .read<PomodoroBloc>()
@@ -153,7 +164,10 @@ class _MainPageState extends State<MainPage> {
                             },
                           ),
                           YaruIconButton(
-                            icon: const Icon(Icons.skip_next),
+                            icon: Icon(
+                              Icons.skip_next,
+                              color: Theme.of(context).primaryColor,
+                            ),
                             onPressed: () {
                               context
                                   .read<PomodoroBloc>()
