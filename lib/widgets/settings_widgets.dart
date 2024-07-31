@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:focuzd/blocs/blocs.dart';
 import 'package:focuzd/blocs/repo_bloc/repo_bloc.dart';
 import 'package:yaru/yaru.dart';
 
@@ -37,20 +39,61 @@ class TileWithSliderAndInfo extends StatelessWidget {
 }
 
 class SettingsCardSpinBox extends StatelessWidget {
-  const SettingsCardSpinBox({required this.value});
-  final double value;
+  // to replace the above widget
+  const SettingsCardSpinBox(
+      {super.key,
+      required this.value,
+      required this.changeable,
+      required this.label,
+      required this.kind});
+  final dynamic value;
+  final int changeable;
+  final String label;
+  final String kind;
   @override
   Widget build(BuildContext context) {
-    return Card(
-        child: Row(
-      children: [
-        YaruIconButton(
-            icon: Icon(Icons.minimize_outlined,
-                color: Theme.of(context).primaryColor)),
-        Text(value.toString()),
-        YaruIconButton(
-            icon: Icon(Icons.add, color: Theme.of(context).primaryColor)),
-      ],
-    ));
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: SizedBox(
+          width: MediaQuery.of(context).size.width * 0.80,
+          height: MediaQuery.of(context).size.height * 0.23,
+          child: YaruSection(
+              child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              YaruIconButton(
+                alignment: Alignment.topCenter,
+                icon: Icon(Icons.minimize_outlined,
+                    color: Theme.of(context).primaryColor),
+                onPressed: () {
+                  var newvalue = value - 1;
+                  BlocProvider.of<RepoBloc>(context).add(UpdateSettingVariables(
+                      selectedToChange: 4, changedVar: newvalue));
+                },
+              ),
+              Column(children: [
+                Text(
+                  label,
+                  style: const TextStyle(fontSize: 20),
+                ),
+                Text(
+                  value.toString(),
+                  style: TextStyle(
+                      fontSize: 25, color: Theme.of(context).primaryColor),
+                ),
+                Text(kind),
+              ]),
+              YaruIconButton(
+                icon: Icon(Icons.add, color: Theme.of(context).primaryColor),
+                onPressed: () {
+                  var newvalue = value + 1;
+                  print(newvalue);
+                  BlocProvider.of<RepoBloc>(context).add(UpdateSettingVariables(
+                      selectedToChange: 4, changedVar: newvalue));
+                },
+              ),
+            ],
+          ))),
+    );
   }
 }

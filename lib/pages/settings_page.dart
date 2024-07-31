@@ -24,58 +24,39 @@ class _SettingsPageState extends State<SettingsPage> {
             return ListView(
               children: [
                 SettingsCardSpinBox(
-                    value: state.selectedWorkDurationStored.toDouble()),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Card(
-                    child: Column(
-                      children: [
-                        TileWithSliderAndInfo(
-                            max4Slider: 50,
-                            min4Slider: 1,
-                            valueChanged: 4,
-                            textInfo: "Work Duration",
-                            valueRequested:
-                                state.selectedWorkDurationStored.toDouble()),
-                        TileWithSliderAndInfo(
-                            max4Slider: 10,
-                            min4Slider: 1,
-                            valueChanged: 3,
-                            textInfo: "Break Duration",
-                            valueRequested:
-                                state.selectedBreakDurationStored.toDouble()),
-                        TileWithSliderAndInfo(
-                            max4Slider: 30,
-                            min4Slider: 1,
-                            textInfo: "Long Break Duration",
-                            valueChanged: 5,
-                            valueRequested:
-                                state.selectedLongBreakDuration.toDouble()),
-                        SpinBox(
-                          value: state.requestedNumberOfSessions,
-                          step: 1.0,
-                          onChanged: (value) {
-                            print("value: $value");
-                            BlocProvider.of<RepoBloc>(context).add(
-                                UpdateSettingVariables(
-                                    selectedToChange: 2, changedVar: value));
-                          },
-                        ),
-                        YaruCheckboxListTile(
-                            value: state.windowOnTop,
-                            title: const Text("Window Always On Top"),
-                            subtitle: const Text(
-                                "If ticked the window will always be on top of other windows"),
-                            onChanged: (newValue) {
-                              BlocProvider.of<RepoBloc>(context).add(
-                                  UpdateSettingVariables(
-                                      selectedToChange: 1,
-                                      changedVar: newValue));
-                            }),
-                      ],
-                    ),
-                  ),
+                    kind: "min",
+                    label: "Work Time",
+                    changeable: 4,
+                    value: state.selectedWorkDurationStored),
+                SettingsCardSpinBox(
+                    kind: "min",
+                    label: "Break Time",
+                    changeable: 3,
+                    value: state.selectedBreakDurationStored),
+                SettingsCardSpinBox(
+                    kind: "min",
+                    label: "Long Break Time",
+                    changeable: 5,
+                    value: state.selectedLongBreakDuration),
+                SettingsCardSpinBox(
+                    kind: "integer",
+                    label: "Rounds",
+                    changeable: 2,
+                    value: state.requestedNumberOfSessions),
+                const Divider(),
+                SizedBox(
+                  height: MediaQuery.of(context).size.height / 40,
                 ),
+                YaruCheckboxListTile(
+                    value: state.windowOnTop,
+                    title: const Text("Window Always On Top"),
+                    subtitle: const Text(
+                        "If ticked the window will always be on top of other windows"),
+                    onChanged: (newValue) {
+                      BlocProvider.of<RepoBloc>(context).add(
+                          UpdateSettingVariables(
+                              selectedToChange: 1, changedVar: newValue));
+                    }),
               ],
             );
           } else {
