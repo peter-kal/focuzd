@@ -8,7 +8,7 @@ website: https://github.com/peter-kal/focuzd
 issues: https://github.com/peter-kal/focuzd/issues
 
 
-summary: A pomodoro app.
+summary: A pomodoro app built with Flutter, and Yaru widgets.
 description: |
   A new pomodoro app, built with Flutter, the goal is to make a feature-equivalent to Pomotroid. 
   Pomotroid uses electron,
@@ -73,7 +73,6 @@ slots:
 apps:
  focuzd:
   command: bin/focuzd
-  desktop: snap/gui/focuzd.desktop
   extensions: [gnome]
   plugs:
     - x11
