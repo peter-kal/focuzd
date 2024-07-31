@@ -1,11 +1,10 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:focuzd/blocs/page_navigation_bloc/page_navigation_bloc.dart';
-import 'package:focuzd/blocs/pomodoro_bloc/pomodoro_bloc.dart';
-import 'package:focuzd/blocs/pomodoro_bloc/ticker.dart';
-import 'package:focuzd/blocs/repo_bloc/repo_bloc.dart';
+import 'package:focuzd/blocs/blocs.dart';
+import 'package:focuzd/data/settings_storage/db_setings.dart';
 import 'package:focuzd/pages/main_page.dart';
 import 'package:focuzd/pages/settings_page.dart';
 import 'package:flutter/material.dart';
+import 'package:is_first_run/is_first_run.dart';
 import 'package:yaru/yaru.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -18,14 +17,17 @@ Future<void> main() async {
   await windowManager.ensureInitialized();
 
   Bloc.observer = MyBlocObserver();
-
+  if (await IsFirstRun.isFirstRun()) {
+    SettingsDataProvider().addTheDefaults();
+  }
   runApp(MultiBlocProvider(providers: [
     BlocProvider(
       create: (context) => PageNavigationBloc()..add(const MainPageEvent()),
     ),
     BlocProvider(create: (context) => RepoBloc()..add(EmitStateWithDBVars())),
     BlocProvider(
-        create: (context) => PomodoroBloc(ticker: Ticker())..add(TimerInit()))
+        create: (context) =>
+            PomodoroBloc(ticker: const Ticker())..add(const TimerInit()))
   ], child: const FocuzdApp()));
 }
 
