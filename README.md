@@ -34,8 +34,8 @@ A new pomodoro app, built with Flutter, the goal is to make a feature-equivalent
     - [ ] make sounds when changing state(opt-in)  
   
   - [ ] publish to snapstore
-    - [ ] snap the app(unfortunately in core22 for now)
-    - [ ] publish the edge-beta
+    - [x] snap the app(unfortunately in core22 for now)
+    - [x] publish the edge-beta (waiting human review)
     - [ ] publish in stable                                                                       
   - [ ] solve the bloc-db problem
   - [ ] revamp settings page to be more user-friendly 
