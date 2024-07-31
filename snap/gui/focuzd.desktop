@@ -8,7 +8,8 @@ Name=Focuzd
 
 Terminal=false
 Exec=focuzd
+Icon=${SNAP}/meta/gui/focuzd_icon.png
 
 Keywords=Pomodoro;
-Comment=A pomodoro app.
+Comment=A pomodoro app built with Flutter.
 Categories=Productivity;

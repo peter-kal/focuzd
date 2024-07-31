@@ -6,6 +6,7 @@ license: GPL-3.0
 source-code: https://github.com/peter-kal/focuzd
 website: https://github.com/peter-kal/focuzd
 issues: https://github.com/peter-kal/focuzd/issues
+icon: snap/gui/focuzd_icon.png
 
 
 summary: A pomodoro app built with Flutter, and Yaru widgets.
@@ -18,7 +19,7 @@ description: |
   
 
 grade: devel
-confinement: devmode 
+confinement: strict 
 compression: lzo
 architectures: 
  - build-on: amd64 
@@ -72,6 +73,7 @@ slots:
       
 apps:
  focuzd:
+  desktop: snap/gui/focuzd.desktop
   command: bin/focuzd
   extensions: [gnome]
   plugs:
