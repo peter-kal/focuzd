@@ -38,9 +38,8 @@ A new pomodoro app, built with Flutter, the goal is to make a feature-equivalent
     - [ ] publish the edge-beta
     - [ ] publish in stable                                                                       
   - [ ] solve the bloc-db problem
-  - [ ] make the TimerCountdown with the TimeToCountdownWidget same-looking
   - [ ] revamp settings page to be more user-friendly 
-  - [ ] fix issue, Next() not working properly when not skipping
+  - [x] fix issue, Next() not working properly when not skipping
   
 
  ### for release 2.0(still thinking)
