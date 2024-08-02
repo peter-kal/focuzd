@@ -2,5 +2,23 @@
     "@@locale": "en",
 
     "mainPage": "Main Page",
-    "settingsPage": "Settings"
+    "settingsPage": "Settings",
+    "backArrowTooltip": "Go Back",
+    "minutes": "Minutes",
+    "reset2Default": "Reset to Default",
+    "alwaysOnTopOption": "Window Always On Top",
+    "alwaysOnTopOptionDescription": "If enabled, the window will always be on top of others",
+
+    "playButtonTooltip": "Play",
+    "resumeButtonTooltip": "Resume",
+    "pauseButtonTooltip": "Pause",
+    "resetSessionButtonTooltip": "Reset",
+    "nextSessionButtonTooltip": "Next",
+
+    "workTimeLabel": "Work Time",
+    "breakTimeLabel": "Breat Time",
+    "longBreakTimeLabel": "Long Break Time",
+    "numberLabelSettings": "Number",
+    "roundsLabelSettings": "Rounds"
+
 }

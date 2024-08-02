@@ -43,6 +43,8 @@ class _MainPageState extends State<MainPage> {
                         width: 50,
                         height: 70,
                         child: YaruIconButton(
+                            tooltip:
+                                AppLocalizations.of(context)!.playButtonTooltip,
                             icon: Icon(
                               Icons.play_arrow,
                               color: Theme.of(context).primaryColor,
@@ -61,6 +63,8 @@ class _MainPageState extends State<MainPage> {
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
                           YaruIconButton(
+                            tooltip: AppLocalizations.of(context)!
+                                .resetSessionButtonTooltip,
                             icon: Icon(
                               Icons.restart_alt,
                               color: Theme.of(context).primaryColor,
@@ -70,6 +74,8 @@ class _MainPageState extends State<MainPage> {
                             },
                           ),
                           YaruIconButton(
+                            tooltip: AppLocalizations.of(context)!
+                                .nextSessionButtonTooltip,
                             icon: Icon(
                               Icons.skip_next,
                               color: Theme.of(context).primaryColor,
@@ -88,6 +94,8 @@ class _MainPageState extends State<MainPage> {
                         width: 50,
                         height: 70,
                         child: YaruIconButton(
+                            tooltip: AppLocalizations.of(context)!
+                                .pauseButtonTooltip,
                             icon: Icon(
                               Icons.pause,
                               color: Theme.of(context).primaryColor,
@@ -106,6 +114,8 @@ class _MainPageState extends State<MainPage> {
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
                           YaruIconButton(
+                            tooltip: AppLocalizations.of(context)!
+                                .resetSessionButtonTooltip,
                             icon: Icon(
                               Icons.restart_alt,
                               color: Theme.of(context).primaryColor,
@@ -117,6 +127,8 @@ class _MainPageState extends State<MainPage> {
                             },
                           ),
                           YaruIconButton(
+                            tooltip: AppLocalizations.of(context)!
+                                .nextSessionButtonTooltip,
                             icon: Icon(
                               Icons.skip_next,
                               color: Theme.of(context).primaryColor,
@@ -135,6 +147,8 @@ class _MainPageState extends State<MainPage> {
                         width: 50,
                         height: 70,
                         child: YaruIconButton(
+                            tooltip: AppLocalizations.of(context)!
+                                .resumeButtonTooltip,
                             icon: Icon(
                               Icons.play_arrow,
                               color: Theme.of(context).primaryColor,
@@ -153,6 +167,8 @@ class _MainPageState extends State<MainPage> {
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
                           YaruIconButton(
+                            tooltip: AppLocalizations.of(context)!
+                                .resetSessionButtonTooltip,
                             icon: Icon(
                               Icons.restart_alt,
                               color: Theme.of(context).primaryColor,
@@ -164,6 +180,8 @@ class _MainPageState extends State<MainPage> {
                             },
                           ),
                           YaruIconButton(
+                            tooltip: AppLocalizations.of(context)!
+                                .nextSessionButtonTooltip,
                             icon: Icon(
                               Icons.skip_next,
                               color: Theme.of(context).primaryColor,
@@ -188,6 +206,7 @@ class _MainPageState extends State<MainPage> {
       ),
       appBar: YaruWindowTitleBar(
         leading: YaruIconButton(
+          tooltip: AppLocalizations.of(context)!.settingsPage,
           icon: const Icon(Icons.settings),
           onPressed: () {
             BlocProvider.of<PageNavigationBloc>(context)

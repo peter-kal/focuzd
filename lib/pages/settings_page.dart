@@ -4,6 +4,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:focuzd/blocs/blocs.dart';
 import 'package:focuzd/widgets/settings_widgets.dart';
 import 'package:yaru/yaru.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart' as l10n;
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -21,12 +22,12 @@ class _SettingsPageState extends State<SettingsPage> {
         if (state is RepoVariablesGivenState) {
           return Scaffold(
             bottomNavigationBar: BottomAppBar(
-              height: 95,
+              height: 100,
               child: YaruSwitchListTile(
                   value: state.windowOnTop,
                   title: const Text("Window Always On Top"),
                   subtitle: const Text(
-                      "If ticked the window will always be on top of other windows"),
+                      "If true the window will always be on top of other windows"),
                   onChanged: (newValue) {
                     BlocProvider.of<RepoBloc>(context).add(
                         UpdateSettingVariables(
@@ -36,35 +37,38 @@ class _SettingsPageState extends State<SettingsPage> {
             body: ListView(
               children: [
                 SettingsCardSpinBox(
-                    kind: "min",
-                    label: "Work Time",
+                    kind: l10n.AppLocalizations.of(context)!.minutes,
+                    label: l10n.AppLocalizations.of(context)!.workTimeLabel,
                     changeable: 4,
                     value: state.selectedWorkDurationStored),
                 SettingsCardSpinBox(
-                    kind: "min",
-                    label: "Break Time",
+                    kind: l10n.AppLocalizations.of(context)!.minutes,
+                    label: l10n.AppLocalizations.of(context)!.breakTimeLabel,
                     changeable: 3,
                     value: state.selectedBreakDurationStored),
                 SettingsCardSpinBox(
-                    kind: "min",
-                    label: "Long Break Time",
+                    kind: l10n.AppLocalizations.of(context)!.minutes,
+                    label:
+                        l10n.AppLocalizations.of(context)!.longBreakTimeLabel,
                     changeable: 5,
                     value: state.selectedLongBreakDuration),
                 SettingsCardSpinBox(
-                    kind: "integer",
-                    label: "Rounds",
+                    kind:
+                        l10n.AppLocalizations.of(context)!.numberLabelSettings,
+                    label:
+                        l10n.AppLocalizations.of(context)!.roundsLabelSettings,
                     changeable: 2,
                     value: state.requestedNumberOfSessions),
                 Padding(
-                  padding: EdgeInsets.all(8),
+                  padding: const EdgeInsets.all(8),
                   child: OutlinedButton(
                       onPressed: () {
                         BlocProvider.of<RepoBloc>(context).add(ResetSettings());
                       },
-                      child: const Row(
+                      child: Row(
                         children: [
-                          Icon(Icons.restart_alt),
-                          Text("Reset to default")
+                          const Icon(Icons.restart_alt),
+                          Text(l10n.AppLocalizations.of(context)!.reset2Default)
                         ],
                       )),
                 ),
@@ -80,6 +84,7 @@ class _SettingsPageState extends State<SettingsPage> {
             appBar: YaruWindowTitleBar(
               title: Text(AppLocalizations.of(context)!.settingsPage),
               leading: YaruIconButton(
+                tooltip: l10n.AppLocalizations.of(context)!.backArrowTooltip,
                 icon: const Icon(Icons.arrow_back),
                 onPressed: () {
                   BlocProvider.of<PageNavigationBloc>(context)
