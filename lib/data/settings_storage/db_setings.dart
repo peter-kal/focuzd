@@ -16,6 +16,7 @@ class SettingsDataProvider {
       switch (whatChangedVar) {
         case 1: // always on top
           defaults!.windowOnTop = changedVar;
+
           break;
         case 2: //requested rounds
           defaults!.requestedNumberOfSessions = changedVar;

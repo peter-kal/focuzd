@@ -35,7 +35,7 @@ A new pomodoro app, built with Flutter, the goal is to make a feature-equivalent
     - [x] autostart work timer 
     - [x] autostart break timer 
     - [x] memorise the setting's changes
-    - [ ] make the window be always on top(opt in) 
+    - [x] make the window be always on top(opt in) 
     - [x] reset changes to default
     - [ ] make sounds when changing state(opt-in)  
   
