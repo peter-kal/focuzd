@@ -47,7 +47,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 SizedBox(
                   height: MediaQuery.of(context).size.height / 40,
                 ),
-                YaruCheckboxListTile(
+                YaruSwitchListTile(
                     value: state.windowOnTop,
                     title: const Text("Window Always On Top"),
                     subtitle: const Text(
@@ -57,6 +57,14 @@ class _SettingsPageState extends State<SettingsPage> {
                           UpdateSettingVariables(
                               selectedToChange: 1, changedVar: newValue));
                     }),
+                OutlinedButton(
+                    onPressed: onPressed,
+                    child: Row(
+                      children: [
+                        Icon(Icons.restart_alt),
+                        Text("Reset to default")
+                      ],
+                    ))
               ],
             );
           } else {

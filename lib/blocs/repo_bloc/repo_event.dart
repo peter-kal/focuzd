@@ -18,3 +18,5 @@ class UpdateSettingVariables extends RepoEvent {
 }
 
 class EmitStateWithDBVars extends RepoEvent {}
+
+class ResetSettings extends RepoEvent {}

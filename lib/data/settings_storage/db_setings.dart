@@ -9,7 +9,7 @@ class SettingsDataProvider {
     db = openDB();
   }
 
-  Future<void> edit(var changedVar, int whatChangedVar) async {
+  Future<void> editSpecific(var changedVar, int whatChangedVar) async {
     final isar = await db;
     isar.writeTxn(() async {
       var defaults = await isar.settingsVariables.get(1);
@@ -33,6 +33,25 @@ class SettingsDataProvider {
       }
 
       isar.settingsVariables.put(defaults!);
+    });
+  }
+
+  Future<void> reset2Default() async {
+    final isar = await db;
+    isar.writeTxn(() async {
+      var defaults = await isar.settingsVariables.get(1);
+
+      defaults!.windowOnTop = false;
+
+      defaults.requestedNumberOfSessions = 4;
+
+      defaults.selectedBreakDurationStored = 5;
+
+      defaults.selectedWorkDurationStored = 25;
+
+      defaults.selectedLongBreakDuration = 15;
+
+      isar.settingsVariables.put(defaults);
     });
   }
 

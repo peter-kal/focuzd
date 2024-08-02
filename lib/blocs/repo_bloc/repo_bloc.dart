@@ -11,10 +11,12 @@ class RepoBloc extends Bloc<RepoEvent, RepoState> {
     on<RepoEvent>((event, emit) {});
     on<EmitStateWithDBVars>(_onEmitStateWithDBVars);
     on<UpdateSettingVariables>(_onUpdateSettingsVariables);
+    on<ResetSettings>(_onResetSettingsEvent);
   }
   void _onUpdateSettingsVariables(
       UpdateSettingVariables event, Emitter<RepoState> emit) async {
-    await SettingsDataProvider().edit(event.changedVar, event.selectedToChange);
+    await SettingsDataProvider()
+        .editSpecific(event.changedVar, event.selectedToChange);
 
     add(EmitStateWithDBVars());
   }
@@ -29,5 +31,10 @@ class RepoBloc extends Bloc<RepoEvent, RepoState> {
         selectedLongBreakDuration: settings.selectedLongBreakDuration!,
         selectedWorkDurationStored: settings.selectedWorkDurationStored!,
         windowOnTop: settings.windowOnTop!));
+  }
+
+  void _onResetSettingsEvent(ResetSettings event, Emitter<RepoState> emit) {
+    SettingsDataProvider().reset2Default();
+    add(EmitStateWithDBVars());
   }
 }
