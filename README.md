@@ -1,17 +1,42 @@
 # focuzd
 
-A new pomodoro app, built with Flutter, the goal is to make a feature-equivalent to Pomotroid. Pomotroid uses electron, which makes it pretty heavy, slow to start, and resource intensive. Flutter will solve these issues while also looking nice, and later more features as well as more platforms will be added. 
-  
+## Dark Mode 
+![main page](screenshots/focuzd_dark.png)
+## Light Mode 
+![main page](screenshots/focuzd_light.png)
 
-(wip)
+
+
 [![Get it from the Snap Store](https://snapcraft.io/static/images/badges/en/snap-store-black.svg)](https://snapcraft.io/focuzd)
 
 
-  
-# Light Mode 
-![main page](screenshots/focuzd_light.png)
-# Dark Mode 
-![main page](screenshots/focuzd_dark.png)
+
+
+
+A new pomodoro app, built with Flutter, the goal is to make a feature-equivalent to Pomotroid. Pomotroid uses electron, which makes it pretty heavy, slow to start, and resource intensive. Flutter will solve these issues while also looking nice, and later more features as well as more platforms will be added. 
+
+#### Pomotroid / Focuzd comparison 
+  1) CPU Usage:
+  Due to Flutter apps being natively compiled in machine code, the performance of Focuzd 
+  far exceeds that of Pomotroid, which is based on Electron, so every time you use it, 
+  it's like opening a chromium tab.
+  Testing on my device, with the countdown on, the CPU Usage was the following:
+  - _Focuzd_: **0.43%**
+  - _Pomotroid_: **9.59**
+
+
+  ![Comparison on System Monitor](screenshots/comparison.png)
+
+  2) Download Size (Snap Store Data):
+  - _Focuzd_: **12.42 MB**
+  - _Pomotroid_: **67.08 MB**
+
+  3) architecture availability
+   _focuzd_ : arm64, amd64
+   _pomotroid_: amd64 _only_
+
+  4) Update Status: 
+  Pomotroid hasn't seen any update since 9 February of 2021  
 
 
  ### For release 1.0
