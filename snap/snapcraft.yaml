@@ -18,7 +18,7 @@ description: |
   and later more features as well as more platforms will be added.
   
 
-grade: devel
+grade: stable
 confinement: strict 
 compression: lzo
 architectures: 
