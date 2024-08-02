@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:focuzd/blocs/blocs.dart';
+
 import 'package:yaru/yaru.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -12,17 +13,16 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
-  int? countingWorkRounds(int times) {
+  num? countingWorkRounds(int times) {
     if (times == 1) {
-      return 1;
+      return times;
     } else if (times != 1 && (times % 2) == 0) {
       double timeshalf = times / 2;
-
       return timeshalf.toInt();
     } else if (times != 1 && (times % 2) != 0) {
-      num newnum = times - (times / 2.1);
-      var newint = newnum.round().toInt();
-      return newint;
+      int n = ((times + 2) - 1) ~/
+          2; // from the arithmetic progression of: An = A 1st + (n - 1) * 2
+      return n;
     }
     return null;
   }
