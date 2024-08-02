@@ -17,9 +17,9 @@ class RepoBloc extends Bloc<RepoEvent, RepoState> {
       UpdateSettingVariables event, Emitter<RepoState> emit) async {
     await SettingsDataProvider()
         .editSpecific(event.changedVar, event.selectedToChange);
-    await Future<void>.delayed(const Duration(milliseconds: 100));
+    await Future<void>.delayed(const Duration(milliseconds: 50));
 
-    await Future<void>.delayed(const Duration(milliseconds: 100));
+    await Future<void>.delayed(const Duration(milliseconds: 50));
     add(EmitStateWithDBVars());
   }
 
@@ -47,8 +47,11 @@ class RepoBloc extends Bloc<RepoEvent, RepoState> {
         windowOnTop: settings.windowOnTop!));
   }
 
-  void _onResetSettingsEvent(ResetSettings event, Emitter<RepoState> emit) {
+  void _onResetSettingsEvent(
+      ResetSettings event, Emitter<RepoState> emit) async {
     SettingsDataProvider().reset2Default();
+    await Future<void>.delayed(const Duration(milliseconds: 50));
+
     add(EmitStateWithDBVars());
   }
 }
