@@ -68,7 +68,7 @@ class SettingsCardSpinBox extends StatelessWidget {
                 onPressed: () {
                   var newvalue = value - 1;
                   BlocProvider.of<RepoBloc>(context).add(UpdateSettingVariables(
-                      selectedToChange: 4, changedVar: newvalue));
+                      selectedToChange: changeable, changedVar: newvalue));
                 },
               ),
               Column(children: [
@@ -89,7 +89,7 @@ class SettingsCardSpinBox extends StatelessWidget {
                   var newvalue = value + 1;
                   print(newvalue);
                   BlocProvider.of<RepoBloc>(context).add(UpdateSettingVariables(
-                      selectedToChange: 4, changedVar: newvalue));
+                      selectedToChange: changeable, changedVar: newvalue));
                 },
               ),
             ],

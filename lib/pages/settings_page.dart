@@ -58,8 +58,10 @@ class _SettingsPageState extends State<SettingsPage> {
                               selectedToChange: 1, changedVar: newValue));
                     }),
                 OutlinedButton(
-                    onPressed: onPressed,
-                    child: Row(
+                    onPressed: () {
+                      BlocProvider.of<RepoBloc>(context).add(ResetSettings());
+                    },
+                    child: const Row(
                       children: [
                         Icon(Icons.restart_alt),
                         Text("Reset to default")
