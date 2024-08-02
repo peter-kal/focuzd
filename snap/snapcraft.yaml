@@ -9,13 +9,16 @@ issues: https://github.com/peter-kal/focuzd/issues
 icon: snap/gui/focuzd_icon.png
 
 
-summary: A pomodoro app built with Flutter, and Yaru widgets.
+summary: A simple and elegant pomodoro app built with Flutter.
 description: |
-  A new pomodoro app, built with Flutter, the goal is to make a feature-equivalent to Pomotroid. 
-  Pomotroid uses electron,
-  which makes it pretty heavy, slow to start, and resource
-  intensive. Flutter will solve these issues while also looking nice,
-  and later more features as well as more platforms will be added.
+ Focuzd is a _new_ pomodoro app, built with Flutter and Yaru widgets. It provides a simple and visually pleasing UI. 
+ You can change the lenght, of work, or break periods, the number of rounds, or even make the window be always on top.
+ Focuzd is **natively compiled**, far outperfoming its Electron-based alternatives*, while being a _sixth_ of the package size,
+ it _integrates_ with the theme of the Desktop, providing consistency.
+ Focuzd is also **strictly confined** meaning it doesn't access to things it **doesn't** need, like the internet, or system files.
+
+ * more comparison data on the GitHub page
+   
   
 
 grade: stable
