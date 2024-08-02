@@ -15,7 +15,7 @@ A new pomodoro app, built with Flutter, the goal is to make a feature-equivalent
 
 
  ### For release 1.0
-  - [ ] Feature equivelant to pomotroid
+  - [x] Feature equivelant to pomotroid
     - [x] start pomodoro sessions
     - [x] show time remaining 
     - [x] show how many sessions you have done in this round 
@@ -37,7 +37,6 @@ A new pomodoro app, built with Flutter, the goal is to make a feature-equivalent
     - [x] memorise the setting's changes
     - [x] make the window be always on top(opt in) 
     - [x] reset changes to default
-    - [ ] make sounds when changing state(opt-in)  
   
   - [ ] publish to snapstore
     - [x] snap the app(unfortunately in core22 for now)
@@ -47,6 +46,12 @@ A new pomodoro app, built with Flutter, the goal is to make a feature-equivalent
   - [x] revamp settings page to be more user-friendly 
   - [x] fix issue, Next() not working properly when not skipping
   
+  ## for release 1.1 minor release 
+    - [ ] make sounds when changing state(opt-in)
+    - [ ] consider different widgets for settings 
+    - [ ] add greek language support 
+    - [ ] consider adding a circular progress indicator along with the countdown
+    
 
  ### for release 2.0(still thinking)
    - [ ] add statistics and analytics
