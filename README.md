@@ -1,7 +1,13 @@
 # focuzd
 
 A new pomodoro app, built with Flutter, the goal is to make a feature-equivalent to Pomotroid. Pomotroid uses electron, which makes it pretty heavy, slow to start, and resource intensive. Flutter will solve these issues while also looking nice, and later more features as well as more platforms will be added. 
+  
 
+(wip)
+[![Get it from the Snap Store](https://snapcraft.io/static/images/badges/en/snap-store-black.svg)](https://snapcraft.io/focuzd)
+
+
+  
 # Light Mode 
 ![main page](screenshots/focuzd_light.png)
 # Dark Mode 
@@ -35,7 +41,7 @@ A new pomodoro app, built with Flutter, the goal is to make a feature-equivalent
   
   - [ ] publish to snapstore
     - [x] snap the app(unfortunately in core22 for now)
-    - [x] publish the edge-beta (waiting human review)
+    - [x] publish the edge-beta
     - [ ] publish in stable                                                                       
   - [ ] solve the bloc-db problem
   - [x] revamp settings page to be more user-friendly 
