@@ -43,7 +43,7 @@ A new pomodoro app, built with Flutter, the goal is to make a feature-equivalent
     - [x] snap the app(unfortunately in core22 for now)
     - [x] publish the edge-beta
     - [ ] publish in stable                                                                       
-  - [ ] solve the bloc-db problem
+  - [x] solve the bloc-db problem
   - [x] revamp settings page to be more user-friendly 
   - [x] fix issue, Next() not working properly when not skipping
   

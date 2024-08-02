@@ -8,7 +8,6 @@ part 'repo_state.dart';
 
 class RepoBloc extends Bloc<RepoEvent, RepoState> {
   RepoBloc() : super(RepoInitial()) {
-    on<RepoEvent>((event, emit) {});
     on<EmitStateWithDBVars>(_onEmitStateWithDBVars);
     on<UpdateSettingVariables>(_onUpdateSettingsVariables);
     on<ResetSettings>(_onResetSettingsEvent);
@@ -17,8 +16,16 @@ class RepoBloc extends Bloc<RepoEvent, RepoState> {
       UpdateSettingVariables event, Emitter<RepoState> emit) async {
     await SettingsDataProvider()
         .editSpecific(event.changedVar, event.selectedToChange);
+    await Future<void>.delayed(const Duration(milliseconds: 100));
 
-    add(EmitStateWithDBVars());
+    final settings = await SettingsDataProvider().readVar();
+    await Future<void>.delayed(const Duration(milliseconds: 100));
+    emit(RepoVariablesGivenState(
+        requestedNumberOfSessions: settings.requestedNumberOfSessions!,
+        selectedBreakDurationStored: settings.selectedBreakDurationStored!,
+        selectedLongBreakDuration: settings.selectedLongBreakDuration!,
+        selectedWorkDurationStored: settings.selectedWorkDurationStored!,
+        windowOnTop: settings.windowOnTop!));
   }
 
   void _onEmitStateWithDBVars(
