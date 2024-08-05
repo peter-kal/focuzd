@@ -5,7 +5,7 @@ sealed class PomodoroTimerState extends Equatable {
   const PomodoroTimerState(this.duration, this.runTimes, this.reqRounds);
   final int duration;
   final int runTimes;
-  final double reqRounds;
+  final int reqRounds;
   @override
   List<Object> get props => [duration, runTimes];
 }

@@ -20,7 +20,7 @@ const SettingsVariablesSchema = CollectionSchema(
     r'requestedNumberOfSessions': PropertySchema(
       id: 0,
       name: r'requestedNumberOfSessions',
-      type: IsarType.double,
+      type: IsarType.long,
     ),
     r'selectedBreakDurationStored': PropertySchema(
       id: 1,
@@ -72,7 +72,7 @@ void _settingsVariablesSerialize(
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
-  writer.writeDouble(offsets[0], object.requestedNumberOfSessions);
+  writer.writeLong(offsets[0], object.requestedNumberOfSessions);
   writer.writeLong(offsets[1], object.selectedBreakDurationStored);
   writer.writeLong(offsets[2], object.selectedLongBreakDuration);
   writer.writeLong(offsets[3], object.selectedWorkDurationStored);
@@ -87,7 +87,7 @@ SettingsVariables _settingsVariablesDeserialize(
 ) {
   final object = SettingsVariables();
   object.id = id;
-  object.requestedNumberOfSessions = reader.readDoubleOrNull(offsets[0]);
+  object.requestedNumberOfSessions = reader.readLongOrNull(offsets[0]);
   object.selectedBreakDurationStored = reader.readLongOrNull(offsets[1]);
   object.selectedLongBreakDuration = reader.readLongOrNull(offsets[2]);
   object.selectedWorkDurationStored = reader.readLongOrNull(offsets[3]);
@@ -103,7 +103,7 @@ P _settingsVariablesDeserializeProp<P>(
 ) {
   switch (propertyId) {
     case 0:
-      return (reader.readDoubleOrNull(offset)) as P;
+      return (reader.readLongOrNull(offset)) as P;
     case 1:
       return (reader.readLongOrNull(offset)) as P;
     case 2:
@@ -288,58 +288,49 @@ extension SettingsVariablesQueryFilter
   }
 
   QueryBuilder<SettingsVariables, SettingsVariables, QAfterFilterCondition>
-      requestedNumberOfSessionsEqualTo(
-    double? value, {
-    double epsilon = Query.epsilon,
-  }) {
+      requestedNumberOfSessionsEqualTo(int? value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'requestedNumberOfSessions',
         value: value,
-        epsilon: epsilon,
       ));
     });
   }
 
   QueryBuilder<SettingsVariables, SettingsVariables, QAfterFilterCondition>
       requestedNumberOfSessionsGreaterThan(
-    double? value, {
+    int? value, {
     bool include = false,
-    double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         include: include,
         property: r'requestedNumberOfSessions',
         value: value,
-        epsilon: epsilon,
       ));
     });
   }
 
   QueryBuilder<SettingsVariables, SettingsVariables, QAfterFilterCondition>
       requestedNumberOfSessionsLessThan(
-    double? value, {
+    int? value, {
     bool include = false,
-    double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.lessThan(
         include: include,
         property: r'requestedNumberOfSessions',
         value: value,
-        epsilon: epsilon,
       ));
     });
   }
 
   QueryBuilder<SettingsVariables, SettingsVariables, QAfterFilterCondition>
       requestedNumberOfSessionsBetween(
-    double? lower,
-    double? upper, {
+    int? lower,
+    int? upper, {
     bool includeLower = true,
     bool includeUpper = true,
-    double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.between(
@@ -348,7 +339,6 @@ extension SettingsVariablesQueryFilter
         includeLower: includeLower,
         upper: upper,
         includeUpper: includeUpper,
-        epsilon: epsilon,
       ));
     });
   }
@@ -815,7 +805,7 @@ extension SettingsVariablesQueryProperty
     });
   }
 
-  QueryBuilder<SettingsVariables, double?, QQueryOperations>
+  QueryBuilder<SettingsVariables, int?, QQueryOperations>
       requestedNumberOfSessionsProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'requestedNumberOfSessions');

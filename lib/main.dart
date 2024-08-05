@@ -1,8 +1,8 @@
-import 'dart:ui';
-
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:focuzd/blocs/blocs.dart';
 import 'package:focuzd/data/settings_storage/db_setings.dart';
+import 'package:focuzd/data/settings_storage/settings_vars.dart';
+import 'package:isar/isar.dart';
 import 'package:focuzd/pages/main_page.dart';
 import 'package:focuzd/pages/settings_page.dart';
 import 'package:flutter/material.dart';
@@ -17,7 +17,6 @@ Future<void> main() async {
   await YaruWindowTitleBar.ensureInitialized();
   WidgetsFlutterBinding.ensureInitialized();
   await windowManager.ensureInitialized();
-
   Bloc.observer = MyBlocObserver();
   if (await IsFirstRun.isFirstRun()) {
     SettingsDataProvider().addTheDefaults();

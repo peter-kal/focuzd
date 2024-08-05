@@ -58,7 +58,7 @@ class _MainPageState extends State<MainPage> {
                       SizedBox(
                           child: YaruSection(
                               child: SelectableText(
-                                  "${countingWorkRounds(state.runTimes)} / ${state.reqRounds.toInt()}"))),
+                                  "${countingWorkRounds(state.runTimes)} / ${state.reqRounds}"))),
                       Column(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
@@ -109,7 +109,7 @@ class _MainPageState extends State<MainPage> {
                       SizedBox(
                           child: YaruSection(
                               child: SelectableText(
-                                  "${countingWorkRounds(state.runTimes)} / ${state.reqRounds.toInt()}"))),
+                                  "${countingWorkRounds(state.runTimes)} / ${state.reqRounds}"))),
                       Column(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
@@ -162,7 +162,7 @@ class _MainPageState extends State<MainPage> {
                       SizedBox(
                           child: YaruSection(
                               child: SelectableText(
-                                  "${countingWorkRounds(state.runTimes)} / ${state.reqRounds.toInt()}"))),
+                                  "${countingWorkRounds(state.runTimes)} / ${state.reqRounds}"))),
                       Column(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [

@@ -17,7 +17,7 @@ class RepoVariablesGivenState extends RepoState {
       required this.selectedWorkDurationStored,
       required this.selectedLongBreakDuration});
   final bool windowOnTop;
-  final double requestedNumberOfSessions;
+  final int requestedNumberOfSessions;
   final int selectedBreakDurationStored;
   final int selectedWorkDurationStored;
   final int selectedLongBreakDuration;

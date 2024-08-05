@@ -7,7 +7,7 @@ part 'settings_vars.g.dart';
 class SettingsVariables {
   Id id = Isar.autoIncrement;
   bool? windowOnTop;
-  double? requestedNumberOfSessions;
+  int? requestedNumberOfSessions;
   int? selectedBreakDurationStored;
   int? selectedWorkDurationStored;
   int? selectedLongBreakDuration;
