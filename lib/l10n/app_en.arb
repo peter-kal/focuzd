@@ -15,7 +15,7 @@
     "resetSessionButtonTooltip": "Reset",
     "nextSessionButtonTooltip": "Next",
 
-    "workTimeLabel": "Work Time",
+    "workTimeLabel": "Focus Time",
     "breakTimeLabel": "Break Time",
     "longBreakTimeLabel": "Long Break Time",
     "numberLabelSettings": "Number",
