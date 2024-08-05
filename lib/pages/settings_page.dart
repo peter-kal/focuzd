@@ -25,9 +25,10 @@ class _SettingsPageState extends State<SettingsPage> {
               height: 100,
               child: YaruSwitchListTile(
                   value: state.windowOnTop,
-                  title: const Text("Window Always On Top"),
-                  subtitle: const Text(
-                      "If true the window will always be on top of other windows"),
+                  title: Text(
+                      l10n.AppLocalizations.of(context)!.alwaysOnTopOption),
+                  subtitle: Text(l10n.AppLocalizations.of(context)!
+                      .alwaysOnTopOptionDescription),
                   onChanged: (newValue) {
                     BlocProvider.of<RepoBloc>(context).add(
                         UpdateSettingVariables(
