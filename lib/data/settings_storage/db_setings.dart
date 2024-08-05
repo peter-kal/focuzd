@@ -40,7 +40,7 @@ class SettingsDataProvider {
   Future<void> reset2Default() async {
     final isar = await db;
     isar.writeTxn(() async {
-      var defaults = await isar.settingsVariables.get(1);
+      final defaults = await isar.settingsVariables.get(1);
 
       defaults!.windowOnTop = false;
 

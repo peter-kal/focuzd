@@ -26,6 +26,13 @@ class RepoBloc extends Bloc<RepoEvent, RepoState> {
   void _onEmitStateWithDBVars(
       EmitStateWithDBVars event, Emitter<RepoState> emit) async {
     final settings = await SettingsDataProvider().readVar();
+    if (settings.requestedNumberOfSessions == null ||
+        settings.selectedBreakDurationStored == null ||
+        settings.selectedLongBreakDuration == null ||
+        settings.selectedWorkDurationStored == null ||
+        settings.windowOnTop == null) {
+      add(ResetSettings());
+    }
     if (await SettingsDataProvider().readSpecificVar(1) == true) {
       WindowOptions options = const WindowOptions(alwaysOnTop: true);
       await windowManager.waitUntilReadyToShow(options, () async {
@@ -39,6 +46,7 @@ class RepoBloc extends Bloc<RepoEvent, RepoState> {
         windowManager.show();
       });
     }
+
     emit(RepoVariablesGivenState(
         requestedNumberOfSessions: settings.requestedNumberOfSessions!,
         selectedBreakDurationStored: settings.selectedBreakDurationStored!,
@@ -49,7 +57,8 @@ class RepoBloc extends Bloc<RepoEvent, RepoState> {
 
   void _onResetSettingsEvent(
       ResetSettings event, Emitter<RepoState> emit) async {
-    SettingsDataProvider().reset2Default();
+    await SettingsDataProvider().reset2Default();
+    await Future<void>.delayed(const Duration(milliseconds: 50));
     await Future<void>.delayed(const Duration(milliseconds: 50));
 
     add(EmitStateWithDBVars());

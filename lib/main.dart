@@ -18,8 +18,18 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await windowManager.ensureInitialized();
   Bloc.observer = MyBlocObserver();
+
   if (await IsFirstRun.isFirstRun()) {
     SettingsDataProvider().addTheDefaults();
+  }
+  final settings = await SettingsDataProvider().readVar();
+
+  if (settings.requestedNumberOfSessions == null ||
+      settings.selectedBreakDurationStored == null ||
+      settings.selectedLongBreakDuration == null ||
+      settings.selectedWorkDurationStored == null ||
+      settings.windowOnTop == null) {
+    await SettingsDataProvider().reset2Default();
   }
   if (await SettingsDataProvider().readSpecificVar(1) == true) {
     WindowOptions options = const WindowOptions(alwaysOnTop: true);
