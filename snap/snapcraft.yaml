@@ -11,9 +11,9 @@ icon: snap/gui/focuzd_icon.png
 
 summary: A simple and elegant pomodoro timer app.
 description: |
- Focuzd is a _new_ pomodoro app, built with Flutter and Yaru widgets. It provides a simple and visually pleasing UI. 
- You can change the lenght, of work, or break periods, the number of rounds, or even make the window be always on top.
- Focuzd is **natively compiled**, far outperfoming its Electron-based alternatives*, while being a _sixth_ of the package size,
+ Focuzd is a _new_ pomodoro app, built with Flutter and Yaru theme. It provides a simple and visually pleasing UI. 
+ You can change the lenght, of focus, or break periods, the number of sessions, or even make the window be always on top.
+ Focuzd is **natively compiled**, far outperfoming its Electron-based alternatives*, all in a _sixth_ of the package size,
  it _integrates_ with the theme of the Desktop, providing consistency.
  Focuzd is also **strictly confined** meaning it doesn't access to things it **doesn't** need, like the internet, or system files.
 
