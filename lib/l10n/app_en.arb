@@ -7,7 +7,7 @@
     "minutes": "Minutes",
     "reset2Default": "Reset to Default",
     "alwaysOnTopOption": "Window Always On Top",
-    "alwaysOnTopOptionDescription": "If enabled, the window will always be on top of others",
+    "alwaysOnTopOptionDescription": "Make the window always be on top of others",
 
     "playButtonTooltip": "Play",
     "resumeButtonTooltip": "Resume",
