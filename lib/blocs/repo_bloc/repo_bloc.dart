@@ -26,13 +26,7 @@ class RepoBloc extends Bloc<RepoEvent, RepoState> {
   void _onEmitStateWithDBVars(
       EmitStateWithDBVars event, Emitter<RepoState> emit) async {
     final settings = await SettingsDataProvider().readVar();
-    if (settings.requestedNumberOfSessions == null ||
-        settings.selectedBreakDurationStored == null ||
-        settings.selectedLongBreakDuration == null ||
-        settings.selectedWorkDurationStored == null ||
-        settings.windowOnTop == null) {
-      add(ResetSettings());
-    }
+
     if (await SettingsDataProvider().readSpecificVar(1) == true) {
       WindowOptions options = const WindowOptions(alwaysOnTop: true);
       await windowManager.waitUntilReadyToShow(options, () async {
