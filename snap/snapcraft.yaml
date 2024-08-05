@@ -9,7 +9,7 @@ issues: https://github.com/peter-kal/focuzd/issues
 icon: snap/gui/focuzd_icon.png
 
 
-summary: A simple and elegant pomodoro app built with Flutter.
+summary: A simple and elegant pomodoro timer app.
 description: |
  Focuzd is a _new_ pomodoro app, built with Flutter and Yaru widgets. It provides a simple and visually pleasing UI. 
  You can change the lenght, of work, or break periods, the number of rounds, or even make the window be always on top.
