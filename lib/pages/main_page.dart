@@ -13,7 +13,7 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
-  num? countingWorkRounds(int times) {
+  int? countingWorkRounds(int times) {
     if (times == 1) {
       return times;
     } else if (times != 1 && (times % 2) == 0) {
@@ -29,11 +29,11 @@ class _MainPageState extends State<MainPage> {
 
   String currentSessionStatus(int Rn, int ReqSessions) {
     if ((Rn % 2) == 0 && Rn == (ReqSessions * 2)) {
-      return "Long Break";
+      return AppLocalizations.of(context)!.longBreakTimeLabel;
     } else if ((Rn % 2 != 0)) {
-      return "Focus";
+      return AppLocalizations.of(context)!.workTimeLabel;
     } else if ((Rn % 2) == 0 && Rn != (ReqSessions * 2)) {
-      return "Break";
+      return AppLocalizations.of(context)!.breakTimeLabel;
     }
     return "error";
   }
@@ -43,178 +43,175 @@ class _MainPageState extends State<MainPage> {
     return BlocBuilder<PomodoroBloc, PomodoroTimerState>(
       builder: (context, state) {
         return Scaffold(
-          bottomNavigationBar: BlocBuilder<PomodoroBloc, PomodoroTimerState>(
-            builder: (context, state) {
-              return BottomAppBar(
-                height: 110,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    ...switch (state) {
-                      TimerInitial() => [
-                          SizedBox(
-                            width: 50,
-                            height: 70,
-                            child: YaruIconButton(
-                                tooltip: AppLocalizations.of(context)!
-                                    .playButtonTooltip,
-                                icon: Icon(
-                                  Icons.play_arrow,
-                                  color: Theme.of(context).primaryColor,
-                                ),
-                                onPressed: () {
-                                  context.read<PomodoroBloc>().add(
-                                      TimerStarted(duration: state.duration));
-                                }),
+          bottomNavigationBar: BottomAppBar(
+            height: 110,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                ...switch (state) {
+                  TimerInitial() => [
+                      SizedBox(
+                        width: 50,
+                        height: 70,
+                        child: YaruIconButton(
+                            tooltip:
+                                AppLocalizations.of(context)!.playButtonTooltip,
+                            icon: Icon(
+                              Icons.play_arrow,
+                              color: Theme.of(context).primaryColor,
+                            ),
+                            onPressed: () {
+                              context
+                                  .read<PomodoroBloc>()
+                                  .add(TimerStarted(duration: state.duration));
+                            }),
+                      ),
+                      SizedBox(
+                          child: YaruSection(
+                              child: SelectableText(
+                                  "${countingWorkRounds(state.runTimes)} / ${state.reqRounds}"))),
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          YaruIconButton(
+                            tooltip: AppLocalizations.of(context)!
+                                .resetSessionButtonTooltip,
+                            icon: Icon(
+                              Icons.restart_alt,
+                              color: Theme.of(context).primaryColor,
+                            ),
+                            onPressed: () {
+                              null;
+                            },
                           ),
-                          SizedBox(
-                              child: YaruSection(
-                                  child: SelectableText(
-                                      "${countingWorkRounds(state.runTimes)} / ${state.reqRounds}"))),
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              YaruIconButton(
-                                tooltip: AppLocalizations.of(context)!
-                                    .resetSessionButtonTooltip,
-                                icon: Icon(
-                                  Icons.restart_alt,
-                                  color: Theme.of(context).primaryColor,
-                                ),
-                                onPressed: () {
-                                  null;
-                                },
-                              ),
-                              YaruIconButton(
-                                tooltip: AppLocalizations.of(context)!
-                                    .nextSessionButtonTooltip,
-                                icon: Icon(
-                                  Icons.skip_next,
-                                  color: Theme.of(context).primaryColor,
-                                ),
-                                onPressed: () {
-                                  context
-                                      .read<PomodoroBloc>()
-                                      .add(const NextPomodoroTimer());
-                                },
-                              )
-                            ],
+                          YaruIconButton(
+                            tooltip: AppLocalizations.of(context)!
+                                .nextSessionButtonTooltip,
+                            icon: Icon(
+                              Icons.skip_next,
+                              color: Theme.of(context).primaryColor,
+                            ),
+                            onPressed: () {
+                              context
+                                  .read<PomodoroBloc>()
+                                  .add(const NextPomodoroTimer());
+                            },
                           )
                         ],
-                      TimerRunInProgress() => [
-                          SizedBox(
-                            width: 50,
-                            height: 70,
-                            child: YaruIconButton(
-                                tooltip: AppLocalizations.of(context)!
-                                    .pauseButtonTooltip,
-                                icon: Icon(
-                                  Icons.pause,
-                                  color: Theme.of(context).primaryColor,
-                                ),
-                                onPressed: () {
-                                  context
-                                      .read<PomodoroBloc>()
-                                      .add(const TimerPaused());
-                                }),
+                      )
+                    ],
+                  TimerRunInProgress() => [
+                      SizedBox(
+                        width: 50,
+                        height: 70,
+                        child: YaruIconButton(
+                            tooltip: AppLocalizations.of(context)!
+                                .pauseButtonTooltip,
+                            icon: Icon(
+                              Icons.pause,
+                              color: Theme.of(context).primaryColor,
+                            ),
+                            onPressed: () {
+                              context
+                                  .read<PomodoroBloc>()
+                                  .add(const TimerPaused());
+                            }),
+                      ),
+                      SizedBox(
+                          child: YaruSection(
+                              child: SelectableText(
+                                  "${countingWorkRounds(state.runTimes)} / ${state.reqRounds}"))),
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          YaruIconButton(
+                            tooltip: AppLocalizations.of(context)!
+                                .resetSessionButtonTooltip,
+                            icon: Icon(
+                              Icons.restart_alt,
+                              color: Theme.of(context).primaryColor,
+                            ),
+                            onPressed: () {
+                              context
+                                  .read<PomodoroBloc>()
+                                  .add(const TimerReset());
+                            },
                           ),
-                          SizedBox(
-                              child: YaruSection(
-                                  child: SelectableText(
-                                      "${countingWorkRounds(state.runTimes)} / ${state.reqRounds}"))),
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              YaruIconButton(
-                                tooltip: AppLocalizations.of(context)!
-                                    .resetSessionButtonTooltip,
-                                icon: Icon(
-                                  Icons.restart_alt,
-                                  color: Theme.of(context).primaryColor,
-                                ),
-                                onPressed: () {
-                                  context
-                                      .read<PomodoroBloc>()
-                                      .add(const TimerReset());
-                                },
-                              ),
-                              YaruIconButton(
-                                tooltip: AppLocalizations.of(context)!
-                                    .nextSessionButtonTooltip,
-                                icon: Icon(
-                                  Icons.skip_next,
-                                  color: Theme.of(context).primaryColor,
-                                ),
-                                onPressed: () {
-                                  context
-                                      .read<PomodoroBloc>()
-                                      .add(const NextPomodoroTimer());
-                                },
-                              )
-                            ],
+                          YaruIconButton(
+                            tooltip: AppLocalizations.of(context)!
+                                .nextSessionButtonTooltip,
+                            icon: Icon(
+                              Icons.skip_next,
+                              color: Theme.of(context).primaryColor,
+                            ),
+                            onPressed: () {
+                              context
+                                  .read<PomodoroBloc>()
+                                  .add(const NextPomodoroTimer());
+                            },
                           )
                         ],
-                      TimerRunPause() => [
-                          SizedBox(
-                            width: 50,
-                            height: 70,
-                            child: YaruIconButton(
-                                tooltip: AppLocalizations.of(context)!
-                                    .resumeButtonTooltip,
-                                icon: Icon(
-                                  Icons.play_arrow,
-                                  color: Theme.of(context).primaryColor,
-                                ),
-                                onPressed: () {
-                                  context
-                                      .read<PomodoroBloc>()
-                                      .add(const TimerResumed());
-                                }),
+                      )
+                    ],
+                  TimerRunPause() => [
+                      SizedBox(
+                        width: 50,
+                        height: 70,
+                        child: YaruIconButton(
+                            tooltip: AppLocalizations.of(context)!
+                                .resumeButtonTooltip,
+                            icon: Icon(
+                              Icons.play_arrow,
+                              color: Theme.of(context).primaryColor,
+                            ),
+                            onPressed: () {
+                              context
+                                  .read<PomodoroBloc>()
+                                  .add(const TimerResumed());
+                            }),
+                      ),
+                      SizedBox(
+                          child: YaruSection(
+                              child: SelectableText(
+                                  "${countingWorkRounds(state.runTimes)} / ${state.reqRounds}"))),
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          YaruIconButton(
+                            tooltip: AppLocalizations.of(context)!
+                                .resetSessionButtonTooltip,
+                            icon: Icon(
+                              Icons.restart_alt,
+                              color: Theme.of(context).primaryColor,
+                            ),
+                            onPressed: () {
+                              context
+                                  .read<PomodoroBloc>()
+                                  .add(const TimerReset());
+                            },
                           ),
-                          SizedBox(
-                              child: YaruSection(
-                                  child: SelectableText(
-                                      "${countingWorkRounds(state.runTimes)} / ${state.reqRounds}"))),
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              YaruIconButton(
-                                tooltip: AppLocalizations.of(context)!
-                                    .resetSessionButtonTooltip,
-                                icon: Icon(
-                                  Icons.restart_alt,
-                                  color: Theme.of(context).primaryColor,
-                                ),
-                                onPressed: () {
-                                  context
-                                      .read<PomodoroBloc>()
-                                      .add(const TimerReset());
-                                },
-                              ),
-                              YaruIconButton(
-                                tooltip: AppLocalizations.of(context)!
-                                    .nextSessionButtonTooltip,
-                                icon: Icon(
-                                  Icons.skip_next,
-                                  color: Theme.of(context).primaryColor,
-                                ),
-                                onPressed: () {
-                                  context
-                                      .read<PomodoroBloc>()
-                                      .add(const NextPomodoroTimer());
-                                },
-                              )
-                            ],
+                          YaruIconButton(
+                            tooltip: AppLocalizations.of(context)!
+                                .nextSessionButtonTooltip,
+                            icon: Icon(
+                              Icons.skip_next,
+                              color: Theme.of(context).primaryColor,
+                            ),
+                            onPressed: () {
+                              context
+                                  .read<PomodoroBloc>()
+                                  .add(const NextPomodoroTimer());
+                            },
                           )
                         ],
+                      )
+                    ],
 
-                      // TODO: Handle this case.
-                      TimerRunComplete() => throw UnimplementedError(),
-                    }
-                  ],
-                ),
-              );
-            },
+                  // TODO: Handle this case.
+                  TimerRunComplete() => throw UnimplementedError(),
+                }
+              ],
+            ),
           ),
           appBar: YaruWindowTitleBar(
             leading: YaruIconButton(
@@ -231,7 +228,7 @@ class _MainPageState extends State<MainPage> {
                   "Focuzd",
                   style: TextStyle(fontWeight: FontWeight.normal),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 3,
                 ),
                 Text(
