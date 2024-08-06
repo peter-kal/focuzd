@@ -17,11 +17,11 @@ class _MainPageState extends State<MainPage> {
     if (times == 1) {
       return times;
     } else if (times != 1 && (times % 2) == 0) {
-      double timeshalf = times / 2;
-      return timeshalf.toInt();
+      int timeshalf = times ~/ 2;
+      return timeshalf;
     } else if (times != 1 && (times % 2) != 0) {
       int n = ((times + 2) - 1) ~/
-          2; // from the arithmetic progression of: An = A 1st + (n - 1) * 2
+          2; // from the arithmetic progression of: An = A1st(which is 1) + (n - 1) * d(which is 2)
       return n;
     }
     return null;
