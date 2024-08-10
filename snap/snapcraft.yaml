@@ -1,7 +1,7 @@
 name: focuzd
 title: Focuzd
 base: core22 
-version: "1.0"
+version: "1.1"
 license: GPL-3.0                                                                                          
 source-code: https://github.com/peter-kal/focuzd
 website: https://github.com/peter-kal/focuzd
@@ -31,7 +31,7 @@ architectures:
 parts:
  flutter-git:
     source: https://github.com/flutter/flutter.git
-    source-tag: 3.22.3
+    source-tag: 3.24.0
     source-depth: 1
     plugin: nil
     override-build: |
