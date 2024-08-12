@@ -85,11 +85,13 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
     var selectedLBDuration = selected.selectedLongBreakDuration;
     var reqRound = selected.requestedNumberOfSessions;
     if (timesRun >= reqRound! * 2) {
+      // if the goal reached then stop
       timesRun = 1;
       _tickerSubscription?.cancel();
 
       add(const TimerInit());
     } else if ((timesRun % 2) == 0) {
+      // its break so it gives back a work session
       timesRun++;
       _tickerSubscription?.cancel();
       _tickerSubscription = _ticker
@@ -100,6 +102,7 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
       await client.notify(
           "Focus for the next ${(state.duration / 60).round()} minutes!");
     } else if ((timesRun % 2) != 0 && timesRun == (reqRound * 2) - 1) {
+      // its the last work session, returns LongBreak
       // The following equation tells us when the last work duration will be: (requestedNumberOfSessions * 2) - 1
       timesRun++;
       _tickerSubscription?.cancel();
