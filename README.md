@@ -20,10 +20,10 @@ A new pomodoro app, built with Flutter, the goal is to make a feature-equivalent
    it's like opening a chromium tab.
    Testing on my device, with the countdown on, the CPU Usage was the following:
 - _Focuzd_: **0.43%**
-- _Pomotroid_: **9.59**
 
+- _Pomotroid_: **9.59%**
+  
   ![Comparison on System Monitor](screenshots/comparison.png)
-
 2) Download Size (Snap Store Data):
 - _Focuzd_: **12.42 MB**
 
@@ -38,20 +38,24 @@ A new pomodoro app, built with Flutter, the goal is to make a feature-equivalent
 ### For release 1.0
 
 - [x] Feature equivelant to pomotroid
+  
   - [x] start pomodoro sessions
+  
   - [x] show time remaining 
+  
   - [x] show how many sessions you have done in this round 
+  
   - [x] go to the next session
+  
   - [x] reset the session 
+  
   - [x] skip the session
-
+    
     - [x] change the time lentgh of focus time 
     - [x] change the time lentgh of break 
     - [x] change the time lentgh of long break
     - [x] change the number of rounds
-    
-    
-    
+
     - [x] have desktop notifications
     - [x] autostart work timer 
     - [x] autostart break timer 
@@ -82,8 +86,6 @@ A new pomodoro app, built with Flutter, the goal is to make a feature-equivalent
   - [ ] consider adding a circular progress indicator along with the countdown
   
   - [ ] display finish time
-  
-  
 
 ### for release 2.0(still thinking)
 
