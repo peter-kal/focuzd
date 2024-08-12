@@ -13,18 +13,16 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
-  int? countingWorkRounds(int times) {
+  int countingWorkRounds(int times) {
     if (times == 1) {
       return times;
     } else if (times != 1 && (times % 2) == 0) {
-      int timeshalf = times ~/ 2;
-      return timeshalf;
+      return times ~/ 2;
     } else if (times != 1 && (times % 2) != 0) {
-      int n = ((times + 2) - 1) ~/
+      return ((times + 2) - 1) ~/
           2; // from the arithmetic progression of: An = A1st(which is 1) + (n - 1) * d(which is 2)
-      return n;
     }
-    return null;
+    return 0;
   }
 
   String currentSessionStatus(int Rn, int ReqSessions) {
