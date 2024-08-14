@@ -42,6 +42,7 @@ class _MainPageState extends State<MainPage> {
       builder: (context, state) {
         return Scaffold(
           bottomNavigationBar: BottomAppBar(
+            elevation: 10,
             height: 110,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -244,9 +245,28 @@ class _MainPageState extends State<MainPage> {
             var minutesStr =
                 ((dur / 60) % 60).floor().toString().padLeft(2, '0');
             final secondsStr = (dur % 60).floor().toString().padLeft(2, '0');
-            return Text(
-              "$minutesStr : $secondsStr",
-              style: const TextStyle(fontSize: 40),
+            return Center(
+              child: Stack(
+                alignment: AlignmentDirectional.center,
+                children: <Widget>[
+                  SizedBox(
+                    height: 200,
+                    width: 200,
+                    child: YaruCircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation(
+                          (state.runTimes % 2 == 0)
+                              ? Colors.green
+                              : Theme.of(context).primaryColor),
+                      strokeWidth: 10,
+                      value: state.duration / (state.selectedDuration),
+                    ),
+                  ),
+                  Text(
+                    "$minutesStr : $secondsStr",
+                    style: const TextStyle(fontSize: 40),
+                  ),
+                ],
+              ),
             );
           })),
         );
