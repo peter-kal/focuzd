@@ -247,11 +247,12 @@ class _MainPageState extends State<MainPage> {
             final secondsStr = (dur % 60).floor().toString().padLeft(2, '0');
             return Center(
               child: Stack(
+                textDirection: TextDirection.ltr,
                 alignment: AlignmentDirectional.center,
                 children: <Widget>[
                   SizedBox(
-                    height: 200,
-                    width: 200,
+                    height: 250,
+                    width: 250,
                     child: YaruCircularProgressIndicator(
                       valueColor: AlwaysStoppedAnimation(
                           (state.runTimes % 2 == 0)
