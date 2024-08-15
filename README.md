@@ -6,7 +6,11 @@
 
 ## Light Mode
 
-![main page](screenshots/focuzd_light.png)
+<img title="" src="screenshots/focuzd_light.png" alt="main page" data-align="inline">
+
+## Break
+
+![](screenshots/focuzd_dark_break.png)
 
 [![Get it from the Snap Store](https://snapcraft.io/static/images/badges/en/snap-store-black.svg)](https://snapcraft.io/focuzd)
 
@@ -52,15 +56,23 @@ A new pomodoro app, built with Flutter, the goal is to make a feature-equivalent
   - [x] skip the session
     
     - [x] change the time lentgh of focus time 
+    
     - [x] change the time lentgh of break 
+    
     - [x] change the time lentgh of long break
+    
     - [x] change the number of rounds
-
+    
     - [x] have desktop notifications
+    
     - [x] autostart work timer 
+    
     - [x] autostart break timer 
+    
     - [x] memorise the setting's changes
+    
     - [x] make the window be always on top(opt in) 
+    
     - [x] reset changes to default
 
 - [x] publish to snapstore
