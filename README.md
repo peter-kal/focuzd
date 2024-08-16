@@ -93,7 +93,7 @@ A new pomodoro app, built with Flutter, the goal is to make a feature-equivalent
   
   - [ ] consider different widgets for settings
   
-  - [ ] add greek language support
+  - [x] add greek language support
   
   - [x] consider adding a circular progress indicator along with the countdown
   

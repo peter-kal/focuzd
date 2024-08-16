@@ -1,0 +1,24 @@
+{
+    "@@locale": "el",
+
+    "mainPage": "Κύρια Σελίδα",
+    "settingsPage": "Ρυθμίσεις",
+    "backArrowTooltip": "Πήγαινε Πίσω",
+    "minutes": "Λεπτά",
+    "reset2Default": "Επαναφορά στα προεπιλεγμένα",
+    "alwaysOnTopOption": "Window Always On Top",
+    "alwaysOnTopOptionDescription": "Κάνει το παράθυρο να είναι πάνω από άλλα παράθυρα",
+
+    "playButtonTooltip": "Ξεκίνα",
+    "resumeButtonTooltip": "Συνέχισε",
+    "pauseButtonTooltip": "Παύσε",
+    "resetSessionButtonTooltip": "Επανάφερε",
+    "nextSessionButtonTooltip": "Επόμενο",
+
+    "workTimeLabel": "Χρόνος Συγκέντρωσης",
+    "breakTimeLabel": "Χρόνος Διάλειμματος",
+    "longBreakTimeLabel": "Χρόνος Μεγάλου Διάλειμματος",
+    "numberLabelSettings": "Ακέραιος",
+    "roundsLabelSettings": "Αριθμός Session"
+
+}
