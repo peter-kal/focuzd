@@ -29,7 +29,7 @@ A new pomodoro app, built with Flutter, the goal is to make a feature-equivalent
   
   ![Comparison on System Monitor](screenshots/comparison.png)
 2) Download Size (Snap Store Data):
-- _Focuzd_: **12.42 MB**
+- _Focuzd_: **12.53 MB**
 
 - _Pomotroid_: **67.08 MB**
 3) architecture availability
@@ -88,17 +88,15 @@ A new pomodoro app, built with Flutter, the goal is to make a feature-equivalent
 - [x] fix issue, Next() not working properly when not skipping
   
   ### for release 1.1 minor release
+    
+- [x] add greek language support
   
-  - [ ] make sounds when changing state(opt-in)
-  
-  - [ ] consider different widgets for settings
-  
-  - [x] add greek language support
-  
-  - [x] consider adding a circular progress indicator along with the countdown
-  
-  - [x] display finish time
+- [x] consider adding a circular progress indicator along with the countdown
+ 
+- [x] display finish time
 
 ### for release 2.0(still thinking)
 
 - [ ] add statistics and analytics
+
+- [ ] consider different widgets for settings
