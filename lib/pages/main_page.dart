@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:focuzd/blocs/blocs.dart';
+import 'package:intl/intl.dart';
 
 import 'package:yaru/yaru.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -34,6 +35,18 @@ class _MainPageState extends State<MainPage> {
       return AppLocalizations.of(context)!.breakTimeLabel;
     }
     return "error";
+  }
+
+  String endsOn(int remainingDuration, PomodoroTimerState state) {
+    if (state is TimerRunInProgress) {
+      Duration buildDuration = Duration(seconds: remainingDuration);
+      DateTime target = DateTime.now().add(buildDuration);
+      String formatted = DateFormat('kk:mm').format(target);
+      return formatted;
+    } else if (state is TimerRunPause || state is TimerInitial) {
+      return "-- : --";
+    }
+    return "null";
   }
 
   @override
@@ -238,38 +251,52 @@ class _MainPageState extends State<MainPage> {
               ],
             ),
           ),
-          body: Center(child: BlocBuilder<PomodoroBloc, PomodoroTimerState>(
+          body: BlocBuilder<PomodoroBloc, PomodoroTimerState>(
               builder: (context, state) {
             final dur =
                 context.select((PomodoroBloc pom) => pom.state.duration);
             var minutesStr =
                 ((dur / 60) % 60).floor().toString().padLeft(2, '0');
             final secondsStr = (dur % 60).floor().toString().padLeft(2, '0');
-            return Center(
-              child: Stack(
-                textDirection: TextDirection.ltr,
-                alignment: AlignmentDirectional.center,
-                children: <Widget>[
-                  SizedBox(
-                    height: 250,
-                    width: 250,
-                    child: YaruCircularProgressIndicator(
-                      valueColor: AlwaysStoppedAnimation(
-                          (state.runTimes % 2 == 0)
-                              ? Colors.green
-                              : Theme.of(context).primaryColor),
-                      strokeWidth: 10,
-                      value: state.duration / (state.selectedDuration),
+            return SizedBox(
+              width: double.infinity,
+              height: double.infinity,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Align(
+                    alignment: Alignment.center,
+                    child: Stack(
+                      alignment: AlignmentDirectional.center,
+                      children: <Widget>[
+                        SizedBox(
+                          height: 250,
+                          width: 250,
+                          child: YaruCircularProgressIndicator(
+                            valueColor: AlwaysStoppedAnimation(
+                                (state.runTimes % 2 == 0)
+                                    ? Colors.green
+                                    : Theme.of(context).primaryColor),
+                            strokeWidth: 10,
+                            value: state.duration / (state.selectedDuration),
+                          ),
+                        ),
+                        Text(
+                          "$minutesStr : $secondsStr",
+                          style: const TextStyle(fontSize: 40),
+                        ),
+                      ],
                     ),
                   ),
-                  Text(
-                    "$minutesStr : $secondsStr",
-                    style: const TextStyle(fontSize: 40),
-                  ),
+                  Align(
+                    alignment: Alignment.bottomCenter,
+                    child: Text("Ends on: ${endsOn(state.duration, state)}"),
+                  )
                 ],
               ),
             );
-          })),
+          }),
         );
       },
     );
