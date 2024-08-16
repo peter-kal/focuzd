@@ -107,7 +107,7 @@ class _MainPageState extends State<MainPage> {
                     alignment: Alignment.bottomCenter,
                     child: Text(
                         style: const TextStyle(fontWeight: FontWeight.w100),
-                        "Ends on: ${ExtraFunctions().endsOn(state.duration, state, DateTime.now())}"),
+                        ExtraFunctions().endsOn(state.duration, state, DateTime.now())),
                   )
                 ],
               ),
