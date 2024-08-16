@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:focuzd/blocs/blocs.dart';
+import 'package:focuzd/extra_functions/extra_functions.dart';
 import 'package:intl/intl.dart';
 
 import 'package:yaru/yaru.dart';
@@ -14,41 +15,6 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
-  int countingWorkRounds(int times) {
-    if (times == 1) {
-      return times;
-    } else if (times != 1 && (times % 2) == 0) {
-      return times ~/ 2;
-    } else if (times != 1 && (times % 2) != 0) {
-      return ((times + 2) - 1) ~/
-          2; // from the arithmetic progression of: An = A1st(which is 1) + (n - 1) * d(which is 2)
-    }
-    return 0;
-  }
-
-  String currentSessionStatus(int Rn, int ReqSessions) {
-    if ((Rn % 2) == 0 && Rn == (ReqSessions * 2)) {
-      return AppLocalizations.of(context)!.longBreakTimeLabel;
-    } else if ((Rn % 2 != 0)) {
-      return AppLocalizations.of(context)!.workTimeLabel;
-    } else if ((Rn % 2) == 0 && Rn != (ReqSessions * 2)) {
-      return AppLocalizations.of(context)!.breakTimeLabel;
-    }
-    return "error";
-  }
-
-  String endsOn(int remainingDuration, PomodoroTimerState state) {
-    if (state is TimerRunInProgress) {
-      Duration buildDuration = Duration(seconds: remainingDuration);
-      DateTime target = DateTime.now().add(buildDuration);
-      String formatted = DateFormat('kk:mm').format(target);
-      return formatted;
-    } else if (state is TimerRunPause || state is TimerInitial) {
-      return "-- : --";
-    }
-    return "null";
-  }
-
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<PomodoroBloc, PomodoroTimerState>(
@@ -81,7 +47,7 @@ class _MainPageState extends State<MainPage> {
                       SizedBox(
                           child: YaruSection(
                               child: SelectableText(
-                                  "${countingWorkRounds(state.runTimes)} / ${state.reqRounds}"))),
+                                  "${ExtraFunctions().countingWorkRounds(state.runTimes)} / ${state.reqRounds}"))),
                       Column(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
@@ -132,7 +98,7 @@ class _MainPageState extends State<MainPage> {
                       SizedBox(
                           child: YaruSection(
                               child: SelectableText(
-                                  "${countingWorkRounds(state.runTimes)} / ${state.reqRounds}"))),
+                                  "${ExtraFunctions().countingWorkRounds(state.runTimes)} / ${state.reqRounds}"))),
                       Column(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
@@ -185,7 +151,7 @@ class _MainPageState extends State<MainPage> {
                       SizedBox(
                           child: YaruSection(
                               child: SelectableText(
-                                  "${countingWorkRounds(state.runTimes)} / ${state.reqRounds}"))),
+                                  "${ExtraFunctions().countingWorkRounds(state.runTimes)} / ${state.reqRounds}"))),
                       Column(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
@@ -244,7 +210,12 @@ class _MainPageState extends State<MainPage> {
                   height: 3,
                 ),
                 Text(
-                  currentSessionStatus(state.runTimes, state.reqRounds),
+                  ExtraFunctions().currentSessionStatus(
+                      state.runTimes,
+                      state.reqRounds,
+                      AppLocalizations.of(context)!.longBreakTimeLabel,
+                      AppLocalizations.of(context)!.workTimeLabel,
+                      AppLocalizations.of(context)!.breakTimeLabel),
                   style: const TextStyle(
                       fontSize: 12, fontWeight: FontWeight.w300),
                 )
@@ -291,7 +262,8 @@ class _MainPageState extends State<MainPage> {
                   ),
                   Align(
                     alignment: Alignment.bottomCenter,
-                    child: Text("Ends on: ${endsOn(state.duration, state)}"),
+                    child: Text(
+                        "Ends on: ${ExtraFunctions().endsOn(state.duration, state, DateTime.now())}"),
                   )
                 ],
               ),
