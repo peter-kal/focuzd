@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:focuzd/blocs/blocs.dart';
 import 'package:focuzd/extra_functions/extra_functions.dart';
-import 'package:intl/intl.dart';
+import 'package:focuzd/extra_widgets/bottom_appBar_interface.dart';
+import 'package:focuzd/extra_widgets/countdown_interface.dart';
 
 import 'package:yaru/yaru.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -23,173 +24,31 @@ class _MainPageState extends State<MainPage> {
           bottomNavigationBar: BottomAppBar(
             elevation: 10,
             height: 110,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                ...switch (state) {
-                  TimerInitial() => [
-                      SizedBox(
-                        width: 50,
-                        height: 70,
-                        child: YaruIconButton(
-                            tooltip:
-                                AppLocalizations.of(context)!.playButtonTooltip,
-                            icon: Icon(
-                              Icons.play_arrow,
-                              color: Theme.of(context).primaryColor,
-                            ),
-                            onPressed: () {
-                              context
-                                  .read<PomodoroBloc>()
-                                  .add(TimerStarted(duration: state.duration));
-                            }),
-                      ),
-                      SizedBox(
-                          child: YaruSection(
-                              child: SelectableText(
-                                  "${ExtraFunctions().countingWorkRounds(state.runTimes)} / ${state.reqRounds}"))),
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          YaruIconButton(
-                            tooltip: AppLocalizations.of(context)!
-                                .resetSessionButtonTooltip,
-                            icon: Icon(
-                              Icons.restart_alt,
-                              color: Theme.of(context).primaryColor,
-                            ),
-                            onPressed: () {
-                              null;
-                            },
-                          ),
-                          YaruIconButton(
-                            tooltip: AppLocalizations.of(context)!
-                                .nextSessionButtonTooltip,
-                            icon: Icon(
-                              Icons.skip_next,
-                              color: Theme.of(context).primaryColor,
-                            ),
-                            onPressed: () {
-                              context
-                                  .read<PomodoroBloc>()
-                                  .add(const NextPomodoroTimer());
-                            },
-                          )
-                        ],
-                      )
-                    ],
-                  TimerRunInProgress() => [
-                      SizedBox(
-                        width: 50,
-                        height: 70,
-                        child: YaruIconButton(
-                            tooltip: AppLocalizations.of(context)!
-                                .pauseButtonTooltip,
-                            icon: Icon(
-                              Icons.pause,
-                              color: Theme.of(context).primaryColor,
-                            ),
-                            onPressed: () {
-                              context
-                                  .read<PomodoroBloc>()
-                                  .add(const TimerPaused());
-                            }),
-                      ),
-                      SizedBox(
-                          child: YaruSection(
-                              child: SelectableText(
-                                  "${ExtraFunctions().countingWorkRounds(state.runTimes)} / ${state.reqRounds}"))),
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          YaruIconButton(
-                            tooltip: AppLocalizations.of(context)!
-                                .resetSessionButtonTooltip,
-                            icon: Icon(
-                              Icons.restart_alt,
-                              color: Theme.of(context).primaryColor,
-                            ),
-                            onPressed: () {
-                              context
-                                  .read<PomodoroBloc>()
-                                  .add(const TimerReset());
-                            },
-                          ),
-                          YaruIconButton(
-                            tooltip: AppLocalizations.of(context)!
-                                .nextSessionButtonTooltip,
-                            icon: Icon(
-                              Icons.skip_next,
-                              color: Theme.of(context).primaryColor,
-                            ),
-                            onPressed: () {
-                              context
-                                  .read<PomodoroBloc>()
-                                  .add(const NextPomodoroTimer());
-                            },
-                          )
-                        ],
-                      )
-                    ],
-                  TimerRunPause() => [
-                      SizedBox(
-                        width: 50,
-                        height: 70,
-                        child: YaruIconButton(
-                            tooltip: AppLocalizations.of(context)!
-                                .resumeButtonTooltip,
-                            icon: Icon(
-                              Icons.play_arrow,
-                              color: Theme.of(context).primaryColor,
-                            ),
-                            onPressed: () {
-                              context
-                                  .read<PomodoroBloc>()
-                                  .add(const TimerResumed());
-                            }),
-                      ),
-                      SizedBox(
-                          child: YaruSection(
-                              child: SelectableText(
-                                  "${ExtraFunctions().countingWorkRounds(state.runTimes)} / ${state.reqRounds}"))),
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          YaruIconButton(
-                            tooltip: AppLocalizations.of(context)!
-                                .resetSessionButtonTooltip,
-                            icon: Icon(
-                              Icons.restart_alt,
-                              color: Theme.of(context).primaryColor,
-                            ),
-                            onPressed: () {
-                              context
-                                  .read<PomodoroBloc>()
-                                  .add(const TimerReset());
-                            },
-                          ),
-                          YaruIconButton(
-                            tooltip: AppLocalizations.of(context)!
-                                .nextSessionButtonTooltip,
-                            icon: Icon(
-                              Icons.skip_next,
-                              color: Theme.of(context).primaryColor,
-                            ),
-                            onPressed: () {
-                              context
-                                  .read<PomodoroBloc>()
-                                  .add(const NextPomodoroTimer());
-                            },
-                          )
-                        ],
-                      )
-                    ],
-
-                  // TODO: Handle this case.
-                  TimerRunComplete() => throw UnimplementedError(),
-                }
-              ],
-            ),
+            child: switch (state) {
+              TimerInitial() => BottomAppBarInterface(
+                  duration: state.duration,
+                  isInitial: true,
+                  isActive: false,
+                  leftButton: AppLocalizations.of(context)!.playButtonTooltip,
+                  reqRounds: state.reqRounds,
+                  runTimes: state.runTimes,
+                ),
+              TimerRunInProgress() => BottomAppBarInterface(
+                  duration: state.duration,
+                  isInitial: false,
+                  isActive: true,
+                  leftButton: AppLocalizations.of(context)!.pauseButtonTooltip,
+                  reqRounds: state.reqRounds,
+                  runTimes: state.runTimes),
+              TimerRunPause() => BottomAppBarInterface(
+                  duration: state.duration,
+                  isInitial: false,
+                  isActive: false,
+                  leftButton: AppLocalizations.of(context)!.resumeButtonTooltip,
+                  reqRounds: state.reqRounds,
+                  runTimes: state.runTimes),
+              TimerRunComplete() => throw UnimplementedError(),
+            },
           ),
           appBar: YaruWindowTitleBar(
             leading: YaruIconButton(
@@ -237,32 +96,17 @@ class _MainPageState extends State<MainPage> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Align(
-                    alignment: Alignment.center,
-                    child: Stack(
-                      alignment: AlignmentDirectional.center,
-                      children: <Widget>[
-                        SizedBox(
-                          height: 250,
-                          width: 250,
-                          child: YaruCircularProgressIndicator(
-                            valueColor: AlwaysStoppedAnimation(
-                                (state.runTimes % 2 == 0)
-                                    ? Colors.green
-                                    : Theme.of(context).primaryColor),
-                            strokeWidth: 10,
-                            value: state.duration / (state.selectedDuration),
-                          ),
-                        ),
-                        Text(
-                          "$minutesStr : $secondsStr",
-                          style: const TextStyle(fontSize: 40),
-                        ),
-                      ],
-                    ),
-                  ),
+                      alignment: Alignment.center,
+                      child: CountdownInterface(
+                          minutesStr: minutesStr,
+                          secondsStr: secondsStr,
+                          duration: state.duration,
+                          selectedDuration: state.selectedDuration,
+                          runTimes: state.runTimes)),
                   Align(
                     alignment: Alignment.bottomCenter,
                     child: Text(
+                        style: const TextStyle(fontWeight: FontWeight.w100),
                         "Ends on: ${ExtraFunctions().endsOn(state.duration, state, DateTime.now())}"),
                   )
                 ],
