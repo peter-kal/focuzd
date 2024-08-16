@@ -95,9 +95,9 @@ A new pomodoro app, built with Flutter, the goal is to make a feature-equivalent
   
   - [ ] add greek language support
   
-  - [ ] consider adding a circular progress indicator along with the countdown
+  - [x] consider adding a circular progress indicator along with the countdown
   
-  - [ ] display finish time
+  - [x] display finish time
 
 ### for release 2.0(still thinking)
 
