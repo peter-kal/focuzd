@@ -98,17 +98,12 @@ class _MainPageState extends State<MainPage> {
                   Align(
                       alignment: Alignment.center,
                       child: CountdownInterface(
+                          state: state,
                           minutesStr: minutesStr,
                           secondsStr: secondsStr,
                           duration: state.duration,
                           selectedDuration: state.selectedDuration,
                           runTimes: state.runTimes)),
-                  Align(
-                    alignment: Alignment.bottomCenter,
-                    child: Text(
-                        style: const TextStyle(fontWeight: FontWeight.w100),
-                        ExtraFunctions().endsOn(state.duration, state, DateTime.now())),
-                  )
                 ],
               ),
             );

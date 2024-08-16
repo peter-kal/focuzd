@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:focuzd/blocs/blocs.dart';
-import 'package:focuzd/widgets/settings_widgets.dart';
+import 'package:focuzd/extra_widgets/settings_widgets.dart';
 import 'package:yaru/yaru.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart' as l10n;
 

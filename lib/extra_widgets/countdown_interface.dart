@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:focuzd/blocs/pomodoro_bloc/pomodoro_bloc.dart';
+import 'package:focuzd/extra_functions/extra_functions.dart';
 import 'package:yaru/yaru.dart';
 
 class CountdownInterface extends StatelessWidget {
@@ -9,12 +11,14 @@ class CountdownInterface extends StatelessWidget {
     required this.duration,
     required this.selectedDuration,
     required this.runTimes,
+    required this.state,
   });
   final String minutesStr;
   final String secondsStr;
   final int duration;
   final int selectedDuration;
   final int runTimes;
+  final PomodoroTimerState state;
 
   @override
   Widget build(BuildContext context) {
@@ -32,9 +36,16 @@ class CountdownInterface extends StatelessWidget {
             value: duration / selectedDuration,
           ),
         ),
-        Text(
-          "$minutesStr : $secondsStr",
-          style: const TextStyle(fontSize: 40),
+        Column(
+          children: [
+            Text(
+              "$minutesStr : $secondsStr",
+              style: const TextStyle(fontSize: 40),
+            ),
+            Text(
+                style: const TextStyle(fontWeight: FontWeight.w500),
+                ExtraFunctions().endsOn(duration, state, DateTime.now())),
+          ],
         ),
       ],
     );
