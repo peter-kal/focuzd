@@ -59,7 +59,13 @@ class SettingsDataProvider {
   Future<SettingsVariables> readVar() async {
     var isar = await db;
     var thesettings = await isar.settingsVariables.get(1);
-    return thesettings!;
+    if (thesettings == null) {
+      await addTheDefaults();
+      dynamic thesettingsAfterNull = await isar.settingsVariables.get(1);
+      return thesettingsAfterNull;
+    } else {
+      return thesettings;
+    }
   }
 
   Future<dynamic> readSpecificVar(int wantToReadVar) async {
