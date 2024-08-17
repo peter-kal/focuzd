@@ -1,4 +1,5 @@
 /// Custom [BlocObserver] which observes all bloc and cubit instances.
+library;
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 

@@ -26,13 +26,13 @@ void main() {
     });
 
     test('test endsOn', () {
-      final fixed_time = DateTime(2024, 0, 0, 10, 0, 0, 0, 0);
+      final fixedTime = DateTime(2024, 0, 0, 10, 0, 0, 0, 0);
       final whenTimerRuns = ExtraFunctions()
-          .endsOn(300, const TimerRunInProgress(200, 2, 4, 200), fixed_time);
+          .endsOn(300, const TimerRunInProgress(200, 2, 4, 200), fixedTime);
       final whenInitial = ExtraFunctions()
-          .endsOn(300, const TimerInitial(300, 1, 4, 300), fixed_time);
+          .endsOn(300, const TimerInitial(300, 1, 4, 300), fixedTime);
       final whenPause = ExtraFunctions()
-          .endsOn(300, TimerRunPause(300, 1, 4, 300), fixed_time);
+          .endsOn(300, const TimerRunPause(300, 1, 4, 300), fixedTime);
 
       expect(whenTimerRuns, "10:05");
       expect(whenInitial, "-- : --");

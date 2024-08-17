@@ -34,9 +34,9 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
   void _onTimerInit(TimerInit event, Emitter<PomodoroTimerState> emit) async {
     final stored = await SettingsDataProvider().readVar();
     final workTimeDuration = stored.selectedWorkDurationStored! * 60;
-    final _reqRounds = stored.requestedNumberOfSessions!;
+    final reqRounds = stored.requestedNumberOfSessions!;
     emit(
-        TimerInitial(workTimeDuration, timesRun, _reqRounds, workTimeDuration));
+        TimerInitial(workTimeDuration, timesRun, reqRounds, workTimeDuration));
   }
 
   void _onStart(TimerStarted event, Emitter<PomodoroTimerState> emit) async {
