@@ -1,0 +1,31 @@
+display_name: Focuzd
+package_name: focuzd
+maintainer:
+  name: Peter Kal
+priority: optional
+section: x11
+installed_size: 6604
+essential: false
+icon: snap/gui/focuzd_icon.png
+
+postinstall_scripts:
+  - echo "Installed my awesome app"
+postuninstall_scripts:
+  - echo "Surprised Pickachu face"
+
+keywords:
+  - Focuzd
+  - Pomodoro
+  - flutter
+
+generic_name: Pomodoro timer app
+
+categories:
+  - Productivity
+  - Utilities
+
+startup_notify: true
+
+# You can also specify [metainfo](https://freedesktop.org/software/appstream/docs/chap-Quickstart.html) file
+# which contains metadata of the app.
+# metainfo: linux/packaging/myappid.appdata.xml
