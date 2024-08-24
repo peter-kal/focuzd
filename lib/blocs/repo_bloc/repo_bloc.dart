@@ -37,9 +37,7 @@ class RepoBloc extends Bloc<RepoEvent, RepoState> {
       default:
     }
     SettingsVariablesEntity.updateSettingsVariablesEntity(has!);
-    await Future<void>.delayed(const Duration(milliseconds: 50));
 
-    await Future<void>.delayed(const Duration(milliseconds: 50));
     add(EmitStateWithDBVars());
   }
 
