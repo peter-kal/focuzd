@@ -1,6 +1,8 @@
+import 'package:drift/drift.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:focuzd/blocs/blocs.dart';
-import 'package:focuzd/data/settings_storage/db_setings.dart';
+import 'package:focuzd/data/settings_storage/db_settings.dart';
+import 'package:focuzd/data/settings_storage/entities/settings_vars.dart';
 import 'package:focuzd/pages/main_page.dart';
 import 'package:focuzd/pages/settings_page.dart';
 import 'package:flutter/material.dart';
@@ -17,25 +19,6 @@ Future<void> main() async {
   await windowManager.ensureInitialized();
   Bloc.observer = MyBlocObserver();
 
-  if (await IsFirstRun.isFirstRun()) {
-    SettingsDataProvider().addTheDefaults();
-  }
-  final settings = await SettingsDataProvider().readVar();
-
-  if (settings.requestedNumberOfSessions == null ||
-      settings.selectedBreakDurationStored == null ||
-      settings.selectedLongBreakDuration == null ||
-      settings.selectedWorkDurationStored == null ||
-      settings.windowOnTop == null) {
-    await SettingsDataProvider().reset2Default();
-  }
-  if (await SettingsDataProvider().readSpecificVar(1) == true) {
-    WindowOptions options = const WindowOptions(alwaysOnTop: true);
-    await windowManager.waitUntilReadyToShow(options, () async {
-      windowManager.focus();
-      windowManager.show();
-    });
-  }
   runApp(MultiBlocProvider(providers: [
     BlocProvider(
       create: (context) => PageNavigationBloc()..add(const MainPageEvent()),

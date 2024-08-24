@@ -3,7 +3,7 @@ description: "A pomodoro app built with flutter."
 publish_to: 'none' 
 
 
-version: 1.0.0+1
+version: 1.1.0
 
 environment:
   sdk: '>=3.4.4 <4.0.0'
@@ -15,23 +15,23 @@ dependencies:
 
 
   
-  cupertino_icons: ^1.0.6
   
   yaru: 5.0.0
   flutter_bloc: ^8.1.6
   bloc: ^8.1.4
-  intl: ^0.19.0
+  intl: any
   flutter_localizations: 
    sdk: flutter 
   handy_window: ^0.4.0
-  isar: ^3.1.0+1
-  isar_generator: ^3.1.0+1
-  build_runner: ^2.4.12
   path_provider: ^2.1.3
-  isar_flutter_libs: ^3.1.0+1
+  path: ^1.9.0
   equatable: ^2.0.5
   desktop_notifications: ^0.6.3
   is_first_run: ^1.0.0
+  drift_sqflite: ^2.0.1
+  drift: ^2.18.0
+  drift_flutter: ^0.2.0
+  path_to_regexp: ^0.4.0
   
 
 dev_dependencies:
@@ -39,6 +39,8 @@ dev_dependencies:
     sdk: flutter
 
   flutter_lints: ^4.0.0
+  drift_dev: ^2.18.0
+  build_runner: ^2.4.12
 
 
 flutter:

@@ -5,7 +5,7 @@ import 'package:desktop_notifications/desktop_notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:equatable/equatable.dart';
 import 'package:focuzd/blocs/pomodoro_bloc/ticker.dart';
-import 'package:focuzd/data/settings_storage/db_setings.dart';
+import 'package:focuzd/data/settings_storage/entities/settings_vars.dart';
 part 'pomodoro_event.dart';
 part 'pomodoro_state.dart';
 
@@ -21,6 +21,7 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
     on<TimerReset>(_onReset);
     on<NextPomodoroTimer>(_onNextPomodoroTimer);
   }
+
   int timesRun = 1;
   var client = NotificationsClient();
   final Ticker _ticker;
@@ -32,11 +33,11 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
   }
 
   void _onTimerInit(TimerInit event, Emitter<PomodoroTimerState> emit) async {
-    final stored = await SettingsDataProvider().readVar();
-    final workTimeDuration = stored.selectedWorkDurationStored! * 60;
-    final reqRounds = stored.requestedNumberOfSessions!;
+    final stored = await SettingsVariablesEntity.querySetVarById(1);
+    final workTimeDuration = stored!.selectedWorkDurationStored! * 60;
+    final reqRounds = stored.requestedNumberOfSessions;
     emit(
-        TimerInitial(workTimeDuration, timesRun, reqRounds, workTimeDuration));
+        TimerInitial(workTimeDuration, timesRun, reqRounds!, workTimeDuration));
   }
 
   void _onStart(TimerStarted event, Emitter<PomodoroTimerState> emit) async {
@@ -77,20 +78,20 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
 
   void _onReset(TimerReset event, Emitter<PomodoroTimerState> emit) async {
     _tickerSubscription?.cancel();
-    final stored = await SettingsDataProvider().readVar();
-    final workTimeDuration = stored.selectedWorkDurationStored! * 60;
+    final stored = await SettingsVariablesEntity.querySetVarById(1);
+    final workTimeDuration = stored!.selectedWorkDurationStored! * 60;
     emit(TimerInitial(workTimeDuration, state.runTimes, state.reqRounds,
         state.selectedDuration));
   }
 
   void _onNextPomodoroTimer(
       NextPomodoroTimer event, Emitter<PomodoroTimerState> emit) async {
-    final selected = await SettingsDataProvider().readVar();
-    var selectedWorkDuration = selected.selectedWorkDurationStored;
-    var selectedBreakDuration = selected.selectedBreakDurationStored;
-    var selectedLBDuration = selected.selectedLongBreakDuration;
-    var reqRound = selected.requestedNumberOfSessions;
-    if (timesRun >= reqRound! * 2) {
+    final selected = await SettingsVariablesEntity.querySetVarById(1);
+    final int selectedWorkDuration = selected!.selectedWorkDurationStored!;
+    final int selectedBreakDuration = selected.selectedBreakDurationStored!;
+    final int selectedLBDuration = selected.selectedLongBreakDurationStored!;
+    final int reqRound = selected.requestedNumberOfSessions!;
+    if (timesRun >= reqRound * 2) {
       // if the goal reached then stop
       timesRun = 1;
       _tickerSubscription?.cancel();
@@ -101,7 +102,7 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
       timesRun++;
       _tickerSubscription?.cancel();
       _tickerSubscription = _ticker
-          .tick(ticks: selectedWorkDuration! * 60)
+          .tick(ticks: selectedWorkDuration * 60)
           .listen((duration) => add(_TimerTicked(duration: duration)));
 
       emit(TimerRunInProgress(selectedWorkDuration * 60, timesRun, reqRound,
@@ -114,7 +115,7 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
       timesRun++;
       _tickerSubscription?.cancel();
       _tickerSubscription = _ticker
-          .tick(ticks: selectedLBDuration! * 60)
+          .tick(ticks: selectedLBDuration * 60)
           .listen((duration) => add(_TimerTicked(duration: duration)));
 
       emit(TimerRunInProgress(
@@ -129,7 +130,7 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
       timesRun++;
       _tickerSubscription?.cancel();
       _tickerSubscription = _ticker
-          .tick(ticks: selectedBreakDuration! * 60)
+          .tick(ticks: selectedBreakDuration * 60)
           .listen((duration) => add(_TimerTicked(duration: duration)));
       emit(TimerRunInProgress(selectedBreakDuration * 60, timesRun,
           state.reqRounds, selectedBreakDuration * 60));

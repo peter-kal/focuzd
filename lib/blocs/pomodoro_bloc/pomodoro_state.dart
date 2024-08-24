@@ -8,6 +8,7 @@ sealed class PomodoroTimerState extends Equatable {
   final int selectedDuration;
   final int runTimes;
   final int reqRounds;
+
   @override
   List<Object> get props => [duration, runTimes, reqRounds, selectedDuration];
 }
