@@ -50,7 +50,7 @@ class SettingsVariablesEntity {
       selectedBreakDurationStored: Value(selectedBreakDurationStored ?? 0),
       selectedLongBreakDurationStored:
           Value(selectedLongBreakDurationStored ?? 0),
-      selectedWorkDurationStored: Value(selectedLongBreakDurationStored ?? 0),
+      selectedWorkDurationStored: Value(selectedWorkDurationStored ?? 0),
     );
   }
 
