@@ -3,15 +3,13 @@ package_name: focuzd
 maintainer:
   name: Peter Kal
 priority: optional
-section: x11
+section: utils
+version: 1.1.1
 installed_size: 6604
 essential: false
 icon: snap/gui/focuzd_icon.png
-
-postinstall_scripts:
-  - echo "Installed my awesome app"
-postuninstall_scripts:
-  - echo "Surprised Pickachu face"
+description: A simple and elegant pomodoro timer app.
+homepage: https://github.com/peter-kal/focuzd
 
 keywords:
   - Focuzd
