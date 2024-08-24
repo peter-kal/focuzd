@@ -1,12 +1,8 @@
-import 'package:drift/drift.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:focuzd/blocs/blocs.dart';
-import 'package:focuzd/data/settings_storage/db_settings.dart';
-import 'package:focuzd/data/settings_storage/entities/settings_vars.dart';
 import 'package:focuzd/pages/main_page.dart';
 import 'package:focuzd/pages/settings_page.dart';
 import 'package:flutter/material.dart';
-import 'package:is_first_run/is_first_run.dart';
 import 'package:yaru/yaru.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
