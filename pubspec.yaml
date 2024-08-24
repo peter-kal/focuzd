@@ -16,7 +16,7 @@ dependencies:
 
   
   
-  yaru: 5.0.0
+  yaru: ^5.1.0
   flutter_bloc: ^8.1.6
   bloc: ^8.1.4
   intl: any
@@ -27,7 +27,6 @@ dependencies:
   path: ^1.9.0
   equatable: ^2.0.5
   desktop_notifications: ^0.6.3
-  is_first_run: ^1.0.0
   drift_sqflite: ^2.0.1
   drift: ^2.18.0
   drift_flutter: ^0.2.0
