@@ -63,6 +63,12 @@ class SettingsVariablesEntity {
         .insertOnConflictUpdate(entity.toCompanion());
   }
 
+  static Future<void> updateSettingsVariablesEntity(
+      SettingsVariablesEntity entity) async {
+    AppDatabase db = AppDatabase.instance();
+    await db.update(db.settingsVariables).replace(entity.toCompanion());
+  }
+
   static Future<SettingsVariablesEntity?> querySetVarById(int setvarId) async {
     AppDatabase db = AppDatabase.instance();
     SettingsVariablesEntity? setvarEntity =

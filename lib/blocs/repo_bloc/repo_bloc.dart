@@ -16,6 +16,27 @@ class RepoBloc extends Bloc<RepoEvent, RepoState> {
 
   void _onUpdateSettingsVariables(
       UpdateSettingVariables event, Emitter<RepoState> emit) async {
+    final has = await SettingsVariablesEntity.querySetVarById(1);
+    switch (event.selectedToChange) {
+      case 1:
+        has!.windowOnTop = event.changedVar;
+        break;
+      case 2:
+        has?.requestedNumberOfSessions = event.changedVar;
+        break;
+      case 3:
+        has?.selectedBreakDurationStored = event.changedVar;
+        break;
+      case 4:
+        has?.selectedWorkDurationStored = event.changedVar;
+        break;
+      case 5:
+        has?.selectedLongBreakDurationStored = event.changedVar;
+        break;
+
+      default:
+    }
+    SettingsVariablesEntity.updateSettingsVariablesEntity(has!);
     await Future<void>.delayed(const Duration(milliseconds: 50));
 
     await Future<void>.delayed(const Duration(milliseconds: 50));
@@ -57,6 +78,13 @@ class RepoBloc extends Bloc<RepoEvent, RepoState> {
 
   void _onResetSettingsEvent(
       ResetSettings event, Emitter<RepoState> emit) async {
+    SettingsVariablesEntity.updateSettingsVariablesEntity(
+        SettingsVariablesEntity(
+            id: 1,
+            requestedNumberOfSessions: 4,
+            selectedBreakDurationStored: 5,
+            selectedLongBreakDurationStored: 15,
+            selectedWorkDurationStored: 25));
     add(EmitStateWithDBVars());
   }
 }
