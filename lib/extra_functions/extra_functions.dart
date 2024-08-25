@@ -1,7 +1,7 @@
 import 'package:focuzd/blocs/pomodoro_bloc/pomodoro_bloc.dart';
 import 'package:intl/intl.dart';
 
-class ExtraFunctions {
+mixin class ExtraFunctions {
   String endsOn(
       int remainingDuration, PomodoroTimerState state, DateTime start) {
     if (state is TimerRunInProgress) {

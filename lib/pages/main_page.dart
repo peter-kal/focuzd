@@ -15,7 +15,7 @@ class MainPage extends StatefulWidget {
   State<MainPage> createState() => _MainPageState();
 }
 
-class _MainPageState extends State<MainPage> {
+class _MainPageState extends State<MainPage> with ExtraFunctions {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<PomodoroBloc, PomodoroTimerState>(
@@ -69,7 +69,7 @@ class _MainPageState extends State<MainPage> {
                   height: 3,
                 ),
                 Text(
-                  ExtraFunctions().currentSessionStatus(
+                  currentSessionStatus(
                       state.runTimes,
                       state.reqRounds,
                       AppLocalizations.of(context)!.longBreakTimeLabel,

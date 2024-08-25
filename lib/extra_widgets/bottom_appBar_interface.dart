@@ -5,7 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:focuzd/blocs/pomodoro_bloc/pomodoro_bloc.dart';
 import 'package:focuzd/extra_functions/extra_functions.dart';
 
-class BottomAppBarInterface extends StatelessWidget {
+class BottomAppBarInterface extends StatelessWidget with ExtraFunctions {
   const BottomAppBarInterface(
       {super.key,
       required this.leftButton,
@@ -50,7 +50,7 @@ class BottomAppBarInterface extends StatelessWidget {
             child: YaruSection(
                 child: SelectableText(
                     textAlign: TextAlign.center,
-                    "${ExtraFunctions().countingWorkRounds(runTimes)} / $reqRounds"))),
+                    "${countingWorkRounds(runTimes)} / $reqRounds"))),
         Column(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
