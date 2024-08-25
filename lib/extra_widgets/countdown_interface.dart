@@ -3,7 +3,7 @@ import 'package:focuzd/blocs/pomodoro_bloc/pomodoro_bloc.dart';
 import 'package:focuzd/extra_functions/extra_functions.dart';
 import 'package:yaru/yaru.dart';
 
-class CountdownInterface extends StatelessWidget {
+class CountdownInterface extends StatelessWidget with ExtraFunctions {
   const CountdownInterface({
     super.key,
     required this.minutesStr,
@@ -44,7 +44,7 @@ class CountdownInterface extends StatelessWidget {
             ),
             Text(
                 style: const TextStyle(fontWeight: FontWeight.w500),
-                ExtraFunctions().endsOn(duration, state, DateTime.now())),
+                endsOn(duration, state, DateTime.now())),
           ],
         ),
       ],
