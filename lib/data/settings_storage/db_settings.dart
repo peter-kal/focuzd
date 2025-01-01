@@ -5,7 +5,7 @@ import 'package:drift/native.dart';
 import 'package:flutter/foundation.dart';
 import 'package:focuzd/data/settings_storage/entities/settings_vars.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:drift_dev/api/migrations.dart';
+import 'package:drift_dev/api/migrations_native.dart';
 import 'package:path/path.dart' as p;
 part 'db_settings.g.dart';
 

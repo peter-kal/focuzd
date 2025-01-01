@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -43,23 +45,25 @@ class RepoBloc extends Bloc<RepoEvent, RepoState> {
 
   void _onEmitStateWithDBVars(
       EmitStateWithDBVars event, Emitter<RepoState> emit) async {
-    /* if (await IsFirstRun.isFirstRun() || database.allTables.isEmpty) {
-      await database.insertNewSettingsVariable(const SettingsVariablesCompanion(
-          windowOnTop: Value(false),
-          requestedNumberOfSessions: Value(4),
-          selectedBreakDurationStored: Value(5),
-          selectedWorkDurationStored: Value(5),
-          selectedLongBreakDurationStored: Value(15)));
-    }*/
     final has = await SettingsVariablesEntity.querySetVarById(1);
     if (has!.windowOnTop!) {
-      WindowOptions options = const WindowOptions(alwaysOnTop: true);
+      WindowOptions options = const WindowOptions(
+        alwaysOnTop: true,
+        size: Size(360, 463),
+        minimumSize: Size(360, 463),
+        fullScreen: false,
+      );
       await windowManager.waitUntilReadyToShow(options, () async {
         windowManager.focus();
         windowManager.show();
       });
     } else {
-      WindowOptions options = const WindowOptions(alwaysOnTop: false);
+      WindowOptions options = const WindowOptions(
+        alwaysOnTop: false,
+        size: Size(360, 463),
+        minimumSize: Size(360, 463),
+        fullScreen: false,
+      );
       await windowManager.waitUntilReadyToShow(options, () async {
         windowManager.focus();
         windowManager.show();

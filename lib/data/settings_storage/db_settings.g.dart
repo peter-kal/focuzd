@@ -301,77 +301,98 @@ typedef $$SettingsVariablesTableUpdateCompanionBuilder
 });
 
 class $$SettingsVariablesTableFilterComposer
-    extends FilterComposer<_$AppDatabase, $SettingsVariablesTable> {
-  $$SettingsVariablesTableFilterComposer(super.$state);
-  ColumnFilters<int> get id => $state.composableBuilder(
-      column: $state.table.id,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
+    extends Composer<_$AppDatabase, $SettingsVariablesTable> {
+  $$SettingsVariablesTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnFilters(column));
 
-  ColumnFilters<bool> get windowOnTop => $state.composableBuilder(
-      column: $state.table.windowOnTop,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
+  ColumnFilters<bool> get windowOnTop => $composableBuilder(
+      column: $table.windowOnTop, builder: (column) => ColumnFilters(column));
 
-  ColumnFilters<int> get requestedNumberOfSessions => $state.composableBuilder(
-      column: $state.table.requestedNumberOfSessions,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
+  ColumnFilters<int> get requestedNumberOfSessions => $composableBuilder(
+      column: $table.requestedNumberOfSessions,
+      builder: (column) => ColumnFilters(column));
 
-  ColumnFilters<int> get selectedBreakDurationStored =>
-      $state.composableBuilder(
-          column: $state.table.selectedBreakDurationStored,
-          builder: (column, joinBuilders) =>
-              ColumnFilters(column, joinBuilders: joinBuilders));
+  ColumnFilters<int> get selectedBreakDurationStored => $composableBuilder(
+      column: $table.selectedBreakDurationStored,
+      builder: (column) => ColumnFilters(column));
 
-  ColumnFilters<int> get selectedWorkDurationStored => $state.composableBuilder(
-      column: $state.table.selectedWorkDurationStored,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
+  ColumnFilters<int> get selectedWorkDurationStored => $composableBuilder(
+      column: $table.selectedWorkDurationStored,
+      builder: (column) => ColumnFilters(column));
 
-  ColumnFilters<int> get selectedLongBreakDurationStored =>
-      $state.composableBuilder(
-          column: $state.table.selectedLongBreakDurationStored,
-          builder: (column, joinBuilders) =>
-              ColumnFilters(column, joinBuilders: joinBuilders));
+  ColumnFilters<int> get selectedLongBreakDurationStored => $composableBuilder(
+      column: $table.selectedLongBreakDurationStored,
+      builder: (column) => ColumnFilters(column));
 }
 
 class $$SettingsVariablesTableOrderingComposer
-    extends OrderingComposer<_$AppDatabase, $SettingsVariablesTable> {
-  $$SettingsVariablesTableOrderingComposer(super.$state);
-  ColumnOrderings<int> get id => $state.composableBuilder(
-      column: $state.table.id,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
+    extends Composer<_$AppDatabase, $SettingsVariablesTable> {
+  $$SettingsVariablesTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnOrderings(column));
 
-  ColumnOrderings<bool> get windowOnTop => $state.composableBuilder(
-      column: $state.table.windowOnTop,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
+  ColumnOrderings<bool> get windowOnTop => $composableBuilder(
+      column: $table.windowOnTop, builder: (column) => ColumnOrderings(column));
 
-  ColumnOrderings<int> get requestedNumberOfSessions =>
-      $state.composableBuilder(
-          column: $state.table.requestedNumberOfSessions,
-          builder: (column, joinBuilders) =>
-              ColumnOrderings(column, joinBuilders: joinBuilders));
+  ColumnOrderings<int> get requestedNumberOfSessions => $composableBuilder(
+      column: $table.requestedNumberOfSessions,
+      builder: (column) => ColumnOrderings(column));
 
-  ColumnOrderings<int> get selectedBreakDurationStored =>
-      $state.composableBuilder(
-          column: $state.table.selectedBreakDurationStored,
-          builder: (column, joinBuilders) =>
-              ColumnOrderings(column, joinBuilders: joinBuilders));
+  ColumnOrderings<int> get selectedBreakDurationStored => $composableBuilder(
+      column: $table.selectedBreakDurationStored,
+      builder: (column) => ColumnOrderings(column));
 
-  ColumnOrderings<int> get selectedWorkDurationStored =>
-      $state.composableBuilder(
-          column: $state.table.selectedWorkDurationStored,
-          builder: (column, joinBuilders) =>
-              ColumnOrderings(column, joinBuilders: joinBuilders));
+  ColumnOrderings<int> get selectedWorkDurationStored => $composableBuilder(
+      column: $table.selectedWorkDurationStored,
+      builder: (column) => ColumnOrderings(column));
 
   ColumnOrderings<int> get selectedLongBreakDurationStored =>
-      $state.composableBuilder(
-          column: $state.table.selectedLongBreakDurationStored,
-          builder: (column, joinBuilders) =>
-              ColumnOrderings(column, joinBuilders: joinBuilders));
+      $composableBuilder(
+          column: $table.selectedLongBreakDurationStored,
+          builder: (column) => ColumnOrderings(column));
+}
+
+class $$SettingsVariablesTableAnnotationComposer
+    extends Composer<_$AppDatabase, $SettingsVariablesTable> {
+  $$SettingsVariablesTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<bool> get windowOnTop => $composableBuilder(
+      column: $table.windowOnTop, builder: (column) => column);
+
+  GeneratedColumn<int> get requestedNumberOfSessions => $composableBuilder(
+      column: $table.requestedNumberOfSessions, builder: (column) => column);
+
+  GeneratedColumn<int> get selectedBreakDurationStored => $composableBuilder(
+      column: $table.selectedBreakDurationStored, builder: (column) => column);
+
+  GeneratedColumn<int> get selectedWorkDurationStored => $composableBuilder(
+      column: $table.selectedWorkDurationStored, builder: (column) => column);
+
+  GeneratedColumn<int> get selectedLongBreakDurationStored =>
+      $composableBuilder(
+          column: $table.selectedLongBreakDurationStored,
+          builder: (column) => column);
 }
 
 class $$SettingsVariablesTableTableManager extends RootTableManager<
@@ -380,6 +401,7 @@ class $$SettingsVariablesTableTableManager extends RootTableManager<
     SettingsVariablesEntity,
     $$SettingsVariablesTableFilterComposer,
     $$SettingsVariablesTableOrderingComposer,
+    $$SettingsVariablesTableAnnotationComposer,
     $$SettingsVariablesTableCreateCompanionBuilder,
     $$SettingsVariablesTableUpdateCompanionBuilder,
     (
@@ -394,10 +416,13 @@ class $$SettingsVariablesTableTableManager extends RootTableManager<
       : super(TableManagerState(
           db: db,
           table: table,
-          filteringComposer:
-              $$SettingsVariablesTableFilterComposer(ComposerState(db, table)),
-          orderingComposer: $$SettingsVariablesTableOrderingComposer(
-              ComposerState(db, table)),
+          createFilteringComposer: () =>
+              $$SettingsVariablesTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$SettingsVariablesTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$SettingsVariablesTableAnnotationComposer(
+                  $db: db, $table: table),
           updateCompanionCallback: ({
             Value<int> id = const Value.absent(),
             Value<bool> windowOnTop = const Value.absent(),
@@ -443,6 +468,7 @@ typedef $$SettingsVariablesTableProcessedTableManager = ProcessedTableManager<
     SettingsVariablesEntity,
     $$SettingsVariablesTableFilterComposer,
     $$SettingsVariablesTableOrderingComposer,
+    $$SettingsVariablesTableAnnotationComposer,
     $$SettingsVariablesTableCreateCompanionBuilder,
     $$SettingsVariablesTableUpdateCompanionBuilder,
     (

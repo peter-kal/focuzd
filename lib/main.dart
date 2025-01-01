@@ -14,7 +14,6 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await windowManager.ensureInitialized();
   Bloc.observer = MyBlocObserver();
-
   runApp(MultiBlocProvider(providers: [
     BlocProvider(
       create: (context) => PageNavigationBloc()..add(const MainPageEvent()),
@@ -31,8 +30,6 @@ class FocuzdApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    YaruWindow.setMaximizable(context, false);
-    YaruWindow.show(context);
     return YaruTheme(
       builder: (context, yaru, child) {
         return MaterialApp(
