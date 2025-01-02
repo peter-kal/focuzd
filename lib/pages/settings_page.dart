@@ -73,8 +73,19 @@ class _SettingsPageState extends State<SettingsPage> {
                         ],
                       )),
                 ),
-                const SizedBox(
-                  height: 4,
+                const Padding(
+                  padding: const EdgeInsets.all(8),
+                  child: SizedBox(
+                    height: 50,
+                    child: YaruInfoBadge(
+                      title: Center(
+                          child: Text(
+                        "Free Palestine ",
+                        style: TextStyle(fontSize: 15),
+                      )),
+                      yaruInfoType: YaruInfoType.success,
+                    ),
+                  ),
                 ),
                 const Divider(),
                 SizedBox(
