@@ -46,29 +46,13 @@ class RepoBloc extends Bloc<RepoEvent, RepoState> {
   void _onEmitStateWithDBVars(
       EmitStateWithDBVars event, Emitter<RepoState> emit) async {
     final has = await SettingsVariablesEntity.querySetVarById(1);
-    if (has!.windowOnTop!) {
-      WindowOptions options = const WindowOptions(
-        alwaysOnTop: true,
-        size: Size(360, 463),
-        minimumSize: Size(360, 463),
-        fullScreen: false,
-      );
-      await windowManager.waitUntilReadyToShow(options, () async {
-        windowManager.focus();
-        windowManager.show();
-      });
-    } else {
-      WindowOptions options = const WindowOptions(
-        alwaysOnTop: false,
-        size: Size(360, 463),
-        minimumSize: Size(360, 463),
-        fullScreen: false,
-      );
-      await windowManager.waitUntilReadyToShow(options, () async {
-        windowManager.focus();
-        windowManager.show();
-      });
-    }
+    WindowOptions options = WindowOptions(
+      alwaysOnTop: has!.windowOnTop,
+    );
+    await windowManager.waitUntilReadyToShow(options, () async {
+      windowManager.focus();
+      windowManager.show();
+    });
 
     emit(RepoVariablesGivenState(
         requestedNumberOfSessions: has.requestedNumberOfSessions!,

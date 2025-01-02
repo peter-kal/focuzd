@@ -13,6 +13,16 @@ Future<void> main() async {
   await YaruWindowTitleBar.ensureInitialized();
   WidgetsFlutterBinding.ensureInitialized();
   await windowManager.ensureInitialized();
+  WindowOptions options = const WindowOptions(
+    size: Size(360, 463),
+    minimumSize: Size(360, 463),
+    fullScreen: false,
+  );
+  await windowManager.waitUntilReadyToShow(options, () async {
+    windowManager.focus();
+    windowManager.show();
+  });
+
   Bloc.observer = MyBlocObserver();
   runApp(MultiBlocProvider(providers: [
     BlocProvider(
