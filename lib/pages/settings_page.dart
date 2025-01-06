@@ -62,28 +62,29 @@ class _SettingsPageState extends State<SettingsPage> {
                     value: state.requestedNumberOfSessions),
                 Padding(
                   padding: const EdgeInsets.all(8),
-                  child: OutlinedButton(
+                  child: OutlinedButton.icon(
+                      icon: const Icon(Icons.restart_alt),
+                      iconAlignment: IconAlignment.start,
                       onPressed: () {
                         BlocProvider.of<RepoBloc>(context).add(ResetSettings());
                       },
-                      child: Row(
+                      label: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const Icon(Icons.restart_alt),
                           Text(l10n.AppLocalizations.of(context)!.reset2Default)
                         ],
                       )),
                 ),
                 const Padding(
-                  padding: const EdgeInsets.all(8),
+                  padding: EdgeInsets.all(8),
                   child: SizedBox(
                     height: 50,
-                    child: YaruInfoBadge(
-                      title: Center(
+                    child: Card(
+                      child: Center(
                           child: Text(
                         "Free Palestine ",
                         style: TextStyle(fontSize: 15),
                       )),
-                      yaruInfoType: YaruInfoType.success,
                     ),
                   ),
                 ),
