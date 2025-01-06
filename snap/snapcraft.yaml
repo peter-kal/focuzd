@@ -74,7 +74,7 @@ slots:
 
 apps:
   focuzd:
-    desktop: snap/gui/focuzd.desktop
+    desktop: bin/snap/gui/focuzd.desktop
     command: bin/focuzd
     extensions: [gnome]
     plugs:
