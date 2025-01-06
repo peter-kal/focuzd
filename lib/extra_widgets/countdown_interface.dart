@@ -12,9 +12,11 @@ class CountdownInterface extends StatelessWidget with ExtraFunctions {
     required this.selectedDuration,
     required this.runTimes,
     required this.state,
+    this.hoursStr,
   });
   final String minutesStr;
   final String secondsStr;
+  final hoursStr;
   final int duration;
   final int selectedDuration;
   final int runTimes;
@@ -39,7 +41,9 @@ class CountdownInterface extends StatelessWidget with ExtraFunctions {
         Column(
           children: [
             Text(
-              "$minutesStr : $secondsStr",
+              hoursStr == null
+                  ? "$minutesStr : $secondsStr"
+                  : "$hoursStr : $minutesStr : $secondsStr",
               style: const TextStyle(fontSize: 40),
             ),
             Text(
