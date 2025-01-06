@@ -85,9 +85,19 @@ class _MainPageState extends State<MainPage> with ExtraFunctions {
               builder: (context, state) {
             final dur =
                 context.select((PomodoroBloc pom) => pom.state.duration);
-            var minutesStr =
+
+            String? hoursString() {
+              if (((dur / 60) / 60) > 1) {
+                return ((dur / 60) / 60).floor().toString().padLeft(1, '0');
+              } else {
+                return null;
+              }
+            }
+
+            String? hoursStr = hoursString();
+            String minutesStr =
                 ((dur / 60) % 60).floor().toString().padLeft(2, '0');
-            final secondsStr = (dur % 60).floor().toString().padLeft(2, '0');
+            String secondsStr = (dur % 60).floor().toString().padLeft(2, '0');
             return SizedBox(
               width: double.infinity,
               height: double.infinity,
@@ -100,6 +110,7 @@ class _MainPageState extends State<MainPage> with ExtraFunctions {
                       child: CountdownInterface(
                           state: state,
                           minutesStr: minutesStr,
+                          hoursStr: hoursStr,
                           secondsStr: secondsStr,
                           duration: state.duration,
                           selectedDuration: state.selectedDuration,
