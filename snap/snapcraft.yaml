@@ -31,7 +31,7 @@ parts:
     plugin: flutter
     source: https://github.com/peter-kal/focuzd.git
     flutter-target: lib/main.dart
-    flutter-channel:
+    flutter-channel: stable
     build-packages:
       - git
 slots:
