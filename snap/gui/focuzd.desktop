@@ -3,11 +3,11 @@ Name=Focuzd
 Exec=focuzd
 Icon=${SNAP}/meta/gui/focuzd_icon.png
 Type=Application
-Version=1.1.2
+Version=2.0
 Terminal=false
 
 
 
 Keywords=Pomodoro;
-Comment=A pomodoro app built with Flutter.
+Comment=A simple and elegant pomodoro timer app.
 Categories=Productivity;

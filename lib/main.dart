@@ -1,8 +1,8 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:focuzd/blocs/blocs.dart';
-import 'package:focuzd/pages/main_page.dart';
-import 'package:focuzd/pages/settings_page.dart';
+import 'package:focuzd/pages/pages.dart';
 import 'package:flutter/material.dart';
+
 import 'package:yaru/yaru.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -43,17 +43,21 @@ class FocuzdApp extends StatelessWidget {
     return YaruTheme(
       builder: (context, yaru, child) {
         return MaterialApp(
-          debugShowCheckedModeBanner: false,
-          supportedLocales: AppLocalizations.supportedLocales,
-          localizationsDelegates: AppLocalizations.localizationsDelegates,
-          title: 'Focuzd',
-          theme: yaru.theme,
-          darkTheme: yaru.darkTheme,
-          home: BlocBuilder<PageNavigationBloc, PageNavigationState>(
-              builder: (context, state) => state is MainPageState
-                  ? const MainPage()
-                  : const SettingsPage()),
-        );
+            debugShowCheckedModeBanner: false,
+            supportedLocales: AppLocalizations.supportedLocales,
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            title: 'Focuzd',
+            theme: yaru.theme,
+            darkTheme: yaru.darkTheme,
+            home: BlocBuilder<PageNavigationBloc, PageNavigationState>(
+                builder: (context, state) {
+              return switch (state) {
+                MainPageState() => const MainPage(),
+                SettingsPageState() => const SettingsPage(),
+                HistoryPageState() => const HistoryPage(),
+                PageNavigationInitial() => const Scaffold()
+              };
+            }));
       },
     );
   }

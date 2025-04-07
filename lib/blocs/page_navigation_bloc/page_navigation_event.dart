@@ -21,3 +21,10 @@ class SettingsPageEvent extends PageNavigationEvent {
   @override
   List<Object> get props => [];
 }
+
+class HistoryPageEvent extends PageNavigationEvent {
+  const HistoryPageEvent();
+
+  @override
+  List<Object> get props => [];
+}

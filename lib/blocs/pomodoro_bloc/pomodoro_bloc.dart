@@ -6,7 +6,8 @@ import 'package:desktop_notifications/desktop_notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:equatable/equatable.dart';
 import 'package:focuzd/blocs/pomodoro_bloc/ticker.dart';
-import 'package:focuzd/data/settings_storage/entities/settings_vars.dart';
+import 'package:focuzd/data/app_db.dart';
+import 'package:focuzd/data/repo.dart';
 part 'pomodoro_event.dart';
 part 'pomodoro_state.dart';
 
@@ -25,6 +26,8 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
 
   int timesRun = 1;
   final Ticker _ticker;
+  final settingsRepo = SettingsRepository(AppDatabase.instance);
+  final memorySessionRepo = MemorySessionRepository(AppDatabase.instance);
   var client;
   StreamSubscription<int>? _tickerSubscription;
   @override
@@ -34,18 +37,18 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
   }
 
   void _onTimerInit(TimerInit event, Emitter<PomodoroTimerState> emit) async {
-    final stored = await SettingsVariablesEntity.querySetVarById(1);
-    final workTimeDuration = stored!.selectedWorkDurationStored! * 60;
+    final stored = await settingsRepo.fetchSettingsById(1);
+    final workTimeDuration = stored!.selectedWorkDurationStored * 60;
     final reqRounds = stored.requestedNumberOfSessions;
     emit(
-        TimerInitial(workTimeDuration, timesRun, reqRounds!, workTimeDuration));
+        TimerInitial(workTimeDuration, timesRun, reqRounds, workTimeDuration));
   }
 
   void _onStart(TimerStarted event, Emitter<PomodoroTimerState> emit) async {
     emit(TimerRunInProgress(event.duration, state.runTimes, state.reqRounds,
         state.selectedDuration));
     if (Platform.isLinux) {
-      client = await NotificationsClient();
+      client = NotificationsClient();
       await client.notify(
           "Focus for the next ${(state.duration / 60).round()} minutes!");
     }
@@ -83,19 +86,19 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
 
   void _onReset(TimerReset event, Emitter<PomodoroTimerState> emit) async {
     _tickerSubscription?.cancel();
-    final stored = await SettingsVariablesEntity.querySetVarById(1);
-    final workTimeDuration = stored!.selectedWorkDurationStored! * 60;
+    final stored = await settingsRepo.fetchSettingsById(1);
+    final workTimeDuration = stored!.selectedWorkDurationStored * 60;
     emit(TimerInitial(workTimeDuration, state.runTimes, state.reqRounds,
         state.selectedDuration));
   }
 
   void _onNextPomodoroTimer(
       NextPomodoroTimer event, Emitter<PomodoroTimerState> emit) async {
-    final selected = await SettingsVariablesEntity.querySetVarById(1);
-    final int selectedWorkDuration = selected!.selectedWorkDurationStored!;
-    final int selectedBreakDuration = selected.selectedBreakDurationStored!;
-    final int selectedLBDuration = selected.selectedLongBreakDurationStored!;
-    final int reqRound = selected.requestedNumberOfSessions!;
+    final selected = await settingsRepo.fetchSettingsById(1);
+    final int selectedWorkDuration = selected!.selectedWorkDurationStored;
+    final int selectedBreakDuration = selected.selectedBreakDurationStored;
+    final int selectedLBDuration = selected.selectedLongBreakDurationStored;
+    final int reqRound = selected.requestedNumberOfSessions;
     if (timesRun >= reqRound * 2) {
       // if the goal reached then stop
       timesRun = 1;
@@ -113,7 +116,7 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
       emit(TimerRunInProgress(selectedWorkDuration * 60, timesRun, reqRound,
           selectedWorkDuration * 60));
       if (Platform.isLinux) {
-        client = await NotificationsClient();
+        client = NotificationsClient();
         await client.notify(
             "Focus for the next ${(state.duration / 60).round()} minutes!");
       } else if (Platform.isWindows) {}
@@ -133,7 +136,7 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
         selectedLBDuration * 60,
       )); // The following equation tells us in what timesRun there will be a Long Break: requestedNumberOfSessions * 2
       if (Platform.isLinux) {
-        client = await NotificationsClient();
+        client = NotificationsClient();
         await client.notify(
             "Take a long break for the next ${(state.duration / 60).round()} minutes!");
       }
@@ -146,7 +149,7 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
       emit(TimerRunInProgress(selectedBreakDuration * 60, timesRun,
           state.reqRounds, selectedBreakDuration * 60));
       if (Platform.isLinux) {
-        client = await NotificationsClient();
+        client = NotificationsClient();
         await client.notify(
             "Take a break for the next ${(state.duration / 60).round()} minutes!");
       }

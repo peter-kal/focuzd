@@ -14,5 +14,8 @@ class PageNavigationBloc
     on<SettingsPageEvent>((event, emit) {
       emit(SettingsPageState());
     });
+    on<HistoryPageEvent>((event, emit) {
+      emit(HistoryPageState());
+    });
   }
 }

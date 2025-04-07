@@ -11,9 +11,9 @@ dependencies:
   flutter:
     sdk: flutter
 
-  yaru: ^5.1.0
-  flutter_bloc: ^8.1.6
-  bloc: ^8.1.4
+  yaru: ^7.0.0
+  flutter_bloc: ^9.1.0
+  bloc: ^9.0.0
   intl: any
   flutter_localizations:
     sdk: flutter
@@ -23,8 +23,8 @@ dependencies:
   equatable: ^2.0.5
   desktop_notifications: ^0.6.3
   drift_sqflite: ^2.0.1
-  drift: ^2.18.0
-  drift_flutter: ^0.2.0
+  drift: ^2.26.0
+  drift_flutter: ^0.2.4
   path_to_regexp: ^0.4.0
   windows_notification: ^1.3.0
 
@@ -32,9 +32,9 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
 
-  flutter_lints: ^4.0.0
-  drift_dev: ^2.18.0
-  build_runner: ^2.4.12
+  flutter_lints: ^5.0.0
+  drift_dev: ^2.26.0
+  build_runner: ^2.4.15
 
 flutter:
   uses-material-design: true

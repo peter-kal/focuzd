@@ -1,9 +1,9 @@
-import 'dart:ui';
-
 import 'package:bloc/bloc.dart';
+import 'package:drift/drift.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:focuzd/data/settings_storage/entities/settings_vars.dart';
+import 'package:focuzd/data/app_db.dart';
+import 'package:focuzd/data/repo.dart';
 import 'package:window_manager/window_manager.dart';
 
 part 'repo_event.dart';
@@ -15,37 +15,51 @@ class RepoBloc extends Bloc<RepoEvent, RepoState> {
     on<UpdateSettingVariables>(_onUpdateSettingsVariables);
     on<ResetSettings>(_onResetSettingsEvent);
   }
-
+  final settingsRepo = SettingsRepository(AppDatabase.instance);
+  final memoryRepo = MemorySessionRepository(AppDatabase.instance);
   void _onUpdateSettingsVariables(
       UpdateSettingVariables event, Emitter<RepoState> emit) async {
-    final has = await SettingsVariablesEntity.querySetVarById(1);
+    var has = await settingsRepo.fetchSettingsById(1);
     switch (event.selectedToChange) {
       case 1:
-        has!.windowOnTop = event.changedVar;
+        await settingsRepo.updateSetting(1,
+            SettingsVariablesCompanion(windowOnTop: Value(event.changedVar)));
         break;
       case 2:
-        has?.requestedNumberOfSessions = event.changedVar;
+        await settingsRepo.updateSetting(
+            1,
+            SettingsVariablesCompanion(
+                requestedNumberOfSessions: Value(event.changedVar)));
         break;
       case 3:
-        has?.selectedBreakDurationStored = event.changedVar;
+        await settingsRepo.updateSetting(
+            1,
+            SettingsVariablesCompanion(
+                selectedBreakDurationStored: Value(event.changedVar)));
         break;
       case 4:
-        has?.selectedWorkDurationStored = event.changedVar;
+        await settingsRepo.updateSetting(
+            1,
+            SettingsVariablesCompanion(
+                selectedWorkDurationStored: Value(event.changedVar)));
         break;
       case 5:
-        has?.selectedLongBreakDurationStored = event.changedVar;
+        await settingsRepo.updateSetting(
+            1,
+            SettingsVariablesCompanion(
+                selectedLongBreakDurationStored: Value(event.changedVar)));
         break;
 
       default:
     }
-    SettingsVariablesEntity.updateSettingsVariablesEntity(has!);
 
     add(EmitStateWithDBVars());
   }
 
   void _onEmitStateWithDBVars(
       EmitStateWithDBVars event, Emitter<RepoState> emit) async {
-    final has = await SettingsVariablesEntity.querySetVarById(1);
+    final has = await settingsRepo.fetchSettingsById(1);
+    final memorysessionlist = await memoryRepo.fetchAllMemorySessions();
     WindowOptions options = WindowOptions(
       alwaysOnTop: has!.windowOnTop,
     );
@@ -55,22 +69,25 @@ class RepoBloc extends Bloc<RepoEvent, RepoState> {
     });
 
     emit(RepoVariablesGivenState(
-        requestedNumberOfSessions: has.requestedNumberOfSessions!,
-        selectedBreakDurationStored: has.selectedBreakDurationStored!,
-        selectedLongBreakDuration: has.selectedLongBreakDurationStored!,
-        selectedWorkDurationStored: has.selectedWorkDurationStored!,
-        windowOnTop: has.windowOnTop!));
+        requestedNumberOfSessions: has.requestedNumberOfSessions,
+        selectedBreakDurationStored: has.selectedBreakDurationStored,
+        selectedLongBreakDuration: has.selectedLongBreakDurationStored,
+        selectedWorkDurationStored: has.selectedWorkDurationStored,
+        windowOnTop: has.windowOnTop,
+        sessions: memorysessionlist));
   }
 
   void _onResetSettingsEvent(
       ResetSettings event, Emitter<RepoState> emit) async {
-    SettingsVariablesEntity.updateSettingsVariablesEntity(
-        SettingsVariablesEntity(
-            id: 1,
-            requestedNumberOfSessions: 4,
-            selectedBreakDurationStored: 5,
-            selectedLongBreakDurationStored: 15,
-            selectedWorkDurationStored: 25));
+    settingsRepo.updateSetting(
+        1,
+        SettingsVariablesCompanion(
+          windowOnTop: Value(false),
+          requestedNumberOfSessions: Value(4),
+          selectedBreakDurationStored: Value(5),
+          selectedLongBreakDurationStored: Value(15),
+          selectedWorkDurationStored: Value(25),
+        ));
     add(EmitStateWithDBVars());
   }
 }

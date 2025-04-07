@@ -99,12 +99,9 @@ A new pomodoro app, built with Flutter, the goal is to make a feature-equivalent
 
 - [x] display finish time
 
-### for release 2.0(still thinking)
+### for release 1.9(still thinking)
 
-- [ ] add statistics and history
-
-- [ ] add optional decimal time support
-
-- [ ] add full windows support(without breaking linux window settings)
+- [ ] add statistics and history base support
+- [x] thus clean and improve the db
 
 - [ ] migrate snap to core24

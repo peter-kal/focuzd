@@ -15,12 +15,14 @@ class RepoVariablesGivenState extends RepoState {
       required this.requestedNumberOfSessions,
       required this.selectedBreakDurationStored,
       required this.selectedWorkDurationStored,
-      required this.selectedLongBreakDuration});
+      required this.selectedLongBreakDuration,
+      this.sessions});
   final bool windowOnTop;
   final int requestedNumberOfSessions;
   final int selectedBreakDurationStored;
   final int selectedWorkDurationStored;
   final int selectedLongBreakDuration;
+  final List? sessions;
 
   @override
   List<Object> get props => [
@@ -28,6 +30,7 @@ class RepoVariablesGivenState extends RepoState {
         requestedNumberOfSessions,
         selectedBreakDurationStored,
         selectedWorkDurationStored,
-        selectedLongBreakDuration
+        selectedLongBreakDuration,
+        sessions!
       ];
 }

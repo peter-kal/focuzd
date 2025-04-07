@@ -13,3 +13,5 @@ final class PageNavigationInitial extends PageNavigationState {}
 class MainPageState extends PageNavigationState {}
 
 class SettingsPageState extends PageNavigationState {}
+
+class HistoryPageState extends PageNavigationState {}

@@ -51,6 +51,15 @@ class _MainPageState extends State<MainPage> with ExtraFunctions {
             },
           ),
           appBar: YaruWindowTitleBar(
+            actions: [
+              YaruIconButton(
+                icon: const Icon(Icons.analytics),
+                onPressed: () {
+                  BlocProvider.of<PageNavigationBloc>(context)
+                      .add(const HistoryPageEvent());
+                },
+              ),
+            ],
             leading: YaruIconButton(
               tooltip: AppLocalizations.of(context)!.settingsPage,
               icon: const Icon(Icons.settings),
@@ -97,6 +106,7 @@ class _MainPageState extends State<MainPage> with ExtraFunctions {
             String? hoursStr = hoursString();
             String minutesStr =
                 ((dur / 60) % 60).floor().toString().padLeft(2, '0');
+
             String secondsStr = (dur % 60).floor().toString().padLeft(2, '0');
             return SizedBox(
               width: double.infinity,
