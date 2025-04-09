@@ -10,6 +10,8 @@ class MemorySessionVariable extends Table {
   DateTimeColumn get startingTime => dateTime()();
   DateTimeColumn get expFinishTime => dateTime().nullable()();
   DateTimeColumn get finishTime => dateTime().nullable()();
+  BoolColumn get completed =>
+      boolean().withDefault(const Constant(false)).nullable()();
 
   TextColumn get type => text()(); //'work' 'break' 'longbreak'
   TextColumn get subject => text().nullable()();

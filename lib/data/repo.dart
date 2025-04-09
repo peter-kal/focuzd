@@ -1,3 +1,5 @@
+import 'package:drift/drift.dart';
+
 import 'app_db.dart';
 
 class SettingsRepository {
@@ -42,6 +44,17 @@ class MemorySessionRepository {
     return await _db.select(_db.memorySessionVariable).get();
   }
 
+  // fetch the newest uncompleted memory session (max id AND uncompleted false )
+  Future<MemorySessionVariableData?> getCurrentSession() async {
+    return await (_db.select(_db.memorySessionVariable)
+          ..where((tbl) => tbl.finishTime.isNull()) // Uncompleted sessions
+          ..orderBy([
+            (tbl) =>
+                OrderingTerm.desc(tbl.id) // Sort by highest ID (or other field)
+          ]))
+        .getSingleOrNull(); // Return the single top result or null if none exist
+  }
+
   // Fetch memory session by ID
   Future<MemorySessionVariableData?> fetchMemorySessionById(int id) async {
     return await (_db.select(_db.memorySessionVariable)
@@ -53,6 +66,14 @@ class MemorySessionRepository {
   Future<void> updateMemorySession(
       MemorySessionVariableCompanion updatedSession) async {
     await _db.update(_db.memorySessionVariable).replace(updatedSession);
+  }
+
+  // edit specific with write not replace
+  Future<void> updateMemorySessionWrite(
+      int id, MemorySessionVariableCompanion updatedSession) async {
+    await (_db.update(_db.memorySessionVariable)
+          ..where((tbl) => tbl.id.equals(id)))
+        .write(updatedSession);
   }
 
   // Delete memory session by ID

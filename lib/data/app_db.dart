@@ -1,4 +1,3 @@
-
 import 'package:drift/drift.dart';
 import 'package:drift_flutter/drift_flutter.dart';
 import 'package:flutter/foundation.dart';
@@ -19,6 +18,14 @@ class AppDatabase extends _$AppDatabase {
     return MigrationStrategy(
       onCreate: (Migrator m) async {
         await m.createAll();
+        await into(memorySessionVariable).insert(MemorySessionVariableCompanion(
+            roundGoal: Value(4),
+            runTime: Value(2),
+            expFinishTime: Value(DateTime.now().add(Duration(seconds: 1500))),
+            plannedDuration: Value(1500),
+            startingTime: Value(DateTime.now()),
+            subject: Value("testing db"),
+            type: Value("work")));
         await into(settingsVariables).insert(SettingsVariablesCompanion(
             windowOnTop: Value(false),
             requestedNumberOfSessions: Value(4),
@@ -34,15 +41,7 @@ class AppDatabase extends _$AppDatabase {
       beforeOpen: (details) async {
         if (kDebugMode) {
           print("testing db ✅✅✅✅");
-          await into(memorySessionVariable).insert(
-              MemorySessionVariableCompanion(
-                  roundGoal: Value(4),
-                  runTime: Value(2),
-                  expFinishTime: Value(DateTime.now().add(Duration(seconds:1500))),
-                  plannedDuration: Value(1500),
-                  startingTime: Value(DateTime.now()),
-                  subject: Value("testing db"),
-                  type: Value("work")));
+
           print("Test data inserted successfully!");
         }
       },

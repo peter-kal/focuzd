@@ -1,4 +1,5 @@
 import 'package:bloc/bloc.dart';
+import 'package:focuzd/blocs/blocs.dart';
 import 'package:meta/meta.dart';
 import 'package:equatable/equatable.dart';
 
@@ -15,6 +16,7 @@ class PageNavigationBloc
       emit(SettingsPageState());
     });
     on<HistoryPageEvent>((event, emit) {
+      EmitStateWithDBVars();
       emit(HistoryPageState());
     });
   }

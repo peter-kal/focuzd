@@ -1,5 +1,11 @@
+import 'dart:ui';
+
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:focuzd/blocs/pomodoro_bloc/pomodoro_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:path/path.dart';
+import 'package:window_manager/window_manager.dart';
 
 mixin class ExtraFunctions {
   String endsOn(
@@ -37,5 +43,18 @@ mixin class ExtraFunctions {
           2; // from the arithmetic progression of: An = A1st(which is 1) + (n - 1) * d(which is 2)
     }
     return 0;
+  }
+}
+
+class MyWindowListener extends WindowListener {
+  MyWindowListener({required this.context});
+  final BuildContext context;
+  @override
+  void onWindowClose() async {
+    print("window is closing");
+    windowManager.setPreventClose(true);
+    BlocProvider.of<PomodoroBloc>(context).add(WindowIsClosing());
+    await windowManager.setPreventClose(false);
+    await windowManager.destroy();
   }
 }

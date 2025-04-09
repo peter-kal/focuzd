@@ -34,3 +34,5 @@ class _TimerTicked extends PomodoroTimerEvent {
 class NextPomodoroTimer extends PomodoroTimerEvent {
   const NextPomodoroTimer();
 }
+
+class WindowIsClosing extends PomodoroTimerEvent {}

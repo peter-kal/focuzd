@@ -1,5 +1,8 @@
+import 'dart:ui';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:focuzd/blocs/blocs.dart';
+import 'package:focuzd/extra_functions/extra_functions.dart';
 import 'package:focuzd/pages/pages.dart';
 import 'package:flutter/material.dart';
 
@@ -22,17 +25,22 @@ Future<void> main() async {
     windowManager.focus();
     windowManager.show();
   });
-
   Bloc.observer = MyBlocObserver();
-  runApp(MultiBlocProvider(providers: [
-    BlocProvider(
-      create: (context) => PageNavigationBloc()..add(const MainPageEvent()),
-    ),
-    BlocProvider(create: (context) => RepoBloc()..add(EmitStateWithDBVars())),
-    BlocProvider(
-        create: (context) =>
-            PomodoroBloc(ticker: const Ticker())..add(const TimerInit()))
-  ], child: const FocuzdApp()));
+  runApp(MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) => PageNavigationBloc()..add(const MainPageEvent()),
+        ),
+        BlocProvider(
+            create: (context) => RepoBloc()..add(EmitStateWithDBVars())),
+        BlocProvider(
+            create: (context) =>
+                PomodoroBloc(ticker: const Ticker())..add(const TimerInit()))
+      ],
+      child: Builder(builder: (context) {
+        windowManager.addListener(MyWindowListener(context: context));
+        return const FocuzdApp();
+      })));
 }
 
 class FocuzdApp extends StatelessWidget {
