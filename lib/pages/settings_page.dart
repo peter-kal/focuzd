@@ -17,7 +17,12 @@ class SettingsPage extends StatefulWidget {
 class _SettingsPageState extends State<SettingsPage> {
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<RepoBloc, RepoState>(
+    return BlocConsumer<RepoBloc, RepoState>(
+      listener: (context, state) {
+        if (state is RepoVariablesGivenState) {
+          BlocProvider.of<PomodoroBloc>(context).add(const TimerInit());
+        }
+      },
       builder: (context, state) {
         if (state is RepoVariablesGivenState) {
           return Scaffold(

@@ -57,8 +57,15 @@ class FocuzdApp extends StatelessWidget {
             title: 'Focuzd',
             theme: yaru.theme,
             darkTheme: yaru.darkTheme,
-            home: BlocBuilder<PageNavigationBloc, PageNavigationState>(
-                builder: (context, state) {
+            home: BlocConsumer<PageNavigationBloc, PageNavigationState>(
+                listener: (context, state) {
+              if (state is HistoryPageState) {
+                BlocProvider.of<RepoBloc>(context).add(EmitStateWithDBVars());
+              }
+              if (state is SettingsPageState) {
+                BlocProvider.of<RepoBloc>(context).add(EmitStateWithDBVars());
+              }
+            }, builder: (context, state) {
               return switch (state) {
                 MainPageState() => const MainPage(),
                 SettingsPageState() => const SettingsPage(),

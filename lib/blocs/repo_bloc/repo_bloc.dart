@@ -4,6 +4,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:focuzd/data/app_db.dart';
 import 'package:focuzd/data/repo.dart';
+import 'package:focuzd/blocs/pomodoro_bloc/pomodoro_bloc.dart';
 import 'package:window_manager/window_manager.dart';
 
 part 'repo_event.dart';

@@ -16,7 +16,6 @@ class PageNavigationBloc
       emit(SettingsPageState());
     });
     on<HistoryPageEvent>((event, emit) {
-      EmitStateWithDBVars();
       emit(HistoryPageState());
     });
   }
