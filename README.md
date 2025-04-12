@@ -99,9 +99,32 @@ A new pomodoro app, built with Flutter, the goal is to make a feature-equivalent
 
 - [x] display finish time
 
-### for release 1.9(still thinking)
+### for release 2.0(still thinking)
 
-- [ ] add statistics and history base support
-- [x] thus clean and improve the db
+- [ ] Release 2.0 ( changing 1.9 release to 2.0 with extra feature )
 
-- [ ] migrate snap to core24
+  - [x] add statistics and history base support
+  - [x] thus clean and improve the db
+  - [ ] make the db file app specific, better breaking db compatibility now than later, maybe think of a migration strategy
+
+  - [ ] create the history & statistics page
+
+    - [ ] See total work(focus break) time
+    - [ ] See charts for week / month / year
+    - [ ] See about each topic \*, and quality view in general(all subjects)
+
+  \*:
+
+  - [ ] Add Subject/topic support
+
+    - [ ] Each Subject should have sub-subjects, and super-subjects, ex: School -> Sciences -> Mathematics -> Algrebra & Geometry etc.
+    - [ ] The working subject should be visible on the main page
+    - [ ] Subject should be optional, and the UI shouldn't be invasive
+
+    - [ ] Together with Subjects, Goals should be implemented.
+      - [ ] Goals should be **quantity-only** as well as **quantity-quality**, so you have to be able to set a goal of _6 sessions / week_, and a goal of _6 sessions of Mathematics(/Algrebra) / week_. Another idea is having a **quality-relation** type of goal, example: 2 sessions of Mathematics/_Algebra_ / 1 session of Mathematics/_Geometry_
+      - [ ] Send notifications when a goal is completed
+
+  (more to come)
+
+  - [ ] migrate snap to core24
