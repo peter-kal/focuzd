@@ -82,4 +82,9 @@ class MemorySessionRepository {
           ..where((tbl) => tbl.id.equals(id)))
         .go();
   }
+
+  //Delete all memory sessions
+  Future<void> deleteAllMemorySessions() async {
+    await _db.delete(_db.memorySessionVariable).go();
+  }
 }
