@@ -174,8 +174,8 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
         await client.notify(
             "Focus for the next ${(state.duration / 60).round()} minutes!");
       } else if (Platform.isWindows) {}
-    } else if ((timesRun % 2) != 0 && timesRun == (reqRound * 2) - 1) {
-      // its the last work session, returns LongBreak
+    } else if ((timesRun % 2) != 0 && (((timesRun + 1) % 8) == 0)) {
+      // after 4 sessions, returns LongBreak
       // The following equation tells us when the last work duration will be: (requestedNumberOfSessions * 2) - 1
       timesRun++;
       _tickerSubscription?.cancel();

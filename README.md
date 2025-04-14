@@ -103,6 +103,7 @@ A new pomodoro app, built with Flutter, the goal is to make a feature-equivalent
 
 - [ ] Release 2.0 ( changing 1.9 release to 2.0 with extra feature )
 
+  - [x] Should take a large break every 4 sessions not after the last work session
   - [x] add statistics and history base support
   - [x] thus clean and improve the db
   - [ ] make the db file app specific, better breaking db compatibility now than later, maybe think of a migration strategy
@@ -122,7 +123,10 @@ A new pomodoro app, built with Flutter, the goal is to make a feature-equivalent
     - [ ] Subject should be optional, and the UI shouldn't be invasive
 
     - [ ] Together with Subjects, Goals should be implemented.
-      - [ ] Goals should be **quantity-only** as well as **quantity-quality**, so you have to be able to set a goal of _6 sessions / week_, and a goal of _6 sessions of Mathematics(/Algrebra) / week_. Another idea is having a **quality-relation** type of goal, example: 2 sessions of Mathematics/_Algebra_ / 1 session of Mathematics/_Geometry_
+      - [ ] Goals should be **quantity-only** as well as **quantity-quality**, so you have to be able to set a goal of _6 sessions / week_, and a goal of _6 sessions of Mathematics(/Algrebra) / week_. Another idea is having a **quality-relation** type of goal, example: 2 sessions of Mathematics/_Algebra_ / 1 session of Mathematics/_Geometry_, as well as a **quantity-quality-relation**, example 2 sessions of Mathematics/Algebra this.week / 1 session of Mathematics/Algebra last.week, and a **quantity-relation**, example: 2 session this week / 1 session last week.
+        > Goals should be well imoplemented for both incremental changes +20% Mathematics this week/month/year
+        > But also for decreasing goals -20% Maths, even a decreasing/increasing relational goal, for instance :
+        > -20% Maths/Algebra -> +20% Maths/Geometry, this week(s)/month(s)/year(s)
       - [ ] Send notifications when a goal is completed
 
   (more to come)
