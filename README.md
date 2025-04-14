@@ -118,7 +118,7 @@ A new pomodoro app, built with Flutter, the goal is to make a feature-equivalent
 
   - [ ] Add Subject/topic support
 
-    - [ ] Each Subject should have sub-subjects, and super-subjects, ex: School -> Sciences -> Mathematics -> Algrebra & Geometry etc.
+    - [x] Each Subject should have sub-subjects, and super-subjects, ex: School -> Sciences -> Mathematics -> Algrebra & Geometry etc.
     - [ ] The working subject should be visible on the main page
     - [ ] Subject should be optional, and the UI shouldn't be invasive
 

@@ -472,14 +472,24 @@ class $MemorySessionVariableTable extends MemorySessionVariable
       const VerificationMeta('expFinishTime');
   @override
   late final GeneratedColumn<DateTime> expFinishTime =
-      GeneratedColumn<DateTime>('exp_finish_time', aliasedName, false,
-          type: DriftSqlType.dateTime, requiredDuringInsert: true);
+      GeneratedColumn<DateTime>('exp_finish_time', aliasedName, true,
+          type: DriftSqlType.dateTime, requiredDuringInsert: false);
   static const VerificationMeta _finishTimeMeta =
       const VerificationMeta('finishTime');
   @override
   late final GeneratedColumn<DateTime> finishTime = GeneratedColumn<DateTime>(
       'finish_time', aliasedName, true,
       type: DriftSqlType.dateTime, requiredDuringInsert: false);
+  static const VerificationMeta _completedMeta =
+      const VerificationMeta('completed');
+  @override
+  late final GeneratedColumn<bool> completed = GeneratedColumn<bool>(
+      'completed', aliasedName, true,
+      type: DriftSqlType.bool,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('CHECK ("completed" IN (0, 1))'),
+      defaultValue: const Constant(false));
   static const VerificationMeta _typeMeta = const VerificationMeta('type');
   @override
   late final GeneratedColumn<String> type = GeneratedColumn<String>(
@@ -488,9 +498,9 @@ class $MemorySessionVariableTable extends MemorySessionVariable
   static const VerificationMeta _subjectMeta =
       const VerificationMeta('subject');
   @override
-  late final GeneratedColumn<String> subject = GeneratedColumn<String>(
+  late final GeneratedColumn<int> subject = GeneratedColumn<int>(
       'subject', aliasedName, true,
-      type: DriftSqlType.string, requiredDuringInsert: false);
+      type: DriftSqlType.int, requiredDuringInsert: false);
   @override
   List<GeneratedColumn> get $columns => [
         id,
@@ -502,6 +512,7 @@ class $MemorySessionVariableTable extends MemorySessionVariable
         startingTime,
         expFinishTime,
         finishTime,
+        completed,
         type,
         subject
       ];
@@ -564,14 +575,16 @@ class $MemorySessionVariableTable extends MemorySessionVariable
           _expFinishTimeMeta,
           expFinishTime.isAcceptableOrUnknown(
               data['exp_finish_time']!, _expFinishTimeMeta));
-    } else if (isInserting) {
-      context.missing(_expFinishTimeMeta);
     }
     if (data.containsKey('finish_time')) {
       context.handle(
           _finishTimeMeta,
           finishTime.isAcceptableOrUnknown(
               data['finish_time']!, _finishTimeMeta));
+    }
+    if (data.containsKey('completed')) {
+      context.handle(_completedMeta,
+          completed.isAcceptableOrUnknown(data['completed']!, _completedMeta));
     }
     if (data.containsKey('type')) {
       context.handle(
@@ -608,13 +621,15 @@ class $MemorySessionVariableTable extends MemorySessionVariable
       startingTime: attachedDatabase.typeMapping.read(
           DriftSqlType.dateTime, data['${effectivePrefix}starting_time'])!,
       expFinishTime: attachedDatabase.typeMapping.read(
-          DriftSqlType.dateTime, data['${effectivePrefix}exp_finish_time'])!,
+          DriftSqlType.dateTime, data['${effectivePrefix}exp_finish_time']),
       finishTime: attachedDatabase.typeMapping
           .read(DriftSqlType.dateTime, data['${effectivePrefix}finish_time']),
+      completed: attachedDatabase.typeMapping
+          .read(DriftSqlType.bool, data['${effectivePrefix}completed']),
       type: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}type'])!,
       subject: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}subject']),
+          .read(DriftSqlType.int, data['${effectivePrefix}subject']),
     );
   }
 
@@ -633,10 +648,11 @@ class MemorySessionVariableData extends DataClass
   final int plannedDuration;
   final int? actuallyDoneDuration;
   final DateTime startingTime;
-  final DateTime expFinishTime;
+  final DateTime? expFinishTime;
   final DateTime? finishTime;
+  final bool? completed;
   final String type;
-  final String? subject;
+  final int? subject;
   const MemorySessionVariableData(
       {required this.id,
       required this.roundGoal,
@@ -645,8 +661,9 @@ class MemorySessionVariableData extends DataClass
       required this.plannedDuration,
       this.actuallyDoneDuration,
       required this.startingTime,
-      required this.expFinishTime,
+      this.expFinishTime,
       this.finishTime,
+      this.completed,
       required this.type,
       this.subject});
   @override
@@ -663,13 +680,18 @@ class MemorySessionVariableData extends DataClass
       map['actually_done_duration'] = Variable<int>(actuallyDoneDuration);
     }
     map['starting_time'] = Variable<DateTime>(startingTime);
-    map['exp_finish_time'] = Variable<DateTime>(expFinishTime);
+    if (!nullToAbsent || expFinishTime != null) {
+      map['exp_finish_time'] = Variable<DateTime>(expFinishTime);
+    }
     if (!nullToAbsent || finishTime != null) {
       map['finish_time'] = Variable<DateTime>(finishTime);
     }
+    if (!nullToAbsent || completed != null) {
+      map['completed'] = Variable<bool>(completed);
+    }
     map['type'] = Variable<String>(type);
     if (!nullToAbsent || subject != null) {
-      map['subject'] = Variable<String>(subject);
+      map['subject'] = Variable<int>(subject);
     }
     return map;
   }
@@ -687,10 +709,15 @@ class MemorySessionVariableData extends DataClass
           ? const Value.absent()
           : Value(actuallyDoneDuration),
       startingTime: Value(startingTime),
-      expFinishTime: Value(expFinishTime),
+      expFinishTime: expFinishTime == null && nullToAbsent
+          ? const Value.absent()
+          : Value(expFinishTime),
       finishTime: finishTime == null && nullToAbsent
           ? const Value.absent()
           : Value(finishTime),
+      completed: completed == null && nullToAbsent
+          ? const Value.absent()
+          : Value(completed),
       type: Value(type),
       subject: subject == null && nullToAbsent
           ? const Value.absent()
@@ -710,10 +737,11 @@ class MemorySessionVariableData extends DataClass
       actuallyDoneDuration:
           serializer.fromJson<int?>(json['actuallyDoneDuration']),
       startingTime: serializer.fromJson<DateTime>(json['startingTime']),
-      expFinishTime: serializer.fromJson<DateTime>(json['expFinishTime']),
+      expFinishTime: serializer.fromJson<DateTime?>(json['expFinishTime']),
       finishTime: serializer.fromJson<DateTime?>(json['finishTime']),
+      completed: serializer.fromJson<bool?>(json['completed']),
       type: serializer.fromJson<String>(json['type']),
-      subject: serializer.fromJson<String?>(json['subject']),
+      subject: serializer.fromJson<int?>(json['subject']),
     );
   }
   @override
@@ -727,10 +755,11 @@ class MemorySessionVariableData extends DataClass
       'plannedDuration': serializer.toJson<int>(plannedDuration),
       'actuallyDoneDuration': serializer.toJson<int?>(actuallyDoneDuration),
       'startingTime': serializer.toJson<DateTime>(startingTime),
-      'expFinishTime': serializer.toJson<DateTime>(expFinishTime),
+      'expFinishTime': serializer.toJson<DateTime?>(expFinishTime),
       'finishTime': serializer.toJson<DateTime?>(finishTime),
+      'completed': serializer.toJson<bool?>(completed),
       'type': serializer.toJson<String>(type),
-      'subject': serializer.toJson<String?>(subject),
+      'subject': serializer.toJson<int?>(subject),
     };
   }
 
@@ -742,10 +771,11 @@ class MemorySessionVariableData extends DataClass
           int? plannedDuration,
           Value<int?> actuallyDoneDuration = const Value.absent(),
           DateTime? startingTime,
-          DateTime? expFinishTime,
+          Value<DateTime?> expFinishTime = const Value.absent(),
           Value<DateTime?> finishTime = const Value.absent(),
+          Value<bool?> completed = const Value.absent(),
           String? type,
-          Value<String?> subject = const Value.absent()}) =>
+          Value<int?> subject = const Value.absent()}) =>
       MemorySessionVariableData(
         id: id ?? this.id,
         roundGoal: roundGoal ?? this.roundGoal,
@@ -757,8 +787,10 @@ class MemorySessionVariableData extends DataClass
             ? actuallyDoneDuration.value
             : this.actuallyDoneDuration,
         startingTime: startingTime ?? this.startingTime,
-        expFinishTime: expFinishTime ?? this.expFinishTime,
+        expFinishTime:
+            expFinishTime.present ? expFinishTime.value : this.expFinishTime,
         finishTime: finishTime.present ? finishTime.value : this.finishTime,
+        completed: completed.present ? completed.value : this.completed,
         type: type ?? this.type,
         subject: subject.present ? subject.value : this.subject,
       );
@@ -785,6 +817,7 @@ class MemorySessionVariableData extends DataClass
           : this.expFinishTime,
       finishTime:
           data.finishTime.present ? data.finishTime.value : this.finishTime,
+      completed: data.completed.present ? data.completed.value : this.completed,
       type: data.type.present ? data.type.value : this.type,
       subject: data.subject.present ? data.subject.value : this.subject,
     );
@@ -802,6 +835,7 @@ class MemorySessionVariableData extends DataClass
           ..write('startingTime: $startingTime, ')
           ..write('expFinishTime: $expFinishTime, ')
           ..write('finishTime: $finishTime, ')
+          ..write('completed: $completed, ')
           ..write('type: $type, ')
           ..write('subject: $subject')
           ..write(')'))
@@ -819,6 +853,7 @@ class MemorySessionVariableData extends DataClass
       startingTime,
       expFinishTime,
       finishTime,
+      completed,
       type,
       subject);
   @override
@@ -834,6 +869,7 @@ class MemorySessionVariableData extends DataClass
           other.startingTime == this.startingTime &&
           other.expFinishTime == this.expFinishTime &&
           other.finishTime == this.finishTime &&
+          other.completed == this.completed &&
           other.type == this.type &&
           other.subject == this.subject);
 }
@@ -847,10 +883,11 @@ class MemorySessionVariableCompanion
   final Value<int> plannedDuration;
   final Value<int?> actuallyDoneDuration;
   final Value<DateTime> startingTime;
-  final Value<DateTime> expFinishTime;
+  final Value<DateTime?> expFinishTime;
   final Value<DateTime?> finishTime;
+  final Value<bool?> completed;
   final Value<String> type;
-  final Value<String?> subject;
+  final Value<int?> subject;
   const MemorySessionVariableCompanion({
     this.id = const Value.absent(),
     this.roundGoal = const Value.absent(),
@@ -861,6 +898,7 @@ class MemorySessionVariableCompanion
     this.startingTime = const Value.absent(),
     this.expFinishTime = const Value.absent(),
     this.finishTime = const Value.absent(),
+    this.completed = const Value.absent(),
     this.type = const Value.absent(),
     this.subject = const Value.absent(),
   });
@@ -872,15 +910,15 @@ class MemorySessionVariableCompanion
     required int plannedDuration,
     this.actuallyDoneDuration = const Value.absent(),
     required DateTime startingTime,
-    required DateTime expFinishTime,
+    this.expFinishTime = const Value.absent(),
     this.finishTime = const Value.absent(),
+    this.completed = const Value.absent(),
     required String type,
     this.subject = const Value.absent(),
   })  : roundGoal = Value(roundGoal),
         runTime = Value(runTime),
         plannedDuration = Value(plannedDuration),
         startingTime = Value(startingTime),
-        expFinishTime = Value(expFinishTime),
         type = Value(type);
   static Insertable<MemorySessionVariableData> custom({
     Expression<int>? id,
@@ -892,8 +930,9 @@ class MemorySessionVariableCompanion
     Expression<DateTime>? startingTime,
     Expression<DateTime>? expFinishTime,
     Expression<DateTime>? finishTime,
+    Expression<bool>? completed,
     Expression<String>? type,
-    Expression<String>? subject,
+    Expression<int>? subject,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -906,6 +945,7 @@ class MemorySessionVariableCompanion
       if (startingTime != null) 'starting_time': startingTime,
       if (expFinishTime != null) 'exp_finish_time': expFinishTime,
       if (finishTime != null) 'finish_time': finishTime,
+      if (completed != null) 'completed': completed,
       if (type != null) 'type': type,
       if (subject != null) 'subject': subject,
     });
@@ -919,10 +959,11 @@ class MemorySessionVariableCompanion
       Value<int>? plannedDuration,
       Value<int?>? actuallyDoneDuration,
       Value<DateTime>? startingTime,
-      Value<DateTime>? expFinishTime,
+      Value<DateTime?>? expFinishTime,
       Value<DateTime?>? finishTime,
+      Value<bool?>? completed,
       Value<String>? type,
-      Value<String?>? subject}) {
+      Value<int?>? subject}) {
     return MemorySessionVariableCompanion(
       id: id ?? this.id,
       roundGoal: roundGoal ?? this.roundGoal,
@@ -933,6 +974,7 @@ class MemorySessionVariableCompanion
       startingTime: startingTime ?? this.startingTime,
       expFinishTime: expFinishTime ?? this.expFinishTime,
       finishTime: finishTime ?? this.finishTime,
+      completed: completed ?? this.completed,
       type: type ?? this.type,
       subject: subject ?? this.subject,
     );
@@ -968,11 +1010,14 @@ class MemorySessionVariableCompanion
     if (finishTime.present) {
       map['finish_time'] = Variable<DateTime>(finishTime.value);
     }
+    if (completed.present) {
+      map['completed'] = Variable<bool>(completed.value);
+    }
     if (type.present) {
       map['type'] = Variable<String>(type.value);
     }
     if (subject.present) {
-      map['subject'] = Variable<String>(subject.value);
+      map['subject'] = Variable<int>(subject.value);
     }
     return map;
   }
@@ -989,6 +1034,7 @@ class MemorySessionVariableCompanion
           ..write('startingTime: $startingTime, ')
           ..write('expFinishTime: $expFinishTime, ')
           ..write('finishTime: $finishTime, ')
+          ..write('completed: $completed, ')
           ..write('type: $type, ')
           ..write('subject: $subject')
           ..write(')'))
@@ -1215,10 +1261,11 @@ typedef $$MemorySessionVariableTableCreateCompanionBuilder
   required int plannedDuration,
   Value<int?> actuallyDoneDuration,
   required DateTime startingTime,
-  required DateTime expFinishTime,
+  Value<DateTime?> expFinishTime,
   Value<DateTime?> finishTime,
+  Value<bool?> completed,
   required String type,
-  Value<String?> subject,
+  Value<int?> subject,
 });
 typedef $$MemorySessionVariableTableUpdateCompanionBuilder
     = MemorySessionVariableCompanion Function({
@@ -1229,10 +1276,11 @@ typedef $$MemorySessionVariableTableUpdateCompanionBuilder
   Value<int> plannedDuration,
   Value<int?> actuallyDoneDuration,
   Value<DateTime> startingTime,
-  Value<DateTime> expFinishTime,
+  Value<DateTime?> expFinishTime,
   Value<DateTime?> finishTime,
+  Value<bool?> completed,
   Value<String> type,
-  Value<String?> subject,
+  Value<int?> subject,
 });
 
 class $$MemorySessionVariableTableFilterComposer
@@ -1273,10 +1321,13 @@ class $$MemorySessionVariableTableFilterComposer
   ColumnFilters<DateTime> get finishTime => $composableBuilder(
       column: $table.finishTime, builder: (column) => ColumnFilters(column));
 
+  ColumnFilters<bool> get completed => $composableBuilder(
+      column: $table.completed, builder: (column) => ColumnFilters(column));
+
   ColumnFilters<String> get type => $composableBuilder(
       column: $table.type, builder: (column) => ColumnFilters(column));
 
-  ColumnFilters<String> get subject => $composableBuilder(
+  ColumnFilters<int> get subject => $composableBuilder(
       column: $table.subject, builder: (column) => ColumnFilters(column));
 }
 
@@ -1321,10 +1372,13 @@ class $$MemorySessionVariableTableOrderingComposer
   ColumnOrderings<DateTime> get finishTime => $composableBuilder(
       column: $table.finishTime, builder: (column) => ColumnOrderings(column));
 
+  ColumnOrderings<bool> get completed => $composableBuilder(
+      column: $table.completed, builder: (column) => ColumnOrderings(column));
+
   ColumnOrderings<String> get type => $composableBuilder(
       column: $table.type, builder: (column) => ColumnOrderings(column));
 
-  ColumnOrderings<String> get subject => $composableBuilder(
+  ColumnOrderings<int> get subject => $composableBuilder(
       column: $table.subject, builder: (column) => ColumnOrderings(column));
 }
 
@@ -1364,10 +1418,13 @@ class $$MemorySessionVariableTableAnnotationComposer
   GeneratedColumn<DateTime> get finishTime => $composableBuilder(
       column: $table.finishTime, builder: (column) => column);
 
+  GeneratedColumn<bool> get completed =>
+      $composableBuilder(column: $table.completed, builder: (column) => column);
+
   GeneratedColumn<String> get type =>
       $composableBuilder(column: $table.type, builder: (column) => column);
 
-  GeneratedColumn<String> get subject =>
+  GeneratedColumn<int> get subject =>
       $composableBuilder(column: $table.subject, builder: (column) => column);
 }
 
@@ -1409,10 +1466,11 @@ class $$MemorySessionVariableTableTableManager extends RootTableManager<
             Value<int> plannedDuration = const Value.absent(),
             Value<int?> actuallyDoneDuration = const Value.absent(),
             Value<DateTime> startingTime = const Value.absent(),
-            Value<DateTime> expFinishTime = const Value.absent(),
+            Value<DateTime?> expFinishTime = const Value.absent(),
             Value<DateTime?> finishTime = const Value.absent(),
+            Value<bool?> completed = const Value.absent(),
             Value<String> type = const Value.absent(),
-            Value<String?> subject = const Value.absent(),
+            Value<int?> subject = const Value.absent(),
           }) =>
               MemorySessionVariableCompanion(
             id: id,
@@ -1424,6 +1482,7 @@ class $$MemorySessionVariableTableTableManager extends RootTableManager<
             startingTime: startingTime,
             expFinishTime: expFinishTime,
             finishTime: finishTime,
+            completed: completed,
             type: type,
             subject: subject,
           ),
@@ -1435,10 +1494,11 @@ class $$MemorySessionVariableTableTableManager extends RootTableManager<
             required int plannedDuration,
             Value<int?> actuallyDoneDuration = const Value.absent(),
             required DateTime startingTime,
-            required DateTime expFinishTime,
+            Value<DateTime?> expFinishTime = const Value.absent(),
             Value<DateTime?> finishTime = const Value.absent(),
+            Value<bool?> completed = const Value.absent(),
             required String type,
-            Value<String?> subject = const Value.absent(),
+            Value<int?> subject = const Value.absent(),
           }) =>
               MemorySessionVariableCompanion.insert(
             id: id,
@@ -1450,6 +1510,7 @@ class $$MemorySessionVariableTableTableManager extends RootTableManager<
             startingTime: startingTime,
             expFinishTime: expFinishTime,
             finishTime: finishTime,
+            completed: completed,
             type: type,
             subject: subject,
           ),

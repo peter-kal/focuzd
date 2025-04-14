@@ -11,21 +11,14 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase._internal() : super(_openConnection());
 
   @override
-  int get schemaVersion => 2;
+  int get schemaVersion => 1;
 
   @override
   MigrationStrategy get migration {
     return MigrationStrategy(
       onCreate: (Migrator m) async {
         await m.createAll();
-        await into(memorySessionVariable).insert(MemorySessionVariableCompanion(
-            roundGoal: Value(4),
-            runTime: Value(2),
-            expFinishTime: Value(DateTime.now().add(Duration(seconds: 1500))),
-            plannedDuration: Value(1500),
-            startingTime: Value(DateTime.now()),
-            subject: Value("testing db"),
-            type: Value("work")));
+
         await into(settingsVariables).insert(SettingsVariablesCompanion(
             windowOnTop: Value(false),
             requestedNumberOfSessions: Value(4),
@@ -34,16 +27,10 @@ class AppDatabase extends _$AppDatabase {
             selectedWorkDurationStored: Value(25)));
       },
       onUpgrade: (Migrator m, int from, int to) async {
-        if (from < 2) {
-          await m.create(memorySessionVariable);
-        }
+        if (from < 2) {}
       },
       beforeOpen: (details) async {
-        if (kDebugMode) {
-          print("testing db ✅✅✅✅");
-
-          print("Test data inserted successfully!");
-        }
+        if (kDebugMode) {}
       },
     );
   }
