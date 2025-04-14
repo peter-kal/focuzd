@@ -106,7 +106,7 @@ A new pomodoro app, built with Flutter, the goal is to make a feature-equivalent
   - [x] Should take a large break every 4 sessions not after the last work session
   - [x] add statistics and history base support
   - [x] thus clean and improve the db
-  - [ ] make the db file app specific, better breaking db compatibility now than later, maybe think of a migration strategy
+  - [x] make the db file app specific, better breaking db compatibility now than later, maybe think of a migration strategy
 
   - [ ] create the history & statistics page
 

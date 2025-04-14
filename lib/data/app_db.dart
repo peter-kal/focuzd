@@ -52,7 +52,7 @@ class AppDatabase extends _$AppDatabase {
 LazyDatabase _openConnection() {
   return LazyDatabase(() {
     return driftDatabase(
-      name: 'app_db',
+      name: 'focuzd_app_db',
     );
   });
 }
