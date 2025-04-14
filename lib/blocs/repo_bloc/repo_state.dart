@@ -22,7 +22,7 @@ class RepoVariablesGivenState extends RepoState {
   final int selectedBreakDurationStored;
   final int selectedWorkDurationStored;
   final int selectedLongBreakDuration;
-  final List? sessions;
+  final List<MemorySessionVariableData>? sessions;
 
   @override
   List<Object> get props => [
