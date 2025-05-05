@@ -1,54 +1,88 @@
 name: focuzd
 title: Focuzd
-base: core24
+base: core22 
 version: "2.0"
-license: GPL-3.0
+license: GPL-3.0                                                                                          
 source-code: https://github.com/peter-kal/focuzd
 website: https://github.com/peter-kal/focuzd
 issues: https://github.com/peter-kal/focuzd/issues
 icon: snap/gui/focuzd_icon.png
 
-summary: A simple and elegant pomodoro timer app.
-description: |
-  Focuzd is a _new_ pomodoro app, built with Flutter and Yaru theme. It provides a simple and visually pleasing UI. 
-  You can change the lenght, of focus, or break periods, the number of sessions, or even make the window be always on top.
-  Focuzd is **natively compiled**, far outperfoming its Electron-based alternatives1, all in a _sixth_ of the package size,
-  it _integrates_ with the theme of the Desktop, providing consistency.
-  Focuzd is also **strictly confined** meaning it doesn't access to things it **doesn't** need, like the internet, or system files.
 
-  1 more comparison data on the GitHub page
+summary: A simple and elegant pomodoro app built with Flutter.
+description: |
+ Focuzd is a _new_ pomodoro app, built with Flutter and Yaru widgets. It provides a simple and visually pleasing UI. 
+ You can change the lenght, of work, or break periods, the number of rounds, or even make the window be always on top.
+ Focuzd is **natively compiled**, far outperfoming its Electron-based alternatives*, while being a _sixth_ of the package size,
+ it _integrates_ with the theme of the Desktop, providing consistency.
+ Focuzd is also **strictly confined** meaning it doesn't access to things it **doesn't** need, like the internet, or system files.
+
+ * more comparison data on the GitHub page
+   
+  
 
 grade: stable
-confinement: strict
+confinement: strict 
 compression: lzo
-
-platforms:
-  amd64:
-  arm64:
+architectures: 
+ - build-on: amd64 
+ - build-on: arm64
 
 parts:
-  focuzd:
-    plugin: flutter
-    source: https://github.com/peter-kal/focuzd.git
-    flutter-target: lib/main.dart
-    flutter-channel: stable
+ flutter-git:
+    source: https://github.com/flutter/flutter.git
+    source-tag: 3.29.3
+    source-depth: 1
+    plugin: nil
+    override-build: |
+      mkdir -p $CRAFT_PART_INSTALL/usr/bin
+      mkdir -p $CRAFT_PART_INSTALL/usr/libexec
+      cp -r $CRAFT_PART_SRC $CRAFT_PART_INSTALL/usr/libexec/flutter
+      ln -s $CRAFT_PART_INSTALL/usr/libexec/flutter/bin/flutter $CRAFT_PART_INSTALL/usr/bin/flutter
+      ln -s $SNAPCRAFT_PART_INSTALL/usr/libexec/flutter/bin/dart $SNAPCRAFT_PART_INSTALL/usr/bin/dart
+      $CRAFT_PART_INSTALL/usr/bin/flutter doctor
     build-packages:
-      - git
+      - clang
+      - cmake
+      - curl
+      - libgtk-3-dev
+      - ninja-build
+      - unzip
+      - xz-utils
+      - zip
+    override-prime: ''
+
+
+ focuzd:
+    plugin: nil
+    source: https://github.com/peter-kal/focuzd.git
+    after: [flutter-git]
+    source-type: git 
+    override-build: |
+      mkdir -p $CRAFT_PART_INSTALL/bin/lib
+      # work around pub get stack overflow # https://github.com/dart-lang/sdk/issues/51068#issuecomment-1396588253
+      set +e
+      dart pub get
+      set -eux
+      flutter build linux --release -v
+      cp -r build/linux/*/release/bundle/* $CRAFT_PART_INSTALL/bin/
+
+
 slots:
   focuzd-dbus:
-    interface: dbus
-    bus: session
-    name: io.peter-kal.focuzd
-
+   interface: dbus
+   bus: session
+   name: io.peter-kal.focuzd
+      
 apps:
-  focuzd:
-    command: focuzd
-    desktop: {SNAP}/meta/gui/focuzd.desktop
-    extensions: [gnome]
-    plugs:
-      - x11
-      - wayland
-      - desktop
-      - desktop-legacy
-      - unity7
-      - opengl
+ focuzd:
+  desktop: snap/gui/focuzd.desktop
+  command: bin/focuzd
+  extensions: [gnome]
+  plugs:
+    - x11
+    - wayland 
+    - desktop
+    - desktop-legacy
+    - unity7 
+    - opengl
