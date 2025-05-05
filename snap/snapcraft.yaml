@@ -1,7 +1,7 @@
 name: focuzd
 title: Focuzd
 base: core24
-version: 1.9.0
+version: "2.0"
 license: GPL-3.0
 source-code: https://github.com/peter-kal/focuzd
 website: https://github.com/peter-kal/focuzd
@@ -42,8 +42,8 @@ slots:
 
 apps:
   focuzd:
-    command: bin/focuzd
-    desktop: bin/snap/gui/focuzd.desktop
+    command: focuzd
+    desktop: {SNAP}/meta/gui/focuzd.desktop
     extensions: [gnome]
     plugs:
       - x11
