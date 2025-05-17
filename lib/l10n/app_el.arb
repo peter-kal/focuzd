@@ -19,6 +19,6 @@
     "breakTimeLabel": "Χρόνος Διάλειμματος",
     "longBreakTimeLabel": "Χρόνος Μεγάλου Διάλειμματος",
     "numberLabelSettings": "Ακέραιος",
-    "roundsLabelSettings": "Αριθμός Session"
+    "roundsLabelSettings": "Sessions ανά Γύρο"
 
 }

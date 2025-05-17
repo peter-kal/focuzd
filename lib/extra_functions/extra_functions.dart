@@ -1,10 +1,8 @@
-import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:focuzd/blocs/pomodoro_bloc/pomodoro_bloc.dart';
 import 'package:intl/intl.dart';
-import 'package:path/path.dart';
 import 'package:window_manager/window_manager.dart';
 
 mixin class ExtraFunctions {

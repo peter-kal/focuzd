@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:focuzd/blocs/repo_bloc/repo_bloc.dart';
 import 'package:focuzd/data/app_db.dart';
 import 'package:focuzd/data/repo.dart';
-import 'package:path/path.dart';
 import 'package:yaru/widgets.dart';
 
 class SessionCard extends StatelessWidget {

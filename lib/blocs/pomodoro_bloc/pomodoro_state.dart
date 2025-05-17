@@ -2,44 +2,79 @@ part of 'pomodoro_bloc.dart';
 
 @immutable
 sealed class PomodoroTimerState extends Equatable {
-  const PomodoroTimerState(this.duration, this.runTimes, this.reqRounds,
-      this.selectedDuration, this.currentMemorySessionid);
-  final int duration;
-  final int selectedDuration;
-  final int runTimes;
-  final int reqRounds;
-  final int currentMemorySessionid;
+  const PomodoroTimerState(
+    this.defaultSessionsPerRound,
+  );
+  //will be used for the list
+  final int defaultSessionsPerRound;
 
   @override
-  List<Object> get props =>
-      [duration, runTimes, reqRounds, selectedDuration, currentMemorySessionid];
+  List<Object> get props => [
+        defaultSessionsPerRound,
+      ];
 }
 
 final class TimerInitial extends PomodoroTimerState {
-  const TimerInitial(super.duration, super.runTimes, super.reqRounds,
-      super.selectedDuration, super.currentMemorySessionid);
-
+  const TimerInitial(
+    this.runTimes,
+    this.selectedDuration,
+    super.defaultSessionsPerRound,
+  );
+  final int runTimes;
+  final int selectedDuration;
   @override
-  String toString() => 'TimerInitial { duration: $duration }';
+  List<Object> get props =>
+      [runTimes, selectedDuration, defaultSessionsPerRound];
+}
+
+final class RoundPlanning extends PomodoroTimerState {
+  const RoundPlanning(super.defaultSessionsPerRound, this.defaultBreakTime,
+      this.defaultWorkTime, this.defaultLongBreakTime, this.subjects);
+  final int defaultBreakTime;
+  final int defaultWorkTime;
+  final int defaultLongBreakTime;
+  final List<SubjectData> subjects;
+  // in the future goals are going to be added here
+  @override
+  List<Object> get props =>
+      [defaultBreakTime, defaultWorkTime, defaultLongBreakTime];
 }
 
 final class TimerRunPause extends PomodoroTimerState {
-  const TimerRunPause(super.duration, super.runTimes, super.reqRounds,
-      super.selectedDuration, super.currentMemorySessionid);
-
+  const TimerRunPause(
+      super.defaultSessionsPerRound,
+      this.runTimes,
+      this.duration,
+      this.selectedDuration,
+      this.currentMemorySessionID,
+      this.currentRoundID);
+  final int runTimes;
+  final int duration;
+  final int selectedDuration;
+  final int currentMemorySessionID;
+  final int currentRoundID;
   @override
   String toString() =>
-      'TimerRunPause { duration: $duration , workTImes: $runTimes}';
+      'TimerRunPause { duration: $duration , workTimes: $runTimes}';
 }
 
 final class TimerRunInProgress extends PomodoroTimerState {
-  const TimerRunInProgress(super.duration, super.runTimes, super.reqRounds,
-      super.selectedDuration, super.currentMemorySessionid);
-
+  const TimerRunInProgress(
+      this.duration,
+      this.runTimes,
+      this.selectedDuration,
+      this.currentMemorySessionID,
+      super.defaultSessionsPerRound,
+      this.currentRoundID);
+  final int duration;
+  final int runTimes;
+  final int selectedDuration;
+  final int currentMemorySessionID;
+  final int currentRoundID;
   @override
   String toString() => 'TimerRunInProgress { duration: $duration }';
 }
 
 final class TimerRunComplete extends PomodoroTimerState {
-  const TimerRunComplete() : super(0, 0, 0, 0, 0);
+  const TimerRunComplete() : super(0);
 }

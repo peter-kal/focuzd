@@ -38,7 +38,7 @@ class BottomAppBarInterface extends StatelessWidget with ExtraFunctions {
               onPressed: () {
                 isInitial
                     ? BlocProvider.of<PomodoroBloc>(context)
-                        .add(TimerStarted(duration: duration))
+                        .add(RoundPlan(duration: duration))
                     : isActive
                         ? BlocProvider.of<PomodoroBloc>(context)
                             .add(const TimerPaused())

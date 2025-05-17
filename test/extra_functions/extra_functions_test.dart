@@ -28,11 +28,11 @@ void main() {
     test('test endsOn', () {
       final fixedTime = DateTime(2024, 0, 0, 10, 0, 0, 0, 0);
       final whenTimerRuns = ExtraFunctions()
-          .endsOn(300, TimerRunInProgress(200, 2, 4, 200, 0), fixedTime);
+          .endsOn(300, TimerRunInProgress(200, 2, 4, 200, 0, 0), fixedTime);
       final whenInitial = ExtraFunctions()
-          .endsOn(300, TimerInitial(300, 1, 4, 300, 0), fixedTime);
+          .endsOn(300, TimerInitial(300, 1, 4, 300, 0, 0), fixedTime);
       final whenPause = ExtraFunctions()
-          .endsOn(300, TimerRunPause(300, 1, 4, 300, 0), fixedTime);
+          .endsOn(300, TimerRunPause(300, 1, 4, 300, 0, 0), fixedTime);
 
       expect(whenTimerRuns, "10:05");
       expect(whenInitial, "-- : --");

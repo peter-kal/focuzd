@@ -4,6 +4,7 @@ import 'package:focuzd/blocs/blocs.dart';
 import 'package:focuzd/extra_functions/extra_functions.dart';
 import 'package:focuzd/extra_widgets/bottom_appBar_interface.dart';
 import 'package:focuzd/extra_widgets/countdown_interface.dart';
+import 'package:focuzd/extra_widgets/round_planning_dialog.dart';
 
 import 'package:yaru/yaru.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -18,19 +19,26 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage> with ExtraFunctions {
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<PomodoroBloc, PomodoroTimerState>(
+    return BlocConsumer<PomodoroBloc, PomodoroTimerState>(
+      listener: (context, state) async {
+        if (state is RoundPlanning) {
+          return await showDialog(
+              context: context, builder: (_) => RoundPlanningDialog());
+        }
+      },
       builder: (context, state) {
         return Scaffold(
           bottomNavigationBar: BottomAppBar(
             elevation: 10,
             height: 110,
             child: switch (state) {
+              RoundPlanning() => null,
               TimerInitial() => BottomAppBarInterface(
-                  duration: state.duration,
+                  duration: state.selectedDuration,
                   isInitial: true,
                   isActive: false,
                   leftButton: AppLocalizations.of(context)!.playButtonTooltip,
-                  reqRounds: state.reqRounds,
+                  reqRounds: state.defaultSessionsPerRound,
                   runTimes: state.runTimes,
                 ),
               TimerRunInProgress() => BottomAppBarInterface(
@@ -38,14 +46,14 @@ class _MainPageState extends State<MainPage> with ExtraFunctions {
                   isInitial: false,
                   isActive: true,
                   leftButton: AppLocalizations.of(context)!.pauseButtonTooltip,
-                  reqRounds: state.reqRounds,
+                  reqRounds: state.defaultSessionsPerRound,
                   runTimes: state.runTimes),
               TimerRunPause() => BottomAppBarInterface(
                   duration: state.duration,
                   isInitial: false,
                   isActive: false,
                   leftButton: AppLocalizations.of(context)!.resumeButtonTooltip,
-                  reqRounds: state.reqRounds,
+                  reqRounds: state.defaultSessionsPerRound,
                   runTimes: state.runTimes),
               TimerRunComplete() => throw UnimplementedError(),
             },
@@ -77,57 +85,84 @@ class _MainPageState extends State<MainPage> with ExtraFunctions {
                 const SizedBox(
                   height: 3,
                 ),
-                Text(
-                  currentSessionStatus(
-                      state.runTimes,
-                      state.reqRounds,
-                      AppLocalizations.of(context)!.longBreakTimeLabel,
-                      AppLocalizations.of(context)!.workTimeLabel,
-                      AppLocalizations.of(context)!.breakTimeLabel),
-                  style: const TextStyle(
-                      fontSize: 12, fontWeight: FontWeight.w300),
-                )
+                switch (state) {
+                  TimerRunComplete() => Text("Completed"),
+                  RoundPlanning() => Text("RoundPlanning"),
+                  TimerInitial() => Text(
+                      currentSessionStatus(
+                          state.runTimes,
+                          state.defaultSessionsPerRound,
+                          AppLocalizations.of(context)!.longBreakTimeLabel,
+                          AppLocalizations.of(context)!.workTimeLabel,
+                          AppLocalizations.of(context)!.breakTimeLabel),
+                      style: const TextStyle(
+                          fontSize: 12, fontWeight: FontWeight.w300),
+                    ),
+                  TimerRunPause() => Text(
+                      currentSessionStatus(
+                          state.runTimes,
+                          state.defaultSessionsPerRound,
+                          AppLocalizations.of(context)!.longBreakTimeLabel,
+                          AppLocalizations.of(context)!.workTimeLabel,
+                          AppLocalizations.of(context)!.breakTimeLabel),
+                      style: const TextStyle(
+                          fontSize: 12, fontWeight: FontWeight.w300),
+                    ),
+                  TimerRunInProgress() => Text(
+                      currentSessionStatus(
+                          state.runTimes,
+                          state.defaultSessionsPerRound,
+                          AppLocalizations.of(context)!.longBreakTimeLabel,
+                          AppLocalizations.of(context)!.workTimeLabel,
+                          AppLocalizations.of(context)!.breakTimeLabel),
+                      style: const TextStyle(
+                          fontSize: 12, fontWeight: FontWeight.w300),
+                    )
+                }
               ],
             ),
           ),
           body: BlocBuilder<PomodoroBloc, PomodoroTimerState>(
               builder: (context, state) {
-            final dur =
-                context.select((PomodoroBloc pom) => pom.state.duration);
-
-            String? hoursString() {
-              if (((dur / 60) / 60) > 1) {
-                return ((dur / 60) / 60).floor().toString().padLeft(1, '0');
-              } else {
-                return null;
+            if (state is TimerRunInProgress) {
+              final dur =
+                  context.select((PomodoroBloc pom) => pom.state.duration);
+              String? hoursString() {
+                if (((dur / 60) / 60) > 1) {
+                  return ((dur / 60) / 60).floor().toString().padLeft(1, '0');
+                } else {
+                  return null;
+                }
               }
+
+              String? hoursStr = hoursString();
+              String minutesStr =
+                  ((dur / 60) % 60).floor().toString().padLeft(2, '0');
+
+              String secondsStr = (dur % 60).floor().toString().padLeft(2, '0');
+              return SizedBox(
+                width: double.infinity,
+                height: double.infinity,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Align(
+                        alignment: Alignment.center,
+                        child: CountdownInterface(
+                            state: state,
+                            minutesStr: minutesStr,
+                            hoursStr: hoursStr,
+                            secondsStr: secondsStr,
+                            duration: state.duration,
+                            selectedDuration: state.selectedDuration,
+                            runTimes: state.runTimes)),
+                  ],
+                ),
+              );
+            } else {
+              return YaruCircularProgressIndicator();
             }
-
-            String? hoursStr = hoursString();
-            String minutesStr =
-                ((dur / 60) % 60).floor().toString().padLeft(2, '0');
-
-            String secondsStr = (dur % 60).floor().toString().padLeft(2, '0');
-            return SizedBox(
-              width: double.infinity,
-              height: double.infinity,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Align(
-                      alignment: Alignment.center,
-                      child: CountdownInterface(
-                          state: state,
-                          minutesStr: minutesStr,
-                          hoursStr: hoursStr,
-                          secondsStr: secondsStr,
-                          duration: state.duration,
-                          selectedDuration: state.selectedDuration,
-                          runTimes: state.runTimes)),
-                ],
-              ),
-            );
           }),
         );
       },

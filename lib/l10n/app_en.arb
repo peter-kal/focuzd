@@ -19,6 +19,6 @@
     "breakTimeLabel": "Break Time",
     "longBreakTimeLabel": "Long Break Time",
     "numberLabelSettings": "integer",
-    "roundsLabelSettings": "Number of Sessions"
+    "roundsLabelSettings": "Sessions per Round"
 
 }

@@ -2,6 +2,15 @@ import 'package:drift/drift.dart';
 
 import 'app_db.dart';
 
+class SubjectRepository {
+  final AppDatabase _db;
+  SubjectRepository(this._db);
+
+  Future<List<SubjectData>> fetchAllSubjects() async {
+    return await _db.select(_db.subject).get();
+  }
+}
+
 class SettingsRepository {
   final AppDatabase _db;
 

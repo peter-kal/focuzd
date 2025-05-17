@@ -1,4 +1,3 @@
-
 import 'package:drift/drift.dart';
 import 'package:drift_flutter/drift_flutter.dart';
 import 'package:flutter/foundation.dart';
@@ -6,7 +5,8 @@ import 'package:path_provider/path_provider.dart';
 import 'db_tables.dart';
 part 'app_db.g.dart';
 
-@DriftDatabase(tables: [SettingsVariables, MemorySessionVariable])
+@DriftDatabase(
+    tables: [SettingsVariables, MemorySessionVariable, RoundVariable, Subject])
 class AppDatabase extends _$AppDatabase {
   static final AppDatabase instance = AppDatabase._internal();
 
@@ -39,12 +39,11 @@ class AppDatabase extends _$AppDatabase {
 }
 
 LazyDatabase _openConnection() {
-  
   return LazyDatabase(() async {
     final directory = await getApplicationSupportDirectory();
     return driftDatabase(
       name: 'focuzd_app_db',
       native: DriftNativeOptions(databaseDirectory: () async => directory),
-          );
+    );
   });
 }

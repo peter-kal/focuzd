@@ -5,13 +5,18 @@ sealed class PomodoroTimerEvent {
   const PomodoroTimerEvent();
 }
 
-final class TimerStarted extends PomodoroTimerEvent {
-  const TimerStarted({required this.duration});
+final class TimerInit extends PomodoroTimerEvent {
+  const TimerInit();
+}
+
+final class RoundPlan extends PomodoroTimerEvent {
+  // for round planning will be renamed later on
+  const RoundPlan({required this.duration});
   final int duration;
 }
 
-final class TimerInit extends PomodoroTimerEvent {
-  const TimerInit();
+final class StartRound extends PomodoroTimerEvent {
+  const StartRound();
 }
 
 final class TimerPaused extends PomodoroTimerEvent {
