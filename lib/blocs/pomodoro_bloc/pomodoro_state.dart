@@ -28,16 +28,24 @@ final class TimerInitial extends PomodoroTimerState {
 }
 
 final class RoundPlanning extends PomodoroTimerState {
-  const RoundPlanning(super.defaultSessionsPerRound, this.defaultBreakTime,
-      this.defaultWorkTime, this.defaultLongBreakTime, this.subjects);
+  const RoundPlanning(
+      super.defaultSessionsPerRound,
+      this.defaultBreakTime,
+      this.defaultWorkTime,
+      this.defaultLongBreakTime,
+      this.subjects,
+      this.planlist,
+      this.expFinishRoundTime);
   final int defaultBreakTime;
   final int defaultWorkTime;
   final int defaultLongBreakTime;
   final List<SubjectData> subjects;
+  final List<SessionVariablePlanning> planlist;
+  final DateTime expFinishRoundTime;
   // in the future goals are going to be added here
   @override
   List<Object> get props =>
-      [defaultBreakTime, defaultWorkTime, defaultLongBreakTime];
+      [defaultBreakTime, defaultWorkTime, defaultLongBreakTime, planlist];
 }
 
 final class TimerRunPause extends PomodoroTimerState {
@@ -47,12 +55,14 @@ final class TimerRunPause extends PomodoroTimerState {
       this.duration,
       this.selectedDuration,
       this.currentMemorySessionID,
-      this.currentRoundID);
+      this.currentRoundID,
+      this.sessions);
   final int runTimes;
   final int duration;
   final int selectedDuration;
   final int currentMemorySessionID;
   final int currentRoundID;
+  final List<SessionVariablePlanning> sessions;
   @override
   String toString() =>
       'TimerRunPause { duration: $duration , workTimes: $runTimes}';
@@ -65,12 +75,14 @@ final class TimerRunInProgress extends PomodoroTimerState {
       this.selectedDuration,
       this.currentMemorySessionID,
       super.defaultSessionsPerRound,
-      this.currentRoundID);
+      this.currentRoundID,
+      this.sessions);
   final int duration;
   final int runTimes;
   final int selectedDuration;
   final int currentMemorySessionID;
   final int currentRoundID;
+  final List<SessionVariablePlanning> sessions;
   @override
   String toString() => 'TimerRunInProgress { duration: $duration }';
 }

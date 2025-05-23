@@ -3,15 +3,14 @@ import 'dart:io';
 
 import 'package:bloc/bloc.dart';
 import 'package:desktop_notifications/desktop_notifications.dart';
-import 'package:drift/backends.dart';
 import 'package:drift/drift.dart';
 import 'package:flutter/material.dart';
 import 'package:equatable/equatable.dart';
-import 'package:flutter/rendering.dart';
+
 import 'package:focuzd/blocs/pomodoro_bloc/ticker.dart';
 import 'package:focuzd/data/app_db.dart';
 import 'package:focuzd/data/repo.dart';
-import 'package:focuzd/extra_widgets/round_planning_dialog.dart';
+import 'package:focuzd/extra_functions/extra_functions.dart';
 part 'pomodoro_event.dart';
 part 'pomodoro_state.dart';
 
@@ -24,6 +23,7 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
           1,
         )) {
     on<RoundPlan>(_onRoundPlan);
+    on<ChangePlan>(_onChangePlan);
     on<StartRound>(_onStart);
     on<TimerInit>(_onTimerInit);
     on<_TimerTicked>(_onTicked);
@@ -59,13 +59,42 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
   void _onRoundPlan(RoundPlan event, Emitter<PomodoroTimerState> emit) async {
     final stored = await settingsRepo.fetchSettingsById(1);
     final subjects = await subjectRepo.fetchAllSubjects();
-    final workTimeDuration = stored!.selectedWorkDurationStored * 60;
-    final breakDuration = stored.selectedBreakDurationStored * 60;
-    final LongBreakDuration = stored.selectedLongBreakDurationStored * 60;
+    final workTimeDuration = stored!.selectedWorkDurationStored;
+    final breakDuration = stored.selectedBreakDurationStored;
+    final LongBreakDuration = stored.selectedLongBreakDurationStored;
     final SessionsperRound = stored.requestedNumberOfSessions;
+    List<SessionVariablePlanning> planlist = ExtraFunctions().getList(
+        SessionsperRound, LongBreakDuration, breakDuration, workTimeDuration);
+
+    var now = DateTime.now().toLocal();
+    var nowperthen = DateTime.now().toLocal();
+    for (int i = 0; i < planlist.length; i++) {
+      nowperthen =
+          nowperthen.add(Duration(seconds: planlist[i].plannedDuration));
+      planlist[i].expFinishTime = nowperthen;
+    }
 
     emit(RoundPlanning(SessionsperRound, breakDuration, workTimeDuration,
-        LongBreakDuration, subjects));
+        LongBreakDuration, subjects, planlist, nowperthen));
+  }
+
+  void _onChangePlan(ChangePlan event, Emitter<PomodoroTimerState> emit) async {
+    final stored = await settingsRepo.fetchSettingsById(1);
+    final subjects = await subjectRepo.fetchAllSubjects();
+    final workTimeDuration = stored!.selectedWorkDurationStored;
+    final breakDuration = stored.selectedBreakDurationStored;
+    final LongBreakDuration = stored.selectedLongBreakDurationStored;
+    final SessionsperRound = stored.requestedNumberOfSessions;
+    emit(TimerInitial(0, 0, 0));
+    var now = DateTime.now().toLocal();
+    var nowperthen = DateTime.now().toLocal();
+    for (int i = 0; i < event.newplanlist.length; i++) {
+      nowperthen = nowperthen
+          .add(Duration(seconds: event.newplanlist[i].plannedDuration));
+      event.newplanlist[i].expFinishTime = nowperthen;
+    }
+    emit(RoundPlanning(SessionsperRound, breakDuration, workTimeDuration,
+        LongBreakDuration, subjects, event.newplanlist, nowperthen));
   }
 
   void _onStart(StartRound event, Emitter<PomodoroTimerState> emit) async {
@@ -95,7 +124,8 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
             state.selectedDuration,
             state.currentMemorySessionID,
             state.defaultSessionsPerRound,
-            state.currentRoundID));
+            state.currentRoundID,
+            state.sessions));
       } else {
         add(const NextPomodoroTimer());
       }
@@ -112,7 +142,8 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
           state.selectedDuration,
           state.currentMemorySessionID,
           state.defaultSessionsPerRound,
-          state.currentRoundID));
+          state.currentRoundID,
+          state.sessions));
     }
   }
 
@@ -126,7 +157,8 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
           state.selectedDuration,
           state.currentMemorySessionID,
           state.defaultSessionsPerRound,
-          state.currentRoundID));
+          state.currentRoundID,
+          state.sessions));
     }
   }
 

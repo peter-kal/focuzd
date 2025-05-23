@@ -15,6 +15,11 @@ final class RoundPlan extends PomodoroTimerEvent {
   final int duration;
 }
 
+final class ChangePlan extends PomodoroTimerEvent {
+  const ChangePlan(this.newplanlist);
+  final List<SessionVariablePlanning> newplanlist;
+}
+
 final class StartRound extends PomodoroTimerEvent {
   const StartRound();
 }

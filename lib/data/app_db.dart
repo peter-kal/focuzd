@@ -20,7 +20,10 @@ class AppDatabase extends _$AppDatabase {
     return MigrationStrategy(
       onCreate: (Migrator m) async {
         await m.createAll();
-
+        await into(subject).insert(SubjectCompanion(
+            name: Value("Mathematics"),
+            createdAt: Value(DateTime.now()),
+            updatedAt: Value(DateTime.now())));
         await into(settingsVariables).insert(SettingsVariablesCompanion(
             windowOnTop: Value(false),
             requestedNumberOfSessions: Value(4),
@@ -40,7 +43,7 @@ class AppDatabase extends _$AppDatabase {
 
 LazyDatabase _openConnection() {
   return LazyDatabase(() async {
-    final directory = await getApplicationSupportDirectory();
+    final directory = await getApplicationDocumentsDirectory();
     return driftDatabase(
       name: 'focuzd_app_db',
       native: DriftNativeOptions(databaseDirectory: () async => directory),

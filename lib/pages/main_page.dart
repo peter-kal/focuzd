@@ -122,49 +122,68 @@ class _MainPageState extends State<MainPage> with ExtraFunctions {
               ],
             ),
           ),
-          body: BlocBuilder<PomodoroBloc, PomodoroTimerState>(
-              builder: (context, state) {
-            if (state is TimerRunInProgress) {
-              final dur =
-                  context.select((PomodoroBloc pom) => pom.state.duration);
-              String? hoursString() {
-                if (((dur / 60) / 60) > 1) {
-                  return ((dur / 60) / 60).floor().toString().padLeft(1, '0');
-                } else {
-                  return null;
-                }
-              }
-
-              String? hoursStr = hoursString();
-              String minutesStr =
-                  ((dur / 60) % 60).floor().toString().padLeft(2, '0');
-
-              String secondsStr = (dur % 60).floor().toString().padLeft(2, '0');
-              return SizedBox(
+          body: switch (state) {
+            TimerRunInProgress() => SizedBox(
                 width: double.infinity,
                 height: double.infinity,
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Align(
-                        alignment: Alignment.center,
-                        child: CountdownInterface(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Align(
+                          alignment: Alignment.center,
+                          child: CountdownInterface(
                             state: state,
-                            minutesStr: minutesStr,
-                            hoursStr: hoursStr,
-                            secondsStr: secondsStr,
-                            duration: state.duration,
+                            runTimes: state.runTimes,
+                            minutesStr: minutesString(state.duration),
+                            secondsStr: secondsString(state.duration),
+                            hoursStr: hoursString(state.duration),
                             selectedDuration: state.selectedDuration,
-                            runTimes: state.runTimes)),
-                  ],
-                ),
-              );
-            } else {
-              return YaruCircularProgressIndicator();
-            }
-          }),
-        );
+                            duration: state.duration,
+                          ))
+                    ])),
+            TimerRunPause() => SizedBox(
+                width: double.infinity,
+                height: double.infinity,
+                child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Align(
+                          alignment: Alignment.center,
+                          child: CountdownInterface(
+                            state: state,
+                            runTimes: state.runTimes,
+                            minutesStr: minutesString(state.duration),
+                            secondsStr: secondsString(state.duration),
+                            hoursStr: hoursString(state.duration),
+                            selectedDuration: state.selectedDuration,
+                            duration: state.duration,
+                          ))
+                    ])),
+            TimerInitial() => SizedBox(
+                width: double.infinity,
+                height: double.infinity,
+                child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Align(
+                          alignment: Alignment.center,
+                          child: CountdownInterface(
+                            state: state,
+                            runTimes: state.runTimes,
+                            minutesStr: minutesString(state.selectedDuration),
+                            secondsStr: secondsString(state.selectedDuration),
+                            hoursStr: hoursString(state.selectedDuration),
+                            selectedDuration: state.selectedDuration,
+                            duration: state.selectedDuration,
+                          ))
+                    ])),
+            RoundPlanning() => Text("RoundPlanning"),
+            TimerRunComplete() => Text("End")
+          },
+        ); // scaffold
       },
     );
   }

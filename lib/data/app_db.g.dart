@@ -1715,9 +1715,9 @@ class $SubjectTable extends Subject with TableInfo<$SubjectTable, SubjectData> {
       const VerificationMeta('lastWorkedOnSessionID');
   @override
   late final GeneratedColumn<int> lastWorkedOnSessionID = GeneratedColumn<int>(
-      'last_worked_on_session_i_d', aliasedName, false,
+      'last_worked_on_session_i_d', aliasedName, true,
       type: DriftSqlType.int,
-      requiredDuringInsert: true,
+      requiredDuringInsert: false,
       defaultConstraints: GeneratedColumn.constraintIsAlways(
           'REFERENCES memory_session_variable (id)'));
   static const VerificationMeta _notesMeta = const VerificationMeta('notes');
@@ -1768,8 +1768,6 @@ class $SubjectTable extends Subject with TableInfo<$SubjectTable, SubjectData> {
           _lastWorkedOnSessionIDMeta,
           lastWorkedOnSessionID.isAcceptableOrUnknown(
               data['last_worked_on_session_i_d']!, _lastWorkedOnSessionIDMeta));
-    } else if (isInserting) {
-      context.missing(_lastWorkedOnSessionIDMeta);
     }
     if (data.containsKey('notes')) {
       context.handle(
@@ -1795,7 +1793,7 @@ class $SubjectTable extends Subject with TableInfo<$SubjectTable, SubjectData> {
       updatedAt: attachedDatabase.typeMapping
           .read(DriftSqlType.dateTime, data['${effectivePrefix}updated_at'])!,
       lastWorkedOnSessionID: attachedDatabase.typeMapping.read(DriftSqlType.int,
-          data['${effectivePrefix}last_worked_on_session_i_d'])!,
+          data['${effectivePrefix}last_worked_on_session_i_d']),
       notes: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}notes']),
     );
@@ -1813,7 +1811,7 @@ class SubjectData extends DataClass implements Insertable<SubjectData> {
   final int? subjectid;
   final DateTime createdAt;
   final DateTime updatedAt;
-  final int lastWorkedOnSessionID;
+  final int? lastWorkedOnSessionID;
   final String? notes;
   const SubjectData(
       {required this.id,
@@ -1821,7 +1819,7 @@ class SubjectData extends DataClass implements Insertable<SubjectData> {
       this.subjectid,
       required this.createdAt,
       required this.updatedAt,
-      required this.lastWorkedOnSessionID,
+      this.lastWorkedOnSessionID,
       this.notes});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -1833,7 +1831,9 @@ class SubjectData extends DataClass implements Insertable<SubjectData> {
     }
     map['created_at'] = Variable<DateTime>(createdAt);
     map['updated_at'] = Variable<DateTime>(updatedAt);
-    map['last_worked_on_session_i_d'] = Variable<int>(lastWorkedOnSessionID);
+    if (!nullToAbsent || lastWorkedOnSessionID != null) {
+      map['last_worked_on_session_i_d'] = Variable<int>(lastWorkedOnSessionID);
+    }
     if (!nullToAbsent || notes != null) {
       map['notes'] = Variable<String>(notes);
     }
@@ -1849,7 +1849,9 @@ class SubjectData extends DataClass implements Insertable<SubjectData> {
           : Value(subjectid),
       createdAt: Value(createdAt),
       updatedAt: Value(updatedAt),
-      lastWorkedOnSessionID: Value(lastWorkedOnSessionID),
+      lastWorkedOnSessionID: lastWorkedOnSessionID == null && nullToAbsent
+          ? const Value.absent()
+          : Value(lastWorkedOnSessionID),
       notes:
           notes == null && nullToAbsent ? const Value.absent() : Value(notes),
     );
@@ -1865,7 +1867,7 @@ class SubjectData extends DataClass implements Insertable<SubjectData> {
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
       updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
       lastWorkedOnSessionID:
-          serializer.fromJson<int>(json['lastWorkedOnSessionID']),
+          serializer.fromJson<int?>(json['lastWorkedOnSessionID']),
       notes: serializer.fromJson<String?>(json['notes']),
     );
   }
@@ -1878,7 +1880,7 @@ class SubjectData extends DataClass implements Insertable<SubjectData> {
       'subjectid': serializer.toJson<int?>(subjectid),
       'createdAt': serializer.toJson<DateTime>(createdAt),
       'updatedAt': serializer.toJson<DateTime>(updatedAt),
-      'lastWorkedOnSessionID': serializer.toJson<int>(lastWorkedOnSessionID),
+      'lastWorkedOnSessionID': serializer.toJson<int?>(lastWorkedOnSessionID),
       'notes': serializer.toJson<String?>(notes),
     };
   }
@@ -1889,7 +1891,7 @@ class SubjectData extends DataClass implements Insertable<SubjectData> {
           Value<int?> subjectid = const Value.absent(),
           DateTime? createdAt,
           DateTime? updatedAt,
-          int? lastWorkedOnSessionID,
+          Value<int?> lastWorkedOnSessionID = const Value.absent(),
           Value<String?> notes = const Value.absent()}) =>
       SubjectData(
         id: id ?? this.id,
@@ -1897,8 +1899,9 @@ class SubjectData extends DataClass implements Insertable<SubjectData> {
         subjectid: subjectid.present ? subjectid.value : this.subjectid,
         createdAt: createdAt ?? this.createdAt,
         updatedAt: updatedAt ?? this.updatedAt,
-        lastWorkedOnSessionID:
-            lastWorkedOnSessionID ?? this.lastWorkedOnSessionID,
+        lastWorkedOnSessionID: lastWorkedOnSessionID.present
+            ? lastWorkedOnSessionID.value
+            : this.lastWorkedOnSessionID,
         notes: notes.present ? notes.value : this.notes,
       );
   SubjectData copyWithCompanion(SubjectCompanion data) {
@@ -1951,7 +1954,7 @@ class SubjectCompanion extends UpdateCompanion<SubjectData> {
   final Value<int?> subjectid;
   final Value<DateTime> createdAt;
   final Value<DateTime> updatedAt;
-  final Value<int> lastWorkedOnSessionID;
+  final Value<int?> lastWorkedOnSessionID;
   final Value<String?> notes;
   const SubjectCompanion({
     this.id = const Value.absent(),
@@ -1968,12 +1971,11 @@ class SubjectCompanion extends UpdateCompanion<SubjectData> {
     this.subjectid = const Value.absent(),
     required DateTime createdAt,
     required DateTime updatedAt,
-    required int lastWorkedOnSessionID,
+    this.lastWorkedOnSessionID = const Value.absent(),
     this.notes = const Value.absent(),
   })  : name = Value(name),
         createdAt = Value(createdAt),
-        updatedAt = Value(updatedAt),
-        lastWorkedOnSessionID = Value(lastWorkedOnSessionID);
+        updatedAt = Value(updatedAt);
   static Insertable<SubjectData> custom({
     Expression<int>? id,
     Expression<String>? name,
@@ -2001,7 +2003,7 @@ class SubjectCompanion extends UpdateCompanion<SubjectData> {
       Value<int?>? subjectid,
       Value<DateTime>? createdAt,
       Value<DateTime>? updatedAt,
-      Value<int>? lastWorkedOnSessionID,
+      Value<int?>? lastWorkedOnSessionID,
       Value<String?>? notes}) {
     return SubjectCompanion(
       id: id ?? this.id,
@@ -2927,7 +2929,7 @@ typedef $$SubjectTableCreateCompanionBuilder = SubjectCompanion Function({
   Value<int?> subjectid,
   required DateTime createdAt,
   required DateTime updatedAt,
-  required int lastWorkedOnSessionID,
+  Value<int?> lastWorkedOnSessionID,
   Value<String?> notes,
 });
 typedef $$SubjectTableUpdateCompanionBuilder = SubjectCompanion Function({
@@ -2936,7 +2938,7 @@ typedef $$SubjectTableUpdateCompanionBuilder = SubjectCompanion Function({
   Value<int?> subjectid,
   Value<DateTime> createdAt,
   Value<DateTime> updatedAt,
-  Value<int> lastWorkedOnSessionID,
+  Value<int?> lastWorkedOnSessionID,
   Value<String?> notes,
 });
 
@@ -2949,9 +2951,9 @@ final class $$SubjectTableReferences
       db.memorySessionVariable.createAlias($_aliasNameGenerator(
           db.subject.lastWorkedOnSessionID, db.memorySessionVariable.id));
 
-  $$MemorySessionVariableTableProcessedTableManager get lastWorkedOnSessionID {
-    final $_column = $_itemColumn<int>('last_worked_on_session_i_d')!;
-
+  $$MemorySessionVariableTableProcessedTableManager? get lastWorkedOnSessionID {
+    final $_column = $_itemColumn<int>('last_worked_on_session_i_d');
+    if ($_column == null) return null;
     final manager = $$MemorySessionVariableTableTableManager(
             $_db, $_db.memorySessionVariable)
         .filter((f) => f.id.sqlEquals($_column));
@@ -3138,7 +3140,7 @@ class $$SubjectTableTableManager extends RootTableManager<
             Value<int?> subjectid = const Value.absent(),
             Value<DateTime> createdAt = const Value.absent(),
             Value<DateTime> updatedAt = const Value.absent(),
-            Value<int> lastWorkedOnSessionID = const Value.absent(),
+            Value<int?> lastWorkedOnSessionID = const Value.absent(),
             Value<String?> notes = const Value.absent(),
           }) =>
               SubjectCompanion(
@@ -3156,7 +3158,7 @@ class $$SubjectTableTableManager extends RootTableManager<
             Value<int?> subjectid = const Value.absent(),
             required DateTime createdAt,
             required DateTime updatedAt,
-            required int lastWorkedOnSessionID,
+            Value<int?> lastWorkedOnSessionID = const Value.absent(),
             Value<String?> notes = const Value.absent(),
           }) =>
               SubjectCompanion.insert(

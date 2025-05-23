@@ -1,11 +1,27 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:focuzd/blocs/pomodoro_bloc/pomodoro_bloc.dart';
+import 'package:focuzd/data/app_db.dart';
 import 'package:intl/intl.dart';
 import 'package:window_manager/window_manager.dart';
 
 mixin class ExtraFunctions {
+  String? hoursString(duration) {
+    if (((duration / 60) / 60) > 1) {
+      return ((duration / 60) / 60).floor().toString().padLeft(1, '0');
+    } else {
+      return null;
+    }
+  }
+
+  String minutesString(duration) {
+    return ((duration / 60) % 60).floor().toString().padLeft(2, '0');
+  }
+
+  String secondsString(duration) {
+    return (duration % 60).floor().toString().padLeft(2, '0');
+  }
+
   String endsOn(
       int remainingDuration, PomodoroTimerState state, DateTime start) {
     if (state is TimerRunInProgress) {
@@ -42,6 +58,25 @@ mixin class ExtraFunctions {
     }
     return 0;
   }
+
+  List<SessionVariablePlanning> getList(
+      int defaultSessionsPerRound, // multiply by 60 so to display you have to divide by 60
+      int defaultLongBreakTime,
+      int defaultBreakTime,
+      defaultWorkTime) {
+    List<SessionVariablePlanning> list = [];
+    for (int i = 1; i < (defaultSessionsPerRound * 2) + 1; i++) {
+      if ((i % 2) == 0 && i == defaultSessionsPerRound * 2) {
+        list.add(SessionVariablePlanning(
+            "longbreak", defaultLongBreakTime * 60, null));
+      } else if ((i % 2) == 0 && i < defaultSessionsPerRound * 2) {
+        list.add(SessionVariablePlanning("break", defaultBreakTime * 60, null));
+      } else if ((i % 2) != 0) {
+        list.add(SessionVariablePlanning("work", defaultWorkTime * 60, null));
+      }
+    }
+    return list;
+  }
 }
 
 class MyWindowListener extends WindowListener {
@@ -55,4 +90,13 @@ class MyWindowListener extends WindowListener {
     await windowManager.setPreventClose(false);
     await windowManager.destroy();
   }
+}
+
+class SessionVariablePlanning {
+  SessionVariablePlanning(this.type, this.plannedDuration, this.subject,
+      {this.expFinishTime});
+  final String type;
+  final int plannedDuration;
+  DateTime? expFinishTime;
+  SubjectData? subject;
 }
