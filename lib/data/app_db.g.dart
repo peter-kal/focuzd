@@ -528,8 +528,8 @@ class $MemorySessionVariableTable extends MemorySessionVariable
       const VerificationMeta('startingTime');
   @override
   late final GeneratedColumn<DateTime> startingTime = GeneratedColumn<DateTime>(
-      'starting_time', aliasedName, false,
-      type: DriftSqlType.dateTime, requiredDuringInsert: true);
+      'starting_time', aliasedName, true,
+      type: DriftSqlType.dateTime, requiredDuringInsert: false);
   static const VerificationMeta _expFinishTimeMeta =
       const VerificationMeta('expFinishTime');
   @override
@@ -645,8 +645,6 @@ class $MemorySessionVariableTable extends MemorySessionVariable
           _startingTimeMeta,
           startingTime.isAcceptableOrUnknown(
               data['starting_time']!, _startingTimeMeta));
-    } else if (isInserting) {
-      context.missing(_startingTimeMeta);
     }
     if (data.containsKey('exp_finish_time')) {
       context.handle(
@@ -700,8 +698,8 @@ class $MemorySessionVariableTable extends MemorySessionVariable
           DriftSqlType.int, data['${effectivePrefix}actually_done_duration']),
       expStartingTime: attachedDatabase.typeMapping.read(
           DriftSqlType.dateTime, data['${effectivePrefix}exp_starting_time'])!,
-      startingTime: attachedDatabase.typeMapping.read(
-          DriftSqlType.dateTime, data['${effectivePrefix}starting_time'])!,
+      startingTime: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}starting_time']),
       expFinishTime: attachedDatabase.typeMapping.read(
           DriftSqlType.dateTime, data['${effectivePrefix}exp_finish_time']),
       finishTime: attachedDatabase.typeMapping
@@ -731,7 +729,7 @@ class MemorySessionVariableData extends DataClass
   final int plannedDuration;
   final int? actuallyDoneDuration;
   final DateTime expStartingTime;
-  final DateTime startingTime;
+  final DateTime? startingTime;
   final DateTime? expFinishTime;
   final DateTime? finishTime;
   final bool? completed;
@@ -746,7 +744,7 @@ class MemorySessionVariableData extends DataClass
       required this.plannedDuration,
       this.actuallyDoneDuration,
       required this.expStartingTime,
-      required this.startingTime,
+      this.startingTime,
       this.expFinishTime,
       this.finishTime,
       this.completed,
@@ -767,7 +765,9 @@ class MemorySessionVariableData extends DataClass
       map['actually_done_duration'] = Variable<int>(actuallyDoneDuration);
     }
     map['exp_starting_time'] = Variable<DateTime>(expStartingTime);
-    map['starting_time'] = Variable<DateTime>(startingTime);
+    if (!nullToAbsent || startingTime != null) {
+      map['starting_time'] = Variable<DateTime>(startingTime);
+    }
     if (!nullToAbsent || expFinishTime != null) {
       map['exp_finish_time'] = Variable<DateTime>(expFinishTime);
     }
@@ -798,7 +798,9 @@ class MemorySessionVariableData extends DataClass
           ? const Value.absent()
           : Value(actuallyDoneDuration),
       expStartingTime: Value(expStartingTime),
-      startingTime: Value(startingTime),
+      startingTime: startingTime == null && nullToAbsent
+          ? const Value.absent()
+          : Value(startingTime),
       expFinishTime: expFinishTime == null && nullToAbsent
           ? const Value.absent()
           : Value(expFinishTime),
@@ -828,7 +830,7 @@ class MemorySessionVariableData extends DataClass
       actuallyDoneDuration:
           serializer.fromJson<int?>(json['actuallyDoneDuration']),
       expStartingTime: serializer.fromJson<DateTime>(json['expStartingTime']),
-      startingTime: serializer.fromJson<DateTime>(json['startingTime']),
+      startingTime: serializer.fromJson<DateTime?>(json['startingTime']),
       expFinishTime: serializer.fromJson<DateTime?>(json['expFinishTime']),
       finishTime: serializer.fromJson<DateTime?>(json['finishTime']),
       completed: serializer.fromJson<bool?>(json['completed']),
@@ -848,7 +850,7 @@ class MemorySessionVariableData extends DataClass
       'plannedDuration': serializer.toJson<int>(plannedDuration),
       'actuallyDoneDuration': serializer.toJson<int?>(actuallyDoneDuration),
       'expStartingTime': serializer.toJson<DateTime>(expStartingTime),
-      'startingTime': serializer.toJson<DateTime>(startingTime),
+      'startingTime': serializer.toJson<DateTime?>(startingTime),
       'expFinishTime': serializer.toJson<DateTime?>(expFinishTime),
       'finishTime': serializer.toJson<DateTime?>(finishTime),
       'completed': serializer.toJson<bool?>(completed),
@@ -866,7 +868,7 @@ class MemorySessionVariableData extends DataClass
           int? plannedDuration,
           Value<int?> actuallyDoneDuration = const Value.absent(),
           DateTime? expStartingTime,
-          DateTime? startingTime,
+          Value<DateTime?> startingTime = const Value.absent(),
           Value<DateTime?> expFinishTime = const Value.absent(),
           Value<DateTime?> finishTime = const Value.absent(),
           Value<bool?> completed = const Value.absent(),
@@ -884,7 +886,8 @@ class MemorySessionVariableData extends DataClass
             ? actuallyDoneDuration.value
             : this.actuallyDoneDuration,
         expStartingTime: expStartingTime ?? this.expStartingTime,
-        startingTime: startingTime ?? this.startingTime,
+        startingTime:
+            startingTime.present ? startingTime.value : this.startingTime,
         expFinishTime:
             expFinishTime.present ? expFinishTime.value : this.expFinishTime,
         finishTime: finishTime.present ? finishTime.value : this.finishTime,
@@ -992,7 +995,7 @@ class MemorySessionVariableCompanion
   final Value<int> plannedDuration;
   final Value<int?> actuallyDoneDuration;
   final Value<DateTime> expStartingTime;
-  final Value<DateTime> startingTime;
+  final Value<DateTime?> startingTime;
   final Value<DateTime?> expFinishTime;
   final Value<DateTime?> finishTime;
   final Value<bool?> completed;
@@ -1023,7 +1026,7 @@ class MemorySessionVariableCompanion
     required int plannedDuration,
     this.actuallyDoneDuration = const Value.absent(),
     required DateTime expStartingTime,
-    required DateTime startingTime,
+    this.startingTime = const Value.absent(),
     this.expFinishTime = const Value.absent(),
     this.finishTime = const Value.absent(),
     this.completed = const Value.absent(),
@@ -1034,7 +1037,6 @@ class MemorySessionVariableCompanion
         runTime = Value(runTime),
         plannedDuration = Value(plannedDuration),
         expStartingTime = Value(expStartingTime),
-        startingTime = Value(startingTime),
         type = Value(type);
   static Insertable<MemorySessionVariableData> custom({
     Expression<int>? id,
@@ -1080,7 +1082,7 @@ class MemorySessionVariableCompanion
       Value<int>? plannedDuration,
       Value<int?>? actuallyDoneDuration,
       Value<DateTime>? expStartingTime,
-      Value<DateTime>? startingTime,
+      Value<DateTime?>? startingTime,
       Value<DateTime?>? expFinishTime,
       Value<DateTime?>? finishTime,
       Value<bool?>? completed,
@@ -2299,7 +2301,7 @@ typedef $$MemorySessionVariableTableCreateCompanionBuilder
   required int plannedDuration,
   Value<int?> actuallyDoneDuration,
   required DateTime expStartingTime,
-  required DateTime startingTime,
+  Value<DateTime?> startingTime,
   Value<DateTime?> expFinishTime,
   Value<DateTime?> finishTime,
   Value<bool?> completed,
@@ -2316,7 +2318,7 @@ typedef $$MemorySessionVariableTableUpdateCompanionBuilder
   Value<int> plannedDuration,
   Value<int?> actuallyDoneDuration,
   Value<DateTime> expStartingTime,
-  Value<DateTime> startingTime,
+  Value<DateTime?> startingTime,
   Value<DateTime?> expFinishTime,
   Value<DateTime?> finishTime,
   Value<bool?> completed,
@@ -2587,7 +2589,7 @@ class $$MemorySessionVariableTableTableManager extends RootTableManager<
             Value<int> plannedDuration = const Value.absent(),
             Value<int?> actuallyDoneDuration = const Value.absent(),
             Value<DateTime> expStartingTime = const Value.absent(),
-            Value<DateTime> startingTime = const Value.absent(),
+            Value<DateTime?> startingTime = const Value.absent(),
             Value<DateTime?> expFinishTime = const Value.absent(),
             Value<DateTime?> finishTime = const Value.absent(),
             Value<bool?> completed = const Value.absent(),
@@ -2619,7 +2621,7 @@ class $$MemorySessionVariableTableTableManager extends RootTableManager<
             required int plannedDuration,
             Value<int?> actuallyDoneDuration = const Value.absent(),
             required DateTime expStartingTime,
-            required DateTime startingTime,
+            Value<DateTime?> startingTime = const Value.absent(),
             Value<DateTime?> expFinishTime = const Value.absent(),
             Value<DateTime?> finishTime = const Value.absent(),
             Value<bool?> completed = const Value.absent(),

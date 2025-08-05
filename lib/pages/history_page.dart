@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:focuzd/blocs/blocs.dart';
 import 'package:focuzd/extra_widgets/session_card.dart';
 import 'package:yaru/yaru.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart' as l10n;
+import 'package:focuzd/l10n/app_localizations.dart' as l10n;
 
 class HistoryPage extends StatefulWidget {
   const HistoryPage({super.key});

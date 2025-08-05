@@ -19,40 +19,66 @@ class SessionTilePlanning extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      color: (prototype.type == "break" || prototype.type == "longbreak")
-          ? Colors.green
-          : Theme.of(context).primaryColor,
-      child: Row(
+    return YaruExpandable(
+      child: Text(""),
+      header: Row(
         children: [
-          Text(prototype.type.toString()),
+          Text(position.toString()),
+          SizedBox(
+            width: 75,
+            child:
+                Text(prototype.type.toString(), style: TextStyle(fontSize: 15)),
+          ),
+          VerticalDivider(),
+          SizedBox(
+            width: 25,
+          ),
+          SizedBox(
+            width: 35,
+            child: Text((prototype.plannedDuration / 60).toString(),
+                style: TextStyle(
+                    fontSize: 15,
+                    color:
+                        prototype.type == "work" ? Colors.red : Colors.green)),
+          ),
+          SizedBox(
+            width: 25,
+            child: Text("min"),
+          ),
           SizedBox(
             width: 10,
           ),
-          Text((prototype.plannedDuration / 60).toString()),
-          YaruIconButton(
-            icon: Icon(YaruIcons.trash),
-            onPressed: () {
-              planlist.removeAt(position);
-              BlocProvider.of<PomodoroBloc>(context).add(ChangePlan(planlist));
-            },
-          ),
-          SizedBox(
-            width: 10,
-          ),
-          Text(DateFormat('HH:mm').format(prototype.expFinishTime!)),
+          prototype.subject != null
+              ? Text(prototype.subject!.name)
+              : SizedBox(
+                  width: 1,
+                ),
+          Text(DateFormat('HH:mm').format(prototype.expFinishTime!),
+              style: TextStyle(color: Theme.of(context).primaryColor)),
           prototype.type == "work"
               ? PopupMenuButton<SubjectData>(
                   onSelected: (selectedItem) {
                     planlist[position].subject = selectedItem;
 
                     BlocProvider.of<PomodoroBloc>(context)
-                        .add(ChangePlan(planlist));
+                        .add(ChangePlan(2, position, selectedItem));
                   },
                   itemBuilder: (context) => subjects.map((item) {
                     return PopupMenuItem<SubjectData>(
                         value: item, child: Text(item.name));
                   }).toList(),
+                )
+              : SizedBox(
+                  width: 5,
+                ),
+          prototype.type == "work"
+              ? FilledButton.icon(
+                  label: Text("Delete"),
+                  icon: Icon(YaruIcons.trash),
+                  onPressed: () {
+                    BlocProvider.of<PomodoroBloc>(context)
+                        .add(ChangePlan(3, position));
+                  },
                 )
               : SizedBox(
                   width: 5,

@@ -30,8 +30,7 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
     on<TimerPaused>(_onPause);
     on<TimerResumed>(_onResumed);
     on<TimerReset>(_onReset);
-    on<NextPomodoroTimer>(
-        (NextPomodoroTimer event, Emitter<PomodoroTimerState> emit) {});
+    on<NextPomodoroTimer>(_onNextPomodoro);
     on<WindowIsClosing>(_onWindowIsClosing);
   }
 
@@ -40,6 +39,7 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
   final settingsRepo = SettingsRepository(AppDatabase.instance);
   final memorySessionRepo = MemorySessionRepository(AppDatabase.instance);
   final subjectRepo = SubjectRepository(AppDatabase.instance);
+  final roundRepo = RoundRepository(AppDatabase.instance);
   var client;
   StreamSubscription<int>? _tickerSubscription;
   @override
@@ -74,8 +74,15 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
       planlist[i].expFinishTime = nowperthen;
     }
 
-    emit(RoundPlanning(SessionsperRound, breakDuration, workTimeDuration,
-        LongBreakDuration, subjects, planlist, nowperthen));
+    emit(RoundPlanning(
+        SessionsperRound,
+        breakDuration,
+        workTimeDuration,
+        LongBreakDuration,
+        subjects,
+        planlist,
+        nowperthen,
+        (nowperthen.difference(now).inSeconds)));
   }
 
   void _onChangePlan(ChangePlan event, Emitter<PomodoroTimerState> emit) async {
@@ -83,37 +90,126 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
     final subjects = await subjectRepo.fetchAllSubjects();
     final workTimeDuration = stored!.selectedWorkDurationStored;
     final breakDuration = stored.selectedBreakDurationStored;
-    final LongBreakDuration = stored.selectedLongBreakDurationStored;
-    final SessionsperRound = stored.requestedNumberOfSessions;
-    emit(TimerInitial(0, 0, 0));
-    var now = DateTime.now().toLocal();
-    var nowperthen = DateTime.now().toLocal();
-    for (int i = 0; i < event.newplanlist.length; i++) {
-      nowperthen = nowperthen
-          .add(Duration(seconds: event.newplanlist[i].plannedDuration));
-      event.newplanlist[i].expFinishTime = nowperthen;
+    final longBreakDuration = stored.selectedLongBreakDurationStored;
+    final sessionsperRound = stored.requestedNumberOfSessions;
+    final state = this.state;
+    var newlist;
+    var nowperthen;
+    var now;
+    var durationOfRound;
+    if (state is RoundPlanning) {
+      newlist = state.planlist;
+      for (int i = 0; i < newlist.length; i++) {
+        print(newlist[i].plannedDuration);
+      }
+      if (event.actionCode == 1) {
+        // add a session
+        var newlist = state.planlist;
+        newlist.add(SessionVariablePlanning('work', workTimeDuration * 60, null,
+            expFinishTime: null));
+        ((newlist.length + 1) % 8) == 0
+            ? newlist.add(SessionVariablePlanning(
+                "longbreak", longBreakDuration * 60, null, expFinishTime: null))
+            : newlist.add(SessionVariablePlanning(
+                "break", breakDuration * 60, null,
+                expFinishTime: null));
+      } else if (event.actionCode == 2) {
+        newlist[event.position!].subject = event.subject;
+        // change subject
+      } else if (event.actionCode == 3) {
+        int pos = event.position!;
+        await newlist.removeAt(pos);
+        await newlist.removeAt(pos++);
+        // delete
+      }
+      for (int i = 0; i < newlist.length; i++) {
+        print(newlist[i].plannedDuration);
+      }
+      now = DateTime.now().toLocal();
+      nowperthen = DateTime.now().toLocal();
+      for (int i = 0; i < newlist.length; i++) {
+        nowperthen =
+            nowperthen.add(Duration(seconds: newlist[i].plannedDuration));
+        newlist[i].expFinishTime = nowperthen;
+      }
+      Duration x = nowperthen.difference(now);
+      durationOfRound = x.inSeconds;
     }
-    emit(RoundPlanning(SessionsperRound, breakDuration, workTimeDuration,
-        LongBreakDuration, subjects, event.newplanlist, nowperthen));
+    emit(TimerInitial(0, 0, 0));
+    emit(RoundPlanning(sessionsperRound, breakDuration, workTimeDuration,
+        longBreakDuration, subjects, newlist, nowperthen, durationOfRound));
   }
 
   void _onStart(StartRound event, Emitter<PomodoroTimerState> emit) async {
     final state = this.state;
 
     if (state is RoundPlanning) {
+      await roundRepo.insertRound(RoundVariableCompanion(
+        // should change the way time is handled in round plannning but later on
+        plannedDuration: Value(state.roundDuration),
+        startingTime: Value(DateTime.now()),
+        expFinishTime: Value(state.expFinishRoundTime),
+      ));
+      var roundid = await roundRepo.getCurrentRound();
+
+      for (int i = 0; i < state.planlist.length; i++) {
+        bool isWork = ((i + 1) % 2) != 0;
+        bool islongBreak = ((i + 1) % 8) == 0;
+        String type;
+        if (isWork == false && islongBreak == false) {
+          type = "break";
+        } else if (isWork == true) {
+          type = "work";
+        } else if (islongBreak == true) {
+          type = "longBreak";
+        } else {
+          type = "e";
+        }
+        dynamic idSub;
+        if (state.planlist[i].subject == null) {
+          idSub = null;
+        } else if (state.planlist[i].subject != null) {
+          idSub = state.planlist[i].subject!.id;
+        }
+        await memorySessionRepo
+            .insertMemorySession(MemorySessionVariableCompanion(
+                type: Value(type),
+                roundGoal: Value(state.planlist.length ~/ 2),
+                roundId: Value(roundid!.id),
+                runTime: Value(i),
+                plannedDuration: Value(state.planlist[i].plannedDuration),
+                subject: Value(idSub),
+                expStartingTime: Value(
+                  state.planlist[i].expFinishTime!.subtract(
+                      Duration(seconds: state.planlist[i].plannedDuration)),
+                )));
+      }
+      var memoryid = await memorySessionRepo.getTheNextClosest();
+      await memorySessionRepo.updateMemorySessionWrite(memoryid!.id,
+          MemorySessionVariableCompanion(startingTime: Value(DateTime.now())));
+      emit(TimerRunInProgress(
+          state.planlist.first.plannedDuration,
+          0,
+          state.planlist.first.plannedDuration,
+          memoryid!.id,
+          state.planlist.length ~/ 2,
+          roundid!.id,
+          state.planlist,
+          state.planlist.first.type,
+          state.planlist.first.subject));
+      _tickerSubscription?.cancel();
       if (Platform.isLinux) {
         client = NotificationsClient();
-        await client.notify("Focus for the next ${(10 / 60).round()} minutes!");
+        await client.notify(
+            "Focus for the next ${(state.planlist.first.plannedDuration / 60).round()} minutes!");
       }
-
-      _tickerSubscription?.cancel();
       _tickerSubscription = _ticker
-          .tick(ticks: 10)
+          .tick(ticks: state.planlist.first.plannedDuration)
           .listen((duration) => add(_TimerTicked(duration: duration)));
     }
   }
 
-  void _onTicked(_TimerTicked event, Emitter<PomodoroTimerState> emit) {
+  void _onTicked(_TimerTicked event, Emitter<PomodoroTimerState> emit) async {
     // to be taken care of later on
     final state = this.state;
     if (state is TimerRunInProgress) {
@@ -125,7 +221,9 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
             state.currentMemorySessionID,
             state.defaultSessionsPerRound,
             state.currentRoundID,
-            state.sessions));
+            state.sessions,
+            state.type,
+            state.subject));
       } else {
         add(const NextPomodoroTimer());
       }
@@ -143,7 +241,9 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
           state.currentMemorySessionID,
           state.defaultSessionsPerRound,
           state.currentRoundID,
-          state.sessions));
+          state.sessions,
+          state.type,
+          state.subject));
     }
   }
 
@@ -158,7 +258,9 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
           state.currentMemorySessionID,
           state.defaultSessionsPerRound,
           state.currentRoundID,
-          state.sessions));
+          state.sessions,
+          state.type,
+          state.subject));
     }
   }
 
@@ -178,7 +280,7 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
                 finishTime: Value(now),
                 durationLeft: Value(state.duration),
                 actuallyDoneDuration:
-                    Value(now.difference(startTime.startingTime).inSeconds)));
+                    Value(now.difference(startTime.startingTime!).inSeconds)));
       }
       emit(TimerInitial(
           state.runTimes, workTimeDuration, state.defaultSessionsPerRound));
@@ -191,149 +293,85 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
                 finishTime: Value(now),
                 durationLeft: Value(state.duration),
                 actuallyDoneDuration:
-                    Value(now.difference(startTime.startingTime).inSeconds)));
+                    Value(now.difference(startTime.startingTime!).inSeconds)));
         emit(TimerInitial(
             state.runTimes, workTimeDuration, state.defaultSessionsPerRound));
       }
     }
   }
 
-/*
-  void _onNextPomodoroTimer(
+  void _onNextPomodoro(
       NextPomodoroTimer event, Emitter<PomodoroTimerState> emit) async {
-    final selected = await settingsRepo.fetchSettingsById(1);
-    final int selectedWorkDuration = selected!.selectedWorkDurationStored;
-    final int selectedBreakDuration = selected.selectedBreakDurationStored;
-    final int selectedLBDuration = selected.selectedLongBreakDurationStored;
-    final int reqRound = selected.requestedNumberOfSessions;
-    if (timesRun >= reqRound * 2) {
-      // if the goal reached then stop
-      timesRun = 1;
-      _tickerSubscription?.cancel();
-      final now = DateTime.now();
-      final startTime = await memorySessionRepo.getCurrentSession();
-      memorySessionRepo.updateMemorySessionWrite(
-          state.currentMemorySessionid,
-          MemorySessionVariableCompanion(
-              id: Value(state.currentMemorySessionid),
-              finishTime: Value(now),
-              durationLeft: Value(state.duration),
-              actuallyDoneDuration:
-                  Value(now.difference(startTime!.startingTime).inSeconds)));
-      add(const TimerInit());
-    } else if ((timesRun % 2) == 0) {
-      // its break so it gives back a work session
-      timesRun++;
-      _tickerSubscription?.cancel();
-      _tickerSubscription = _ticker
-          .tick(ticks: selectedWorkDuration * 60)
-          .listen((duration) => add(_TimerTicked(duration: duration)));
-      final now = DateTime.now();
-      final startTime = await memorySessionRepo.getCurrentSession();
-      memorySessionRepo.updateMemorySessionWrite(
-          //update the session that ends
-          state.currentMemorySessionid,
-          MemorySessionVariableCompanion(
-              id: Value(state.currentMemorySessionid),
-              finishTime: Value(now),
-              durationLeft: Value(state.duration),
-              actuallyDoneDuration:
-                  Value(now.difference(startTime!.startingTime).inSeconds)));
-      memorySessionRepo.insertMemorySession(MemorySessionVariableCompanion(
-        //creates a new session
-        roundGoal: Value(state.reqRounds),
-        runTime: Value(state.runTimes),
-        plannedDuration: Value(state.duration),
-        startingTime: Value(now),
-        expFinishTime: Value(now.add(Duration(seconds: state.duration))),
-        type: Value("work"),
-      ));
-      final curr = await memorySessionRepo.getCurrentSession();
-      emit(TimerRunInProgress(selectedWorkDuration * 60, timesRun, reqRound,
-          selectedWorkDuration * 60, curr!.id));
-      if (Platform.isLinux) {
-        client = NotificationsClient();
-        await client.notify(
-            "Focus for the next ${(state.duration / 60).round()} minutes!");
-      } else if (Platform.isWindows) {}
-    } else if ((timesRun % 2) != 0 && (((timesRun + 1) % 8) == 0)) {
-      // after 4 sessions, returns LongBreak
-      // The following equation tells us when the last work duration will be: (requestedNumberOfSessions * 2) - 1
-      timesRun++;
-      _tickerSubscription?.cancel();
-      _tickerSubscription = _ticker
-          .tick(ticks: selectedLBDuration * 60)
-          .listen((duration) => add(_TimerTicked(duration: duration)));
-      final now = DateTime.now();
-      final startTime = await memorySessionRepo.getCurrentSession();
-      memorySessionRepo.updateMemorySessionWrite(
-          state.currentMemorySessionid,
-          MemorySessionVariableCompanion(
-              id: Value(state.currentMemorySessionid),
-              finishTime: Value(now),
-              durationLeft: Value(state.duration),
-              actuallyDoneDuration:
-                  Value(now.difference(startTime!.startingTime).inSeconds)));
+    final now = DateTime.now();
+    final state = this.state;
+    if (state is TimerRunInProgress) {
+      if ((state.runTimes + 1) >= state.sessions.length) {
+        // TASK: End the round
 
-      memorySessionRepo.insertMemorySession(MemorySessionVariableCompanion(
-        roundGoal: Value(state.reqRounds),
-        runTime: Value(state.runTimes),
-        plannedDuration: Value(state.duration),
-        startingTime: Value(now),
-        expFinishTime: Value(now.add(Duration(seconds: state.duration))),
-        type: Value("longbreak"),
-      ));
-      final curr = await memorySessionRepo.getCurrentSession();
-      emit(TimerRunInProgress(
-          selectedLBDuration * 60,
-          timesRun,
-          state.reqRounds,
-          selectedLBDuration * 60,
-          curr!
-              .id)); // The following equation tells us in what timesRun there will be a Long Break: requestedNumberOfSessions * 2
-      if (Platform.isLinux) {
-        client = NotificationsClient();
-        await client.notify(
-            "Take a long break for the next ${(state.duration / 60).round()} minutes!");
-      }
-    } else if ((timesRun % 2) != 0) {
-      timesRun++;
-      _tickerSubscription?.cancel();
-      _tickerSubscription = _ticker
-          .tick(ticks: selectedBreakDuration * 60)
-          .listen((duration) => add(_TimerTicked(duration: duration)));
-      final now = DateTime.now();
-
-      final startTime = await memorySessionRepo.getCurrentSession();
-      memorySessionRepo.updateMemorySessionWrite(
-          //update the session that ends
-          state.currentMemorySessionid,
-          MemorySessionVariableCompanion(
-              id: Value(state.currentMemorySessionid),
-              finishTime: Value(now),
+        _tickerSubscription?.cancel();
+        await memorySessionRepo.updateMemorySessionWrite(
+            state.currentMemorySessionID,
+            MemorySessionVariableCompanion(
               durationLeft: Value(state.duration),
-              actuallyDoneDuration:
-                  Value(now.difference(startTime!.startingTime).inSeconds)));
-      memorySessionRepo.insertMemorySession(MemorySessionVariableCompanion(
-        roundGoal: Value(state.reqRounds),
-        runTime: Value(state.runTimes),
-        plannedDuration: Value(state.duration),
-        startingTime: Value(now),
-        expFinishTime: Value(now.add(Duration(seconds: state.duration))),
-        type: Value("break"),
-      ));
+              finishTime: Value(now),
+              completed: Value(true),
+            ));
 
-      final curr = await memorySessionRepo.getCurrentSession();
-      emit(TimerRunInProgress(selectedBreakDuration * 60, timesRun,
-          state.reqRounds, selectedBreakDuration * 60, curr!.id));
-      if (Platform.isLinux) {
-        client = NotificationsClient();
-        await client.notify(
-            "Take a break for the next ${(state.duration / 60).round()} minutes!");
+        await roundRepo.updateRoundWrite(
+            state.currentRoundID,
+            RoundVariableCompanion(
+              completed: Value(true),
+              finishTime: Value(now),
+            ));
+        add(TimerInit());
+      } else if ((state.runTimes + 1) < state.sessions.length) {
+        _tickerSubscription?.cancel();
+        await memorySessionRepo.updateMemorySessionWrite(
+            state.currentMemorySessionID,
+            MemorySessionVariableCompanion(
+              durationLeft: Value(state.duration),
+              finishTime: Value(now),
+              completed: Value(true),
+            ));
+        var sessionathand = await memorySessionRepo.getTheNextClosest();
+        await memorySessionRepo.updateMemorySessionWrite(
+            state.currentMemorySessionID + 1,
+            MemorySessionVariableCompanion(
+              startingTime: Value(now),
+            ));
+        print(state.runTimes);
+        emit(TimerRunInProgress(
+            state.sessions[state.runTimes + 1].plannedDuration,
+            state.runTimes + 1,
+            state.sessions[state.runTimes + 1].plannedDuration,
+            sessionathand!.id,
+            state
+                .defaultSessionsPerRound, // how many sessions are there in the round, name change needed
+            state.currentRoundID,
+            state.sessions,
+            state.sessions[state.runTimes + 1].type,
+            state.subject));
+
+        _tickerSubscription = _ticker
+            .tick(ticks: state.sessions[state.runTimes].plannedDuration)
+            .listen((duration) => add(_TimerTicked(duration: duration)));
+
+        if (Platform.isLinux) {
+          client = NotificationsClient();
+
+          if (state.sessions[state.runTimes + 1].type == 'break' ||
+              state.sessions[state.runTimes + 1].type == 'longbreak') {
+            await client.notify(
+                "Take a break for the next ${(state.selectedDuration / 60).round()} minutes!");
+          } else if (state.sessions[state.runTimes + 1].type == 'work') {
+            await client.notify(
+                "Focus for the next ${(state.selectedDuration / 60).round()} minutes!");
+          }
+        }
       }
     }
   }
-*/
+
   void _onWindowIsClosing(
       WindowIsClosing event, Emitter<PomodoroTimerState> emit) async {
     final state = this.state;
@@ -347,7 +385,7 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
             finishTime: Value(now),
             durationLeft: Value(state.duration),
             actuallyDoneDuration: Value(
-              now.difference(currentSession.startingTime).inSeconds,
+              now.difference(currentSession.startingTime!).inSeconds,
             ),
           ),
         );
@@ -362,7 +400,7 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
             finishTime: Value(now),
             durationLeft: Value(state.duration),
             actuallyDoneDuration: Value(
-              now.difference(currentSession.startingTime).inSeconds,
+              now.difference(currentSession.startingTime!).inSeconds,
             ),
           ),
         );

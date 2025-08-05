@@ -6,6 +6,11 @@ class SubjectRepository {
   final AppDatabase _db;
   SubjectRepository(this._db);
 
+  Future<SubjectData?> fetchSubjectByID(int id) async {
+    return await (_db.select(_db.subject)..where((tbl) => tbl.id.equals(id)))
+        .getSingleOrNull();
+  }
+
   Future<List<SubjectData>> fetchAllSubjects() async {
     return await _db.select(_db.subject).get();
   }
@@ -53,6 +58,14 @@ class MemorySessionRepository {
     return await _db.select(_db.memorySessionVariable).get();
   }
 
+  Future<MemorySessionVariableData?> getTheNextClosest() async {
+    return await (_db.select(_db.memorySessionVariable)
+          ..where((tbl) => tbl.completed.isValue(false))
+          ..orderBy([(tbl) => OrderingTerm.asc(tbl.expStartingTime)])
+          ..limit(1))
+        .getSingleOrNull();
+  }
+
   // fetch the newest uncompleted memory session (max id AND uncompleted false )
   Future<MemorySessionVariableData?> getCurrentSession() async {
     return await (_db.select(_db.memorySessionVariable)
@@ -95,5 +108,67 @@ class MemorySessionRepository {
   //Delete all memory sessions
   Future<void> deleteAllMemorySessions() async {
     await _db.delete(_db.memorySessionVariable).go();
+  }
+
+  Future<MemorySessionVariableData?> fetchLastMemorySession() async {
+    return await (_db.select(_db.memorySessionVariable)
+          ..orderBy([(tbl) => OrderingTerm.desc(tbl.id)])
+          ..limit(1))
+        .getSingleOrNull();
+  }
+}
+
+class RoundRepository {
+  final AppDatabase _db;
+
+  RoundRepository(this._db);
+
+  // Insert a new round
+  Future<void> insertRound(RoundVariableCompanion round) async {
+    await _db.into(_db.roundVariable).insert(round);
+  }
+
+  // Fetch all rounds
+  Future<List<RoundVariableData>> fetchAllRounds() async {
+    return await _db.select(_db.roundVariable).get();
+  }
+
+  // Fetch the newest uncompleted round (max id AND uncompleted)
+  Future<RoundVariableData?> getCurrentRound() async {
+    return await (_db.select(_db.roundVariable)
+          ..where((tbl) => tbl.completed
+              .equals(false)) // Assuming endTime is null if incomplete
+          ..orderBy([(tbl) => OrderingTerm.desc(tbl.id)]))
+        .getSingleOrNull();
+  }
+
+  // Fetch round by ID
+  Future<RoundVariableData?> fetchRoundById(int id) async {
+    return await (_db.select(_db.roundVariable)
+          ..where((tbl) => tbl.id.equals(id)))
+        .getSingleOrNull();
+  }
+
+  // Replace round
+  Future<void> updateRound(RoundVariableCompanion updatedRound) async {
+    await _db.update(_db.roundVariable).replace(updatedRound);
+  }
+
+  // Write update (partial)
+  Future<void> updateRoundWrite(
+      int id, RoundVariableCompanion updatedRound) async {
+    await (_db.update(_db.roundVariable)..where((tbl) => tbl.id.equals(id)))
+        .write(updatedRound);
+  }
+
+  // Delete round by ID
+  Future<void> deleteRoundById(int id) async {
+    await (_db.delete(_db.roundVariable)..where((tbl) => tbl.id.equals(id)))
+        .go();
+  }
+
+  // Delete all rounds
+  Future<void> deleteAllRounds() async {
+    await _db.delete(_db.roundVariable).go();
   }
 }

@@ -1,5 +1,7 @@
+import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:focuzd/blocs/blocs.dart';
+import 'package:focuzd/data/app_db.dart';
 import 'package:focuzd/extra_functions/extra_functions.dart';
 
 void main() {
@@ -10,6 +12,14 @@ void main() {
 
       expect(testWork, 2);
       expect(testBreak, 2);
+    });
+
+    test('test getPermanantList', () {
+      final List<SessionVariablePlanning> historyList = [
+        SessionVariablePlanning('work', 1500, null, expFinishTime: null),
+        SessionVariablePlanning('break', 300, null)
+      ];
+      // final listGivenByCode = ExtraFunctions().getThePermanentList(historyList, );
     });
 
     test('test currentSessionStatus', () {

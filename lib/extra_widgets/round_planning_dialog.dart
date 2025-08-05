@@ -18,7 +18,6 @@ class RoundPlanningDialog extends StatelessWidget {
       builder: (context, state) {
         if (state is RoundPlanning) {
           return AlertDialog(
-            backgroundColor: Theme.of(context).primaryColor,
             content: SizedBox(
               height: double.infinity,
               width: MediaQuery.of(context).size.width * 0.8,
@@ -35,15 +34,7 @@ class RoundPlanningDialog extends StatelessWidget {
                   "Ends on: ${DateFormat('HH:mm').format(state.expFinishRoundTime)}"),
               FilledButton(
                   onPressed: () {
-                    var newlist = state.planlist;
-                    newlist.addAll([
-                      SessionVariablePlanning(
-                          "work", state.defaultWorkTime * 60, null),
-                      SessionVariablePlanning(
-                          "break", state.defaultBreakTime * 60, null)
-                    ]);
-                    BlocProvider.of<PomodoroBloc>(context)
-                        .add(ChangePlan(newlist));
+                    BlocProvider.of<PomodoroBloc>(context).add(ChangePlan(1));
                   },
                   child: Text("Add Session")),
               ElevatedButton(

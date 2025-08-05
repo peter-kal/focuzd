@@ -1,11 +1,66 @@
+import 'package:drift/drift.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:focuzd/blocs/pomodoro_bloc/pomodoro_bloc.dart';
 import 'package:focuzd/data/app_db.dart';
+import 'package:focuzd/data/repo.dart';
 import 'package:intl/intl.dart';
 import 'package:window_manager/window_manager.dart';
 
 mixin class ExtraFunctions {
+  Future<void> getThePermanentList(List<SessionVariablePlanning> list,
+      MemorySessionRepository memoryrepo, int roundID) async {
+    List<MemorySessionVariableData> historyList = [];
+
+    DateTime now = DateTime.now().toLocal();
+    DateTime nowperthen = DateTime.now().toLocal();
+    for (int i = 0; i < list.length; i++) {
+      nowperthen = nowperthen.add(Duration(seconds: list[i].plannedDuration));
+      list[i].expFinishTime = nowperthen;
+    }
+
+    for (int i = 0; i < list.length; i++) {
+      bool isWork = ((i + 1) % 2) != 0;
+      bool islongBreak = ((i + 1) % 8) == 0;
+      String type;
+
+      if (isWork == false && islongBreak == false) {
+        type = "break";
+      } else if (isWork == true) {
+        type = "work";
+      } else if (islongBreak == true) {
+        type = "longBreak";
+      } else {
+        type = "e";
+      }
+      historyList.add(MemorySessionVariableData(
+        id: i,
+        type: type,
+        roundGoal: list.length ~/ 2,
+        roundId: roundID,
+        runTime: i++,
+        plannedDuration: list[i].plannedDuration,
+        subject: list[i].subject!.id,
+        expStartingTime: list[i]
+            .expFinishTime!
+            .subtract(Duration(seconds: list[i].plannedDuration)),
+      ));
+      memoryrepo.insertMemorySession(MemorySessionVariableCompanion(
+          type: Value(type),
+          roundGoal: Value(list.length ~/ 2),
+          roundId: Value(roundID),
+          runTime: Value(i++),
+          plannedDuration: Value(list[i].plannedDuration),
+          subject: Value(list[i].subject!.id),
+          expStartingTime: Value(
+            list[i]
+                .expFinishTime!
+                .subtract(Duration(seconds: list[i].plannedDuration)),
+          )));
+    }
+  }
+
   String? hoursString(duration) {
     if (((duration / 60) / 60) > 1) {
       return ((duration / 60) / 60).floor().toString().padLeft(1, '0');
@@ -35,13 +90,13 @@ mixin class ExtraFunctions {
     return "null";
   }
 
-  String currentSessionStatus(int Rn, int ReqSessions,
-      String longBreakTimeLabel, String workTimeLabel, String breakTimeLabel) {
-    if ((Rn % 2) == 0 && Rn == (ReqSessions * 2)) {
+  String currentSessionStatus(String type, String longBreakTimeLabel,
+      String workTimeLabel, String breakTimeLabel) {
+    if (type == 'longbreak') {
       return longBreakTimeLabel;
-    } else if ((Rn % 2 != 0)) {
+    } else if (type == 'work') {
       return workTimeLabel;
-    } else if ((Rn % 2) == 0 && Rn != (ReqSessions * 2)) {
+    } else if (type == 'break') {
       return breakTimeLabel;
     }
     return "error";
@@ -66,10 +121,10 @@ mixin class ExtraFunctions {
       defaultWorkTime) {
     List<SessionVariablePlanning> list = [];
     for (int i = 1; i < (defaultSessionsPerRound * 2) + 1; i++) {
-      if ((i % 2) == 0 && i == defaultSessionsPerRound * 2) {
+      if ((i % 2) == 0 && (i % 8) == 0) {
         list.add(SessionVariablePlanning(
             "longbreak", defaultLongBreakTime * 60, null));
-      } else if ((i % 2) == 0 && i < defaultSessionsPerRound * 2) {
+      } else if ((i % 2) == 0) {
         list.add(SessionVariablePlanning("break", defaultBreakTime * 60, null));
       } else if ((i % 2) != 0) {
         list.add(SessionVariablePlanning("work", defaultWorkTime * 60, null));

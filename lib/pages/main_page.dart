@@ -7,7 +7,7 @@ import 'package:focuzd/extra_widgets/countdown_interface.dart';
 import 'package:focuzd/extra_widgets/round_planning_dialog.dart';
 
 import 'package:yaru/yaru.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:focuzd/l10n/app_localizations.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
@@ -21,6 +21,11 @@ class _MainPageState extends State<MainPage> with ExtraFunctions {
   Widget build(BuildContext context) {
     return BlocConsumer<PomodoroBloc, PomodoroTimerState>(
       listener: (context, state) async {
+        if (state is TimerRunInProgress) {
+          if (Navigator.canPop(context)) {
+            Navigator.of(context, rootNavigator: true).pop();
+          }
+        }
         if (state is RoundPlanning) {
           return await showDialog(
               context: context, builder: (_) => RoundPlanningDialog());
@@ -90,8 +95,7 @@ class _MainPageState extends State<MainPage> with ExtraFunctions {
                   RoundPlanning() => Text("RoundPlanning"),
                   TimerInitial() => Text(
                       currentSessionStatus(
-                          state.runTimes,
-                          state.defaultSessionsPerRound,
+                          'work',
                           AppLocalizations.of(context)!.longBreakTimeLabel,
                           AppLocalizations.of(context)!.workTimeLabel,
                           AppLocalizations.of(context)!.breakTimeLabel),
@@ -100,8 +104,7 @@ class _MainPageState extends State<MainPage> with ExtraFunctions {
                     ),
                   TimerRunPause() => Text(
                       currentSessionStatus(
-                          state.runTimes,
-                          state.defaultSessionsPerRound,
+                          state.type,
                           AppLocalizations.of(context)!.longBreakTimeLabel,
                           AppLocalizations.of(context)!.workTimeLabel,
                           AppLocalizations.of(context)!.breakTimeLabel),
@@ -110,8 +113,7 @@ class _MainPageState extends State<MainPage> with ExtraFunctions {
                     ),
                   TimerRunInProgress() => Text(
                       currentSessionStatus(
-                          state.runTimes,
-                          state.defaultSessionsPerRound,
+                          state.type,
                           AppLocalizations.of(context)!.longBreakTimeLabel,
                           AppLocalizations.of(context)!.workTimeLabel,
                           AppLocalizations.of(context)!.breakTimeLabel),
@@ -134,7 +136,8 @@ class _MainPageState extends State<MainPage> with ExtraFunctions {
                           alignment: Alignment.center,
                           child: CountdownInterface(
                             state: state,
-                            runTimes: state.runTimes,
+                            type: state.type,
+                            runTimes: state.runTimes + 1,
                             minutesStr: minutesString(state.duration),
                             secondsStr: secondsString(state.duration),
                             hoursStr: hoursString(state.duration),
@@ -153,7 +156,8 @@ class _MainPageState extends State<MainPage> with ExtraFunctions {
                           alignment: Alignment.center,
                           child: CountdownInterface(
                             state: state,
-                            runTimes: state.runTimes,
+                            type: state.type,
+                            runTimes: state.runTimes + 1,
                             minutesStr: minutesString(state.duration),
                             secondsStr: secondsString(state.duration),
                             hoursStr: hoursString(state.duration),
@@ -172,6 +176,7 @@ class _MainPageState extends State<MainPage> with ExtraFunctions {
                           alignment: Alignment.center,
                           child: CountdownInterface(
                             state: state,
+                            type: 'work',
                             runTimes: state.runTimes,
                             minutesStr: minutesString(state.selectedDuration),
                             secondsStr: secondsString(state.selectedDuration),

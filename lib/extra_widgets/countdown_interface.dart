@@ -12,6 +12,7 @@ class CountdownInterface extends StatelessWidget with ExtraFunctions {
     required this.selectedDuration,
     required this.runTimes,
     required this.state,
+    required this.type,
     this.hoursStr,
   });
   final String minutesStr;
@@ -20,6 +21,7 @@ class CountdownInterface extends StatelessWidget with ExtraFunctions {
   final int duration;
   final int selectedDuration;
   final int runTimes;
+  final String type;
   final PomodoroTimerState state;
 
   @override
@@ -31,9 +33,10 @@ class CountdownInterface extends StatelessWidget with ExtraFunctions {
           height: 250,
           width: 250,
           child: YaruCircularProgressIndicator(
-            valueColor: AlwaysStoppedAnimation((runTimes % 2 == 0)
-                ? Colors.green
-                : Theme.of(context).primaryColor),
+            valueColor: AlwaysStoppedAnimation(
+                (type == 'break' || type == 'longbreak')
+                    ? Colors.green
+                    : Theme.of(context).primaryColor),
             strokeWidth: 10,
             value: duration / selectedDuration,
           ),

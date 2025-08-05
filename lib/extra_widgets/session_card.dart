@@ -9,6 +9,16 @@ class SessionCard extends StatelessWidget {
   SessionCard(this.id, {super.key});
   MemorySessionVariableData id;
   var memoryrepo = MemorySessionRepository(AppDatabase.instance);
+  var subjectRepo = SubjectRepository(AppDatabase.instance);
+  Future<String?> getSubjectName(int subid) async {
+    if (id.subject == null) {
+      return null;
+    } else if (id.subject != null) {
+      var n = await subjectRepo.fetchSubjectByID(id.subject!);
+      return n!.name;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -18,7 +28,9 @@ class SessionCard extends StatelessWidget {
           Text(
               "${id.finishTime!.day.toString()}/${id.finishTime!.month.toString()}/${id.finishTime!.year.toString()}"),
           Text(style: TextStyle(color: Colors.red), id.type),
-          Text(style: TextStyle(color: Colors.green), id.subject.toString()),
+          Text(
+              style: TextStyle(color: Colors.green),
+              getSubjectName(id.subject!).toString()),
           YaruIconButton(
             icon: Icon(Icons.delete),
             onPressed: () {
