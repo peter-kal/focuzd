@@ -24,11 +24,11 @@ void main() {
 
     test('test currentSessionStatus', () {
       final outputBreak = ExtraFunctions()
-          .currentSessionStatus(2, 4, "longBreak", "work", "break");
+          .currentSessionStatus('break', "longBreak", "work", "break");
       final outputWork = ExtraFunctions()
-          .currentSessionStatus(3, 4, "longBreak", "work", "break");
+          .currentSessionStatus('work', "longBreak", "work", "break");
       final outputLongBreak = ExtraFunctions()
-          .currentSessionStatus(8, 4, "longBreak", "work", "break");
+          .currentSessionStatus('longBreak', "longBreak", "work", "break");
 
       expect(outputBreak, "break");
       expect(outputWork, "work");
