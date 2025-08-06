@@ -19,18 +19,8 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage> with ExtraFunctions {
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<PomodoroBloc, PomodoroTimerState>(
-      listener: (context, state) async {
-        if (state is TimerRunInProgress) {
-          if (Navigator.canPop(context)) {
-            Navigator.of(context, rootNavigator: true).pop();
-          }
-        }
-        if (state is RoundPlanning) {
-          return await showDialog(
-              context: context, builder: (_) => RoundPlanningDialog());
-        }
-      },
+    return BlocBuilder<PomodoroBloc, PomodoroTimerState>(
+     
       builder: (context, state) {
         return Scaffold(
           bottomNavigationBar: BottomAppBar(

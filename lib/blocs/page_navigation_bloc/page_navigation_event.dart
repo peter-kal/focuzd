@@ -28,3 +28,10 @@ class HistoryPageEvent extends PageNavigationEvent {
   @override
   List<Object> get props => [];
 }
+
+class RoundPlanningPageEvent extends PageNavigationEvent {
+  const RoundPlanningPageEvent();
+
+  @override
+  List<Object> get props => [];
+}

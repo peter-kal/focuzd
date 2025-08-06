@@ -15,3 +15,5 @@ class MainPageState extends PageNavigationState {}
 class SettingsPageState extends PageNavigationState {}
 
 class HistoryPageState extends PageNavigationState {}
+
+class RoundPlanningPageState extends PageNavigationState {}

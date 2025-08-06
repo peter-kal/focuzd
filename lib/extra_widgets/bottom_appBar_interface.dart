@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:focuzd/blocs/blocs.dart';
 import 'package:focuzd/l10n/app_localizations.dart';
 import 'package:yaru/yaru.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -20,6 +21,10 @@ class BottomAppBarInterface extends StatelessWidget with ExtraFunctions {
   final bool isActive;
   final bool isInitial;
   final int duration;
+  void initialFunction(BuildContext context) {
+    BlocProvider.of<PomodoroBloc>(context).add(RoundPlan(duration: duration));
+    BlocProvider.of<PageNavigationBloc>(context).add(const RoundPlanningPageEvent());
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,8 +42,7 @@ class BottomAppBarInterface extends StatelessWidget with ExtraFunctions {
               ),
               onPressed: () {
                 isInitial
-                    ? BlocProvider.of<PomodoroBloc>(context)
-                        .add(RoundPlan(duration: duration))
+                    ? initialFunction(context)
                     : isActive
                         ? BlocProvider.of<PomodoroBloc>(context)
                             .add(const TimerPaused())

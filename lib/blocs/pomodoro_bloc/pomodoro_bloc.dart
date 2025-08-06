@@ -32,6 +32,14 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
     on<TimerReset>(_onReset);
     on<NextPomodoroTimer>(_onNextPomodoro);
     on<WindowIsClosing>(_onWindowIsClosing);
+    on<SetTimeInnit>((event, emit) async {
+      // This event is not used in the current implementation
+      // but can be used to set initial time if needed.
+      final stored = await settingsRepo.fetchSettingsById(1);
+    final workTimeDuration = stored!.selectedWorkDurationStored * 60;
+    final reqRounds = stored.requestedNumberOfSessions;
+    emit(TimerInitial(1, workTimeDuration, reqRounds));
+    });
   }
 
   int timesRun = 1;

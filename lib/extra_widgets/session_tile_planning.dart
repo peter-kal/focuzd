@@ -23,7 +23,6 @@ class SessionTilePlanning extends StatelessWidget {
       child: Text(""),
       header: Row(
         children: [
-          Text(position.toString()),
           SizedBox(
             width: 75,
             child:
@@ -35,15 +34,11 @@ class SessionTilePlanning extends StatelessWidget {
           ),
           SizedBox(
             width: 35,
-            child: Text((prototype.plannedDuration / 60).toString(),
+            child: Text((prototype.plannedDuration / 60).round().toString(),
                 style: TextStyle(
                     fontSize: 15,
                     color:
                         prototype.type == "work" ? Colors.red : Colors.green)),
-          ),
-          SizedBox(
-            width: 25,
-            child: Text("min"),
           ),
           SizedBox(
             width: 10,
@@ -56,6 +51,17 @@ class SessionTilePlanning extends StatelessWidget {
           Text(DateFormat('HH:mm').format(prototype.expFinishTime!),
               style: TextStyle(color: Theme.of(context).primaryColor)),
           prototype.type == "work"
+              ? YaruIconButton(
+                  icon: Icon(YaruIcons.trash),
+                  onPressed: () {
+                    BlocProvider.of<PomodoroBloc>(context)
+                        .add(ChangePlan(3, position));
+                  },
+                )
+              : SizedBox(
+                  width: 5,
+                ),
+          prototype.type == "work"
               ? PopupMenuButton<SubjectData>(
                   onSelected: (selectedItem) {
                     planlist[position].subject = selectedItem;
@@ -67,18 +73,6 @@ class SessionTilePlanning extends StatelessWidget {
                     return PopupMenuItem<SubjectData>(
                         value: item, child: Text(item.name));
                   }).toList(),
-                )
-              : SizedBox(
-                  width: 5,
-                ),
-          prototype.type == "work"
-              ? FilledButton.icon(
-                  label: Text("Delete"),
-                  icon: Icon(YaruIcons.trash),
-                  onPressed: () {
-                    BlocProvider.of<PomodoroBloc>(context)
-                        .add(ChangePlan(3, position));
-                  },
                 )
               : SizedBox(
                   width: 5,

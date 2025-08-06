@@ -34,6 +34,11 @@ final class TimerResumed extends PomodoroTimerEvent {
   const TimerResumed();
 }
 
+final class SetTimeInnit extends PomodoroTimerEvent {
+  const SetTimeInnit();
+
+}
+
 class TimerReset extends PomodoroTimerEvent {
   const TimerReset();
 }

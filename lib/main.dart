@@ -3,6 +3,7 @@ import 'package:focuzd/blocs/blocs.dart';
 import 'package:focuzd/extra_functions/extra_functions.dart';
 import 'package:focuzd/pages/pages.dart';
 import 'package:flutter/material.dart';
+import 'package:focuzd/pages/round_planning_page.dart';
 
 import 'package:yaru/yaru.dart';
 import 'package:window_manager/window_manager.dart';
@@ -15,8 +16,8 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await windowManager.ensureInitialized();
   WindowOptions options = const WindowOptions(
-    size: Size(360, 463),
-    minimumSize: Size(360, 463),
+    size: Size(400, 483),
+    minimumSize: Size(380, 483),
     fullScreen: false,
   );
   await windowManager.waitUntilReadyToShow(options, () async {
@@ -68,7 +69,8 @@ class FocuzdApp extends StatelessWidget {
                 MainPageState() => const MainPage(),
                 SettingsPageState() => const SettingsPage(),
                 HistoryPageState() => const HistoryPage(),
-                PageNavigationInitial() => const Scaffold()
+                PageNavigationInitial() => const Scaffold(),
+                RoundPlanningPageState() => const RoundPlanningPage(),
               };
             }));
       },
