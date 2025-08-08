@@ -273,6 +273,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.1"
+  duration_spinbox:
+    dependency: "direct main"
+    description:
+      name: duration_spinbox
+      sha256: a71e79c419a3a4fc7cbe2829270e12e23a53c9e396e4ddccca502248bdaafe41
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.1.1"
   equatable:
     dependency: "direct main"
     description:

@@ -34,7 +34,7 @@ class RoundPlanningPage extends StatelessWidget {
               ),
             ),
             bottomNavigationBar: BottomAppBar(
-              height: 150,
+              height: 70,
               elevation: 10,
               child: Row(
                     children: [

@@ -1,3 +1,4 @@
+import 'package:duration_spinbox/duration_spinbox.dart';
 import 'package:flutter/material.dart';
 import 'package:focuzd/blocs/blocs.dart';
 import 'package:focuzd/extra_functions/extra_functions.dart';
@@ -11,7 +12,7 @@ import 'package:intl/intl.dart';
 
 class SessionTilePlanning extends StatelessWidget {
   const SessionTilePlanning(
-      this.prototype, this.position, this.planlist, this.subjects);
+      this.prototype, this.position, this.planlist, this.subjects, {super.key});
   final SessionVariablePlanning prototype;
   final List<SessionVariablePlanning> planlist;
   final int position;
@@ -20,7 +21,6 @@ class SessionTilePlanning extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return YaruExpandable(
-      child: Text(""),
       header: Row(
         children: [
           SizedBox(
@@ -79,6 +79,10 @@ class SessionTilePlanning extends StatelessWidget {
                 ),
         ],
       ),
+      child: DurationSpinbox(value: Duration(seconds: prototype.plannedDuration),onChanged: (value) {
+        BlocProvider.of<PomodoroBloc>(context)
+            .add(ChangePlan(5, position, null, value.inSeconds)); 
+      }, ),
     );
   }
 }

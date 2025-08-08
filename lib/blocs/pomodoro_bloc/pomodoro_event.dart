@@ -16,8 +16,9 @@ final class RoundPlan extends PomodoroTimerEvent {
 }
 
 final class ChangePlan extends PomodoroTimerEvent {
-  const ChangePlan(this.actionCode, [this.position, this.subject]);
+  const ChangePlan(this.actionCode, [this.position, this.subject, this.newduration]);
   final int actionCode;
+  final int? newduration;
   final int? position;
   final SubjectData? subject;
 }

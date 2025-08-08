@@ -142,6 +142,9 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
         // delete
       }else if(event.actionCode == 4 ){
         print("just for refreshing time");
+      }else if (event.actionCode == 5) {
+        // change duration
+        newlist[event.position!].plannedDuration = event.newduration;
       }
      
       now = DateTime.now().toLocal();

@@ -151,7 +151,7 @@ class SessionVariablePlanning {
   SessionVariablePlanning(this.type, this.plannedDuration, this.subject,
       {this.expFinishTime});
   final String type;
-  final int plannedDuration;
+  int plannedDuration;
   DateTime? expFinishTime;
   SubjectData? subject;
 }

@@ -17,6 +17,7 @@ class SessionCard extends StatelessWidget {
       var n = await subjectRepo.fetchSubjectByID(id.subject!);
       return n!.name;
     }
+    return null;
   }
 @override
 Widget build(BuildContext context) {

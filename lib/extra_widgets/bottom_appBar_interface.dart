@@ -3,7 +3,6 @@ import 'package:focuzd/blocs/blocs.dart';
 import 'package:focuzd/l10n/app_localizations.dart';
 import 'package:yaru/yaru.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:focuzd/blocs/pomodoro_bloc/pomodoro_bloc.dart';
 import 'package:focuzd/extra_functions/extra_functions.dart';
 
 class BottomAppBarInterface extends StatelessWidget with ExtraFunctions {
