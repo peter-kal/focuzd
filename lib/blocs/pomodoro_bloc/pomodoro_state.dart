@@ -60,6 +60,7 @@ final class TimerRunPause extends PomodoroTimerState {
   const TimerRunPause(
       super.defaultSessionsPerRound,
       this.runTimes,
+      this.showTime,
       this.duration,
       this.selectedDuration,
       this.currentMemorySessionID,
@@ -68,6 +69,7 @@ final class TimerRunPause extends PomodoroTimerState {
       this.type,
       [this.subject]);
   final int runTimes;
+  final int showTime;
   final int duration;
   final int selectedDuration;
   final int currentMemorySessionID;
@@ -84,6 +86,7 @@ final class TimerRunInProgress extends PomodoroTimerState {
   const TimerRunInProgress(
       this.duration,
       this.runTimes,
+      this.showTime,
       this.selectedDuration,
       this.currentMemorySessionID,
       super.defaultSessionsPerRound,
@@ -93,6 +96,7 @@ final class TimerRunInProgress extends PomodoroTimerState {
       [this.subject]);
   final int duration;
   final int runTimes;
+  final int showTime;
   final int selectedDuration;
   final int currentMemorySessionID;
   final int currentRoundID;

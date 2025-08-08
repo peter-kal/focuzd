@@ -11,13 +11,13 @@ class BottomAppBarInterface extends StatelessWidget with ExtraFunctions {
       {super.key,
       required this.leftButton,
       required this.reqRounds,
-      required this.runTimes,
+      required this.showTime,
       required this.isActive,
       required this.isInitial,
       required this.duration});
   final String leftButton;
-  final int runTimes;
   final int reqRounds;
+  final int showTime;
   final bool isActive;
   final bool isInitial;
   final int duration;
@@ -54,7 +54,7 @@ class BottomAppBarInterface extends StatelessWidget with ExtraFunctions {
             child: YaruSection(
                 child: SelectableText(
                     textAlign: TextAlign.center,
-                    "${countingWorkRounds(runTimes)} / $reqRounds"))),
+                    "$showTime / $reqRounds"))),
         Column(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
