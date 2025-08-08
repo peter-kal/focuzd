@@ -55,6 +55,8 @@ class RoundPlanningPage extends StatelessWidget {
                         child: const Text("Start"),
                         onPressed: () {
                           BlocProvider.of<PomodoroBloc>(context)
+                              .add(ChangePlan(4));
+                          BlocProvider.of<PomodoroBloc>(context)
                               .add(StartRound());
                           
                         },

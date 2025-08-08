@@ -41,7 +41,8 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
     emit(TimerInitial(1, workTimeDuration, reqRounds));
     });
   }
-
+  Timer? _planningRefreshTimer;
+  // This timer is used to refresh the planning time in the RoundPlanning state.
   int timesRun = 1;
   final Ticker _ticker;
   final settingsRepo = SettingsRepository(AppDatabase.instance);
@@ -52,9 +53,19 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
   StreamSubscription<int>? _tickerSubscription;
   @override
   Future<void> close() {
+    _planningRefreshTimer?.cancel();
     _tickerSubscription?.cancel();
     return super.close();
   }
+  void _startPlanningRefresh(){
+    _planningRefreshTimer?.cancel();
+    _planningRefreshTimer = Timer.periodic(const Duration(seconds: 5), (_) => add(ChangePlan(4)));
+  }
+  void _cancelPlanningRefresh() {
+    _planningRefreshTimer?.cancel();
+    _planningRefreshTimer = null;
+  }
+  
 
   void _onTimerInit(TimerInit event, Emitter<PomodoroTimerState> emit) async {
     // done for now 17:25 17/05
@@ -91,6 +102,7 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
         planlist,
         nowperthen,
         (nowperthen.difference(now).inSeconds)));
+        _startPlanningRefresh();
   }
 
   void _onChangePlan(ChangePlan event, Emitter<PomodoroTimerState> emit) async {
@@ -107,9 +119,7 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
     var durationOfRound;
     if (state is RoundPlanning) {
       newlist = state.planlist;
-      for (int i = 0; i < newlist.length; i++) {
-        print(newlist[i].plannedDuration);
-      }
+     
       if (event.actionCode == 1) {
         // add a session
         var newlist = state.planlist;
@@ -129,10 +139,10 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
         await newlist.removeAt(pos);
         await newlist.removeAt(pos++);
         // delete
+      }else if(event.actionCode == 4 ){
+        print("just for refreshing time");
       }
-      for (int i = 0; i < newlist.length; i++) {
-        print(newlist[i].plannedDuration);
-      }
+     
       now = DateTime.now().toLocal();
       nowperthen = DateTime.now().toLocal();
       for (int i = 0; i < newlist.length; i++) {
@@ -143,14 +153,14 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
       Duration x = nowperthen.difference(now);
       durationOfRound = x.inSeconds;
     }
-    emit(TimerInitial(0, 0, 0));
+
     emit(RoundPlanning(sessionsperRound, breakDuration, workTimeDuration,
         longBreakDuration, subjects, newlist, nowperthen, durationOfRound));
   }
 
   void _onStart(StartRound event, Emitter<PomodoroTimerState> emit) async {
     final state = this.state;
-
+    _cancelPlanningRefresh();
     if (state is RoundPlanning) {
       await roundRepo.insertRound(RoundVariableCompanion(
         // should change the way time is handled in round plannning but later on
@@ -237,7 +247,7 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
       }
     }
   }
-
+  
   void _onPause(TimerPaused event, Emitter<PomodoroTimerState> emit) {
     final state = this.state;
     if (state is TimerRunInProgress) {
