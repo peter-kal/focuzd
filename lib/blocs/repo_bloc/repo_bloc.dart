@@ -19,7 +19,6 @@ class RepoBloc extends Bloc<RepoEvent, RepoState> {
   final memoryRepo = MemorySessionRepository(AppDatabase.instance);
   void _onUpdateSettingsVariables(
       UpdateSettingVariables event, Emitter<RepoState> emit) async {
-    var has = await settingsRepo.fetchSettingsById(1);
     switch (event.selectedToChange) {
       case 1:
         await settingsRepo.updateSetting(1,
