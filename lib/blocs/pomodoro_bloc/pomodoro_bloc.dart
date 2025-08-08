@@ -247,6 +247,17 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
             state.type,
             state.subject));
       } else {
+        emit(TimerRunInProgress(
+            event.duration,
+            state.runTimes,
+            state.showTime,
+            state.selectedDuration,
+            state.currentMemorySessionID,
+            state.defaultSessionsPerRound,
+            state.currentRoundID,
+            state.sessions,
+            state.type,
+            state.subject));
         add(const NextPomodoroTimer());
       }
     }
@@ -257,12 +268,12 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
     if (state is TimerRunInProgress) {
       _tickerSubscription?.pause();
       emit(TimerRunPause(
-          state.duration,
+          state.defaultSessionsPerRound,
           state.runTimes,
           state.showTime,
+          state.duration,
           state.selectedDuration,
           state.currentMemorySessionID,
-          state.defaultSessionsPerRound,
           state.currentRoundID,
           state.sessions,
           state.type,
@@ -339,7 +350,10 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
             MemorySessionVariableCompanion(
               durationLeft: Value(state.duration),
               finishTime: Value(now),
-              completed: Value(true),
+              actuallyDoneDuration: Value(
+               state.selectedDuration - state.duration, 
+              ),
+              completed: Value(state.duration == 0 ? true : false), // what if it's skipped, is it considered completed? Actually done duration is not added tho it should
             ));
 
         await roundRepo.updateRoundWrite(
@@ -356,7 +370,10 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
             MemorySessionVariableCompanion(
               durationLeft: Value(state.duration),
               finishTime: Value(now),
-              completed: Value(true),
+              completed: Value(state.duration == 0 ? true : false),
+              actuallyDoneDuration: Value(
+               state.selectedDuration - state.duration, 
+              ),
             ));
         var sessionathand = await memorySessionRepo.getTheNextClosest();
         await memorySessionRepo.updateMemorySessionWrite(
@@ -364,7 +381,6 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
             MemorySessionVariableCompanion(
               startingTime: Value(now),
             ));
-        print(state.runTimes);
 
         emit(TimerRunInProgress(
             state.sessions[state.runTimes + 1].plannedDuration,

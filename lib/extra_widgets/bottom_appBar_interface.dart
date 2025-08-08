@@ -75,7 +75,7 @@ class BottomAppBarInterface extends StatelessWidget with ExtraFunctions {
                 color: Theme.of(context).primaryColor,
               ),
               onPressed: () {
-                context.read<PomodoroBloc>().add(const NextPomodoroTimer());
+                BlocProvider.of<PomodoroBloc>(context).add(const NextPomodoroTimer());
               },
             )
           ],
