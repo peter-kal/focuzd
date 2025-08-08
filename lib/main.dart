@@ -16,8 +16,8 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await windowManager.ensureInitialized();
   WindowOptions options = const WindowOptions(
-    size: Size(400, 483),
-    minimumSize: Size(380, 483),
+    size: Size(360, 463),
+    minimumSize: Size(360, 463),
     fullScreen: false,
   );
   await windowManager.waitUntilReadyToShow(options, () async {
