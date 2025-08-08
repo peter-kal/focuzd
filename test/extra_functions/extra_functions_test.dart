@@ -1,7 +1,5 @@
-import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:focuzd/blocs/blocs.dart';
-import 'package:focuzd/data/app_db.dart';
 import 'package:focuzd/extra_functions/extra_functions.dart';
 
 void main() {
@@ -38,11 +36,11 @@ void main() {
     test('test endsOn', () {
       final fixedTime = DateTime(2024, 0, 0, 10, 0, 0, 0, 0);
       final whenTimerRuns = ExtraFunctions()
-          .endsOn(300, TimerRunInProgress(200, 2, 4, 200, 0, 0, [], 'work'), fixedTime);
+          .endsOn(300, TimerRunInProgress(200, 2, 1, 4, 200, 0, 0, [], 'work'), fixedTime);
       final whenInitial =
           ExtraFunctions().endsOn(300, TimerInitial(300, 1, 4), fixedTime);
       final whenPause = ExtraFunctions()
-          .endsOn(300, TimerRunPause(300, 1, 4, 300, 0, 0, [], 'work'), fixedTime);
+          .endsOn(300, TimerRunPause(300, 1,1, 4, 300, 0, 0, [], 'work'), fixedTime);
 
       expect(whenTimerRuns, "10:05");
       expect(whenInitial, "-- : --");
