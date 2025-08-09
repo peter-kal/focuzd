@@ -9,7 +9,7 @@
     "alwaysOnTopOption": "Window Always On Top",
     "alwaysOnTopOptionDescription": "Make the window always be on top of others",
 
-    "playButtonTooltip": "Play",
+    "playButtonTooltip": "Plan",
     "resumeButtonTooltip": "Resume",
     "pauseButtonTooltip": "Pause",
     "resetSessionButtonTooltip": "Reset",
@@ -19,6 +19,13 @@
     "breakTimeLabel": "Break Time",
     "longBreakTimeLabel": "Long Break Time",
     "numberLabelSettings": "integer",
-    "roundsLabelSettings": "Sessions per Round"
+    "roundsLabelSettings": "Sessions per Round",
+
+
+    "roundPlanningTitleBar": "Round Plan",
+    "addSessionButton": "Add Session",
+    "startButtonOnPlanning": "Start"
+
+
 
 }

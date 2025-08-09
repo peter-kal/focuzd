@@ -79,10 +79,28 @@ class SessionTilePlanning extends StatelessWidget {
                 ),
         ],
       ),
-      child: DurationSpinbox(value: Duration(seconds: prototype.plannedDuration),onChanged: (value) {
-        BlocProvider.of<PomodoroBloc>(context)
-            .add(ChangePlan(5, position, null, value.inSeconds)); 
-      }, ),
+      child: Column(
+        children: [
+          Text("Change Duration:"),
+          Padding(
+            padding: const EdgeInsets.all(15.0),
+            child: DurationSpinbox(value: Duration(seconds: prototype.plannedDuration),onChanged: (value) {
+              BlocProvider.of<PomodoroBloc>(context)
+                  .add(ChangePlan(5, position, null, value.inSeconds)); 
+            }, ),
+          ),
+          prototype.type == 'work'
+          ? Column(
+            children: [
+              Text("Attach a Subject:"),
+              
+            ],
+          )
+          
+          : SizedBox.shrink(),
+
+        ],
+      ),
     );
   }
 }

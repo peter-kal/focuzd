@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:focuzd/blocs/blocs.dart';
 import 'package:focuzd/extra_widgets/session_tile_planning.dart';
+import 'package:focuzd/l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
 import 'package:yaru/yaru.dart';
 
@@ -23,7 +24,7 @@ class RoundPlanningPage extends StatelessWidget {
         if (state is RoundPlanning) {
           return Scaffold(
             appBar: YaruWindowTitleBar(
-              title: const Text("Round Plan"),
+              title:  Text(AppLocalizations.of(context)!.roundPlanningTitleBar),
              leading: YaruIconButton(
                 icon:  Icon(Icons.close),
                 onPressed: () {
@@ -34,40 +35,45 @@ class RoundPlanningPage extends StatelessWidget {
               ),
             ),
             bottomNavigationBar: BottomAppBar(
-              height: 70,
+              height: 100,
               elevation: 10,
-              child: Row(
-                    children: [
-                      Text(
-                        DateFormat('HH:mm').format(state.expFinishRoundTime),
-                        style: Theme.of(context).textTheme.bodyMedium,
-                      ),
-                      const SizedBox(height: 8),
-                      FilledButton(
-                        onPressed: () {
-                          BlocProvider.of<PomodoroBloc>(context)
-                              .add(ChangePlan(1));
-                        },
-                        child: const Text("Add Session"),
-                      ),
-                      const SizedBox(height: 8),
-                      ElevatedButton(
-                        child: const Text("Start"),
-                        onPressed: () {
-                          BlocProvider.of<PomodoroBloc>(context)
-                              .add(ChangePlan(4));
-                          BlocProvider.of<PomodoroBloc>(context)
-                              .add(StartRound());
+              child: Column(
+                children: [
+                  Text(
+                            DateFormat('HH:mm').format(state.expFinishRoundTime),
+                            style: Theme.of(context).textTheme.bodyLarge,
+                          ),
+                          SizedBox(height: 10,),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
                           
-                        },
+                          
+                          FilledButton(
+                            onPressed: () {
+                              BlocProvider.of<PomodoroBloc>(context)
+                                  .add(ChangePlan(1));
+                            },
+                            child:  Text(AppLocalizations.of(context)!.addSessionButton),
+                          ),
+                          
+                          ElevatedButton(
+                            child: Text(AppLocalizations.of(context)!.startButtonOnPlanning),
+                            onPressed: () {
+                              BlocProvider.of<PomodoroBloc>(context)
+                                  .add(ChangePlan(4));
+                              BlocProvider.of<PomodoroBloc>(context)
+                                  .add(StartRound());
+                              
+                            },
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
+                ],
+              ),
             ),
-            body: Column(
-              children: [
-                Expanded(
-                  child: ListView.builder(
+            body:  ListView.builder(
+              padding: EdgeInsets.all(10),
                     itemCount: state.planlist.length,
                     itemBuilder: (context, index) {
                       return SessionTilePlanning(
@@ -78,10 +84,7 @@ class RoundPlanningPage extends StatelessWidget {
                       );
                     },
                   ),
-                ),
-                
-              ],
-            ),
+           
           );
         } else {
           return const YaruCircularProgressIndicator();

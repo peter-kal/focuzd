@@ -31,7 +31,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'Make the window always be on top of others';
 
   @override
-  String get playButtonTooltip => 'Play';
+  String get playButtonTooltip => 'Plan';
 
   @override
   String get resumeButtonTooltip => 'Resume';
@@ -59,4 +59,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get roundsLabelSettings => 'Sessions per Round';
+
+  @override
+  String get roundPlanningTitleBar => 'Round Plan';
+
+  @override
+  String get addSessionButton => 'Add Session';
+
+  @override
+  String get startButtonOnPlanning => 'Start';
 }

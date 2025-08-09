@@ -9,7 +9,7 @@
     "alwaysOnTopOption": "Window Always On Top",
     "alwaysOnTopOptionDescription": "Κάνει το παράθυρο να είναι πάνω από άλλα παράθυρα",
 
-    "playButtonTooltip": "Ξεκίνα",
+    "playButtonTooltip": "Σχεδίασε",
     "resumeButtonTooltip": "Συνέχισε",
     "pauseButtonTooltip": "Παύσε",
     "resetSessionButtonTooltip": "Επανάφερε",
@@ -19,6 +19,10 @@
     "breakTimeLabel": "Χρόνος Διάλειμματος",
     "longBreakTimeLabel": "Χρόνος Μεγάλου Διάλειμματος",
     "numberLabelSettings": "Ακέραιος",
-    "roundsLabelSettings": "Sessions ανά Γύρο"
+    "roundsLabelSettings": "Sessions ανά Γύρο",
+
+    "roundPlanningTitleBar": "Σχεδίασε Γύρο",
+    "addSessionButton": "Νέο session",
+    "startButtonOnPlanning": "Έναρξη"
 
 }

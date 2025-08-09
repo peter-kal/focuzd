@@ -143,7 +143,7 @@ abstract class AppLocalizations {
   /// No description provided for @playButtonTooltip.
   ///
   /// In en, this message translates to:
-  /// **'Play'**
+  /// **'Plan'**
   String get playButtonTooltip;
 
   /// No description provided for @resumeButtonTooltip.
@@ -199,6 +199,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Sessions per Round'**
   String get roundsLabelSettings;
+
+  /// No description provided for @roundPlanningTitleBar.
+  ///
+  /// In en, this message translates to:
+  /// **'Round Plan'**
+  String get roundPlanningTitleBar;
+
+  /// No description provided for @addSessionButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Session'**
+  String get addSessionButton;
+
+  /// No description provided for @startButtonOnPlanning.
+  ///
+  /// In en, this message translates to:
+  /// **'Start'**
+  String get startButtonOnPlanning;
 }
 
 class _AppLocalizationsDelegate

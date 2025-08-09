@@ -31,7 +31,7 @@ class AppLocalizationsEl extends AppLocalizations {
       'Κάνει το παράθυρο να είναι πάνω από άλλα παράθυρα';
 
   @override
-  String get playButtonTooltip => 'Ξεκίνα';
+  String get playButtonTooltip => 'Σχεδίασε';
 
   @override
   String get resumeButtonTooltip => 'Συνέχισε';
@@ -59,4 +59,13 @@ class AppLocalizationsEl extends AppLocalizations {
 
   @override
   String get roundsLabelSettings => 'Sessions ανά Γύρο';
+
+  @override
+  String get roundPlanningTitleBar => 'Σχεδίασε Γύρο';
+
+  @override
+  String get addSessionButton => 'Νέο session';
+
+  @override
+  String get startButtonOnPlanning => 'Έναρξη';
 }
