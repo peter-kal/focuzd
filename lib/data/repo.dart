@@ -5,12 +5,17 @@ import 'app_db.dart';
 class SubjectRepository {
   final AppDatabase _db;
   SubjectRepository(this._db);
-
+  // TASK: Write a function that will insert sub-subjects time into the super-subjects, after updating in the Bloc
+  
   Future<SubjectData?> fetchSubjectByID(int id) async {
     return await (_db.select(_db.subject)..where((tbl) => tbl.id.equals(id)))
         .getSingleOrNull();
   }
-
+  Future<void> editSubjectWrite(
+      int id, SubjectCompanion updatedSubject) async {
+    await (_db.update(_db.subject)..where((tbl) => tbl.id.equals(id)))
+        .write(updatedSubject);
+  }
   Future<List<SubjectData>> fetchAllSubjects() async {
     return await _db.select(_db.subject).get();
   }
