@@ -500,11 +500,11 @@ class $MemorySessionVariableTable extends MemorySessionVariable
   late final GeneratedColumn<int> durationLeft = GeneratedColumn<int>(
       'duration_left', aliasedName, true,
       type: DriftSqlType.int, requiredDuringInsert: false);
-  static const VerificationMeta _runTimeMeta =
-      const VerificationMeta('runTime');
+  static const VerificationMeta _roundRunTimeMeta =
+      const VerificationMeta('roundRunTime');
   @override
-  late final GeneratedColumn<int> runTime = GeneratedColumn<int>(
-      'run_time', aliasedName, false,
+  late final GeneratedColumn<int> roundRunTime = GeneratedColumn<int>(
+      'round_run_time', aliasedName, false,
       type: DriftSqlType.int, requiredDuringInsert: true);
   static const VerificationMeta _plannedDurationMeta =
       const VerificationMeta('plannedDuration');
@@ -552,6 +552,15 @@ class $MemorySessionVariableTable extends MemorySessionVariable
       defaultConstraints:
           GeneratedColumn.constraintIsAlways('CHECK ("completed" IN (0, 1))'),
       defaultValue: const Constant(false));
+  static const VerificationMeta _activeMeta = const VerificationMeta('active');
+  @override
+  late final GeneratedColumn<bool> active = GeneratedColumn<bool>(
+      'active', aliasedName, false,
+      type: DriftSqlType.bool,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('CHECK ("active" IN (0, 1))'),
+      defaultValue: const Constant(false));
   static const VerificationMeta _typeMeta = const VerificationMeta('type');
   @override
   late final GeneratedColumn<String> type = GeneratedColumn<String>(
@@ -563,13 +572,18 @@ class $MemorySessionVariableTable extends MemorySessionVariable
   late final GeneratedColumn<int> subject = GeneratedColumn<int>(
       'subject', aliasedName, true,
       type: DriftSqlType.int, requiredDuringInsert: false);
+  static const VerificationMeta _notesMeta = const VerificationMeta('notes');
+  @override
+  late final GeneratedColumn<String> notes = GeneratedColumn<String>(
+      'notes', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
   @override
   List<GeneratedColumn> get $columns => [
         id,
         roundGoal,
         roundId,
         durationLeft,
-        runTime,
+        roundRunTime,
         plannedDuration,
         actuallyDoneDuration,
         expStartingTime,
@@ -577,8 +591,10 @@ class $MemorySessionVariableTable extends MemorySessionVariable
         expFinishTime,
         finishTime,
         completed,
+        active,
         type,
-        subject
+        subject,
+        notes
       ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -612,11 +628,13 @@ class $MemorySessionVariableTable extends MemorySessionVariable
           durationLeft.isAcceptableOrUnknown(
               data['duration_left']!, _durationLeftMeta));
     }
-    if (data.containsKey('run_time')) {
-      context.handle(_runTimeMeta,
-          runTime.isAcceptableOrUnknown(data['run_time']!, _runTimeMeta));
+    if (data.containsKey('round_run_time')) {
+      context.handle(
+          _roundRunTimeMeta,
+          roundRunTime.isAcceptableOrUnknown(
+              data['round_run_time']!, _roundRunTimeMeta));
     } else if (isInserting) {
-      context.missing(_runTimeMeta);
+      context.missing(_roundRunTimeMeta);
     }
     if (data.containsKey('planned_duration')) {
       context.handle(
@@ -662,6 +680,10 @@ class $MemorySessionVariableTable extends MemorySessionVariable
       context.handle(_completedMeta,
           completed.isAcceptableOrUnknown(data['completed']!, _completedMeta));
     }
+    if (data.containsKey('active')) {
+      context.handle(_activeMeta,
+          active.isAcceptableOrUnknown(data['active']!, _activeMeta));
+    }
     if (data.containsKey('type')) {
       context.handle(
           _typeMeta, type.isAcceptableOrUnknown(data['type']!, _typeMeta));
@@ -671,6 +693,10 @@ class $MemorySessionVariableTable extends MemorySessionVariable
     if (data.containsKey('subject')) {
       context.handle(_subjectMeta,
           subject.isAcceptableOrUnknown(data['subject']!, _subjectMeta));
+    }
+    if (data.containsKey('notes')) {
+      context.handle(
+          _notesMeta, notes.isAcceptableOrUnknown(data['notes']!, _notesMeta));
     }
     return context;
   }
@@ -690,8 +716,8 @@ class $MemorySessionVariableTable extends MemorySessionVariable
           .read(DriftSqlType.int, data['${effectivePrefix}round_id'])!,
       durationLeft: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}duration_left']),
-      runTime: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}run_time'])!,
+      roundRunTime: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}round_run_time'])!,
       plannedDuration: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}planned_duration'])!,
       actuallyDoneDuration: attachedDatabase.typeMapping.read(
@@ -706,10 +732,14 @@ class $MemorySessionVariableTable extends MemorySessionVariable
           .read(DriftSqlType.dateTime, data['${effectivePrefix}finish_time']),
       completed: attachedDatabase.typeMapping
           .read(DriftSqlType.bool, data['${effectivePrefix}completed']),
+      active: attachedDatabase.typeMapping
+          .read(DriftSqlType.bool, data['${effectivePrefix}active'])!,
       type: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}type'])!,
       subject: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}subject']),
+      notes: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}notes']),
     );
   }
 
@@ -725,7 +755,7 @@ class MemorySessionVariableData extends DataClass
   final int roundGoal;
   final int roundId;
   final int? durationLeft;
-  final int runTime;
+  final int roundRunTime;
   final int plannedDuration;
   final int? actuallyDoneDuration;
   final DateTime expStartingTime;
@@ -733,14 +763,16 @@ class MemorySessionVariableData extends DataClass
   final DateTime? expFinishTime;
   final DateTime? finishTime;
   final bool? completed;
+  final bool active;
   final String type;
   final int? subject;
+  final String? notes;
   const MemorySessionVariableData(
       {required this.id,
       required this.roundGoal,
       required this.roundId,
       this.durationLeft,
-      required this.runTime,
+      required this.roundRunTime,
       required this.plannedDuration,
       this.actuallyDoneDuration,
       required this.expStartingTime,
@@ -748,8 +780,10 @@ class MemorySessionVariableData extends DataClass
       this.expFinishTime,
       this.finishTime,
       this.completed,
+      required this.active,
       required this.type,
-      this.subject});
+      this.subject,
+      this.notes});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -759,7 +793,7 @@ class MemorySessionVariableData extends DataClass
     if (!nullToAbsent || durationLeft != null) {
       map['duration_left'] = Variable<int>(durationLeft);
     }
-    map['run_time'] = Variable<int>(runTime);
+    map['round_run_time'] = Variable<int>(roundRunTime);
     map['planned_duration'] = Variable<int>(plannedDuration);
     if (!nullToAbsent || actuallyDoneDuration != null) {
       map['actually_done_duration'] = Variable<int>(actuallyDoneDuration);
@@ -777,9 +811,13 @@ class MemorySessionVariableData extends DataClass
     if (!nullToAbsent || completed != null) {
       map['completed'] = Variable<bool>(completed);
     }
+    map['active'] = Variable<bool>(active);
     map['type'] = Variable<String>(type);
     if (!nullToAbsent || subject != null) {
       map['subject'] = Variable<int>(subject);
+    }
+    if (!nullToAbsent || notes != null) {
+      map['notes'] = Variable<String>(notes);
     }
     return map;
   }
@@ -792,7 +830,7 @@ class MemorySessionVariableData extends DataClass
       durationLeft: durationLeft == null && nullToAbsent
           ? const Value.absent()
           : Value(durationLeft),
-      runTime: Value(runTime),
+      roundRunTime: Value(roundRunTime),
       plannedDuration: Value(plannedDuration),
       actuallyDoneDuration: actuallyDoneDuration == null && nullToAbsent
           ? const Value.absent()
@@ -810,10 +848,13 @@ class MemorySessionVariableData extends DataClass
       completed: completed == null && nullToAbsent
           ? const Value.absent()
           : Value(completed),
+      active: Value(active),
       type: Value(type),
       subject: subject == null && nullToAbsent
           ? const Value.absent()
           : Value(subject),
+      notes:
+          notes == null && nullToAbsent ? const Value.absent() : Value(notes),
     );
   }
 
@@ -825,7 +866,7 @@ class MemorySessionVariableData extends DataClass
       roundGoal: serializer.fromJson<int>(json['roundGoal']),
       roundId: serializer.fromJson<int>(json['roundId']),
       durationLeft: serializer.fromJson<int?>(json['durationLeft']),
-      runTime: serializer.fromJson<int>(json['runTime']),
+      roundRunTime: serializer.fromJson<int>(json['roundRunTime']),
       plannedDuration: serializer.fromJson<int>(json['plannedDuration']),
       actuallyDoneDuration:
           serializer.fromJson<int?>(json['actuallyDoneDuration']),
@@ -834,8 +875,10 @@ class MemorySessionVariableData extends DataClass
       expFinishTime: serializer.fromJson<DateTime?>(json['expFinishTime']),
       finishTime: serializer.fromJson<DateTime?>(json['finishTime']),
       completed: serializer.fromJson<bool?>(json['completed']),
+      active: serializer.fromJson<bool>(json['active']),
       type: serializer.fromJson<String>(json['type']),
       subject: serializer.fromJson<int?>(json['subject']),
+      notes: serializer.fromJson<String?>(json['notes']),
     );
   }
   @override
@@ -846,7 +889,7 @@ class MemorySessionVariableData extends DataClass
       'roundGoal': serializer.toJson<int>(roundGoal),
       'roundId': serializer.toJson<int>(roundId),
       'durationLeft': serializer.toJson<int?>(durationLeft),
-      'runTime': serializer.toJson<int>(runTime),
+      'roundRunTime': serializer.toJson<int>(roundRunTime),
       'plannedDuration': serializer.toJson<int>(plannedDuration),
       'actuallyDoneDuration': serializer.toJson<int?>(actuallyDoneDuration),
       'expStartingTime': serializer.toJson<DateTime>(expStartingTime),
@@ -854,8 +897,10 @@ class MemorySessionVariableData extends DataClass
       'expFinishTime': serializer.toJson<DateTime?>(expFinishTime),
       'finishTime': serializer.toJson<DateTime?>(finishTime),
       'completed': serializer.toJson<bool?>(completed),
+      'active': serializer.toJson<bool>(active),
       'type': serializer.toJson<String>(type),
       'subject': serializer.toJson<int?>(subject),
+      'notes': serializer.toJson<String?>(notes),
     };
   }
 
@@ -864,7 +909,7 @@ class MemorySessionVariableData extends DataClass
           int? roundGoal,
           int? roundId,
           Value<int?> durationLeft = const Value.absent(),
-          int? runTime,
+          int? roundRunTime,
           int? plannedDuration,
           Value<int?> actuallyDoneDuration = const Value.absent(),
           DateTime? expStartingTime,
@@ -872,15 +917,17 @@ class MemorySessionVariableData extends DataClass
           Value<DateTime?> expFinishTime = const Value.absent(),
           Value<DateTime?> finishTime = const Value.absent(),
           Value<bool?> completed = const Value.absent(),
+          bool? active,
           String? type,
-          Value<int?> subject = const Value.absent()}) =>
+          Value<int?> subject = const Value.absent(),
+          Value<String?> notes = const Value.absent()}) =>
       MemorySessionVariableData(
         id: id ?? this.id,
         roundGoal: roundGoal ?? this.roundGoal,
         roundId: roundId ?? this.roundId,
         durationLeft:
             durationLeft.present ? durationLeft.value : this.durationLeft,
-        runTime: runTime ?? this.runTime,
+        roundRunTime: roundRunTime ?? this.roundRunTime,
         plannedDuration: plannedDuration ?? this.plannedDuration,
         actuallyDoneDuration: actuallyDoneDuration.present
             ? actuallyDoneDuration.value
@@ -892,8 +939,10 @@ class MemorySessionVariableData extends DataClass
             expFinishTime.present ? expFinishTime.value : this.expFinishTime,
         finishTime: finishTime.present ? finishTime.value : this.finishTime,
         completed: completed.present ? completed.value : this.completed,
+        active: active ?? this.active,
         type: type ?? this.type,
         subject: subject.present ? subject.value : this.subject,
+        notes: notes.present ? notes.value : this.notes,
       );
   MemorySessionVariableData copyWithCompanion(
       MemorySessionVariableCompanion data) {
@@ -904,7 +953,9 @@ class MemorySessionVariableData extends DataClass
       durationLeft: data.durationLeft.present
           ? data.durationLeft.value
           : this.durationLeft,
-      runTime: data.runTime.present ? data.runTime.value : this.runTime,
+      roundRunTime: data.roundRunTime.present
+          ? data.roundRunTime.value
+          : this.roundRunTime,
       plannedDuration: data.plannedDuration.present
           ? data.plannedDuration.value
           : this.plannedDuration,
@@ -923,8 +974,10 @@ class MemorySessionVariableData extends DataClass
       finishTime:
           data.finishTime.present ? data.finishTime.value : this.finishTime,
       completed: data.completed.present ? data.completed.value : this.completed,
+      active: data.active.present ? data.active.value : this.active,
       type: data.type.present ? data.type.value : this.type,
       subject: data.subject.present ? data.subject.value : this.subject,
+      notes: data.notes.present ? data.notes.value : this.notes,
     );
   }
 
@@ -935,7 +988,7 @@ class MemorySessionVariableData extends DataClass
           ..write('roundGoal: $roundGoal, ')
           ..write('roundId: $roundId, ')
           ..write('durationLeft: $durationLeft, ')
-          ..write('runTime: $runTime, ')
+          ..write('roundRunTime: $roundRunTime, ')
           ..write('plannedDuration: $plannedDuration, ')
           ..write('actuallyDoneDuration: $actuallyDoneDuration, ')
           ..write('expStartingTime: $expStartingTime, ')
@@ -943,8 +996,10 @@ class MemorySessionVariableData extends DataClass
           ..write('expFinishTime: $expFinishTime, ')
           ..write('finishTime: $finishTime, ')
           ..write('completed: $completed, ')
+          ..write('active: $active, ')
           ..write('type: $type, ')
-          ..write('subject: $subject')
+          ..write('subject: $subject, ')
+          ..write('notes: $notes')
           ..write(')'))
         .toString();
   }
@@ -955,7 +1010,7 @@ class MemorySessionVariableData extends DataClass
       roundGoal,
       roundId,
       durationLeft,
-      runTime,
+      roundRunTime,
       plannedDuration,
       actuallyDoneDuration,
       expStartingTime,
@@ -963,8 +1018,10 @@ class MemorySessionVariableData extends DataClass
       expFinishTime,
       finishTime,
       completed,
+      active,
       type,
-      subject);
+      subject,
+      notes);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -973,7 +1030,7 @@ class MemorySessionVariableData extends DataClass
           other.roundGoal == this.roundGoal &&
           other.roundId == this.roundId &&
           other.durationLeft == this.durationLeft &&
-          other.runTime == this.runTime &&
+          other.roundRunTime == this.roundRunTime &&
           other.plannedDuration == this.plannedDuration &&
           other.actuallyDoneDuration == this.actuallyDoneDuration &&
           other.expStartingTime == this.expStartingTime &&
@@ -981,8 +1038,10 @@ class MemorySessionVariableData extends DataClass
           other.expFinishTime == this.expFinishTime &&
           other.finishTime == this.finishTime &&
           other.completed == this.completed &&
+          other.active == this.active &&
           other.type == this.type &&
-          other.subject == this.subject);
+          other.subject == this.subject &&
+          other.notes == this.notes);
 }
 
 class MemorySessionVariableCompanion
@@ -991,7 +1050,7 @@ class MemorySessionVariableCompanion
   final Value<int> roundGoal;
   final Value<int> roundId;
   final Value<int?> durationLeft;
-  final Value<int> runTime;
+  final Value<int> roundRunTime;
   final Value<int> plannedDuration;
   final Value<int?> actuallyDoneDuration;
   final Value<DateTime> expStartingTime;
@@ -999,14 +1058,16 @@ class MemorySessionVariableCompanion
   final Value<DateTime?> expFinishTime;
   final Value<DateTime?> finishTime;
   final Value<bool?> completed;
+  final Value<bool> active;
   final Value<String> type;
   final Value<int?> subject;
+  final Value<String?> notes;
   const MemorySessionVariableCompanion({
     this.id = const Value.absent(),
     this.roundGoal = const Value.absent(),
     this.roundId = const Value.absent(),
     this.durationLeft = const Value.absent(),
-    this.runTime = const Value.absent(),
+    this.roundRunTime = const Value.absent(),
     this.plannedDuration = const Value.absent(),
     this.actuallyDoneDuration = const Value.absent(),
     this.expStartingTime = const Value.absent(),
@@ -1014,15 +1075,17 @@ class MemorySessionVariableCompanion
     this.expFinishTime = const Value.absent(),
     this.finishTime = const Value.absent(),
     this.completed = const Value.absent(),
+    this.active = const Value.absent(),
     this.type = const Value.absent(),
     this.subject = const Value.absent(),
+    this.notes = const Value.absent(),
   });
   MemorySessionVariableCompanion.insert({
     this.id = const Value.absent(),
     required int roundGoal,
     required int roundId,
     this.durationLeft = const Value.absent(),
-    required int runTime,
+    required int roundRunTime,
     required int plannedDuration,
     this.actuallyDoneDuration = const Value.absent(),
     required DateTime expStartingTime,
@@ -1030,11 +1093,13 @@ class MemorySessionVariableCompanion
     this.expFinishTime = const Value.absent(),
     this.finishTime = const Value.absent(),
     this.completed = const Value.absent(),
+    this.active = const Value.absent(),
     required String type,
     this.subject = const Value.absent(),
+    this.notes = const Value.absent(),
   })  : roundGoal = Value(roundGoal),
         roundId = Value(roundId),
-        runTime = Value(runTime),
+        roundRunTime = Value(roundRunTime),
         plannedDuration = Value(plannedDuration),
         expStartingTime = Value(expStartingTime),
         type = Value(type);
@@ -1043,7 +1108,7 @@ class MemorySessionVariableCompanion
     Expression<int>? roundGoal,
     Expression<int>? roundId,
     Expression<int>? durationLeft,
-    Expression<int>? runTime,
+    Expression<int>? roundRunTime,
     Expression<int>? plannedDuration,
     Expression<int>? actuallyDoneDuration,
     Expression<DateTime>? expStartingTime,
@@ -1051,15 +1116,17 @@ class MemorySessionVariableCompanion
     Expression<DateTime>? expFinishTime,
     Expression<DateTime>? finishTime,
     Expression<bool>? completed,
+    Expression<bool>? active,
     Expression<String>? type,
     Expression<int>? subject,
+    Expression<String>? notes,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (roundGoal != null) 'round_goal': roundGoal,
       if (roundId != null) 'round_id': roundId,
       if (durationLeft != null) 'duration_left': durationLeft,
-      if (runTime != null) 'run_time': runTime,
+      if (roundRunTime != null) 'round_run_time': roundRunTime,
       if (plannedDuration != null) 'planned_duration': plannedDuration,
       if (actuallyDoneDuration != null)
         'actually_done_duration': actuallyDoneDuration,
@@ -1068,8 +1135,10 @@ class MemorySessionVariableCompanion
       if (expFinishTime != null) 'exp_finish_time': expFinishTime,
       if (finishTime != null) 'finish_time': finishTime,
       if (completed != null) 'completed': completed,
+      if (active != null) 'active': active,
       if (type != null) 'type': type,
       if (subject != null) 'subject': subject,
+      if (notes != null) 'notes': notes,
     });
   }
 
@@ -1078,7 +1147,7 @@ class MemorySessionVariableCompanion
       Value<int>? roundGoal,
       Value<int>? roundId,
       Value<int?>? durationLeft,
-      Value<int>? runTime,
+      Value<int>? roundRunTime,
       Value<int>? plannedDuration,
       Value<int?>? actuallyDoneDuration,
       Value<DateTime>? expStartingTime,
@@ -1086,14 +1155,16 @@ class MemorySessionVariableCompanion
       Value<DateTime?>? expFinishTime,
       Value<DateTime?>? finishTime,
       Value<bool?>? completed,
+      Value<bool>? active,
       Value<String>? type,
-      Value<int?>? subject}) {
+      Value<int?>? subject,
+      Value<String?>? notes}) {
     return MemorySessionVariableCompanion(
       id: id ?? this.id,
       roundGoal: roundGoal ?? this.roundGoal,
       roundId: roundId ?? this.roundId,
       durationLeft: durationLeft ?? this.durationLeft,
-      runTime: runTime ?? this.runTime,
+      roundRunTime: roundRunTime ?? this.roundRunTime,
       plannedDuration: plannedDuration ?? this.plannedDuration,
       actuallyDoneDuration: actuallyDoneDuration ?? this.actuallyDoneDuration,
       expStartingTime: expStartingTime ?? this.expStartingTime,
@@ -1101,8 +1172,10 @@ class MemorySessionVariableCompanion
       expFinishTime: expFinishTime ?? this.expFinishTime,
       finishTime: finishTime ?? this.finishTime,
       completed: completed ?? this.completed,
+      active: active ?? this.active,
       type: type ?? this.type,
       subject: subject ?? this.subject,
+      notes: notes ?? this.notes,
     );
   }
 
@@ -1121,8 +1194,8 @@ class MemorySessionVariableCompanion
     if (durationLeft.present) {
       map['duration_left'] = Variable<int>(durationLeft.value);
     }
-    if (runTime.present) {
-      map['run_time'] = Variable<int>(runTime.value);
+    if (roundRunTime.present) {
+      map['round_run_time'] = Variable<int>(roundRunTime.value);
     }
     if (plannedDuration.present) {
       map['planned_duration'] = Variable<int>(plannedDuration.value);
@@ -1145,11 +1218,17 @@ class MemorySessionVariableCompanion
     if (completed.present) {
       map['completed'] = Variable<bool>(completed.value);
     }
+    if (active.present) {
+      map['active'] = Variable<bool>(active.value);
+    }
     if (type.present) {
       map['type'] = Variable<String>(type.value);
     }
     if (subject.present) {
       map['subject'] = Variable<int>(subject.value);
+    }
+    if (notes.present) {
+      map['notes'] = Variable<String>(notes.value);
     }
     return map;
   }
@@ -1161,7 +1240,7 @@ class MemorySessionVariableCompanion
           ..write('roundGoal: $roundGoal, ')
           ..write('roundId: $roundId, ')
           ..write('durationLeft: $durationLeft, ')
-          ..write('runTime: $runTime, ')
+          ..write('roundRunTime: $roundRunTime, ')
           ..write('plannedDuration: $plannedDuration, ')
           ..write('actuallyDoneDuration: $actuallyDoneDuration, ')
           ..write('expStartingTime: $expStartingTime, ')
@@ -1169,8 +1248,10 @@ class MemorySessionVariableCompanion
           ..write('expFinishTime: $expFinishTime, ')
           ..write('finishTime: $finishTime, ')
           ..write('completed: $completed, ')
+          ..write('active: $active, ')
           ..write('type: $type, ')
-          ..write('subject: $subject')
+          ..write('subject: $subject, ')
+          ..write('notes: $notes')
           ..write(')'))
         .toString();
   }
@@ -1195,7 +1276,7 @@ class $RoundVariableTable extends RoundVariable
       const VerificationMeta('completed');
   @override
   late final GeneratedColumn<bool> completed = GeneratedColumn<bool>(
-      'completed', aliasedName, true,
+      'completed', aliasedName, false,
       type: DriftSqlType.bool,
       requiredDuringInsert: false,
       defaultConstraints:
@@ -1327,7 +1408,7 @@ class $RoundVariableTable extends RoundVariable
       id: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
       completed: attachedDatabase.typeMapping
-          .read(DriftSqlType.bool, data['${effectivePrefix}completed']),
+          .read(DriftSqlType.bool, data['${effectivePrefix}completed'])!,
       propableCause: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}propable_cause']),
       plannedDuration: attachedDatabase.typeMapping
@@ -1354,7 +1435,7 @@ class $RoundVariableTable extends RoundVariable
 class RoundVariableData extends DataClass
     implements Insertable<RoundVariableData> {
   final int id;
-  final bool? completed;
+  final bool completed;
   final String? propableCause;
   final int plannedDuration;
   final int? actuallyDoneDuration;
@@ -1364,7 +1445,7 @@ class RoundVariableData extends DataClass
   final String? notes;
   const RoundVariableData(
       {required this.id,
-      this.completed,
+      required this.completed,
       this.propableCause,
       required this.plannedDuration,
       this.actuallyDoneDuration,
@@ -1376,9 +1457,7 @@ class RoundVariableData extends DataClass
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
-    if (!nullToAbsent || completed != null) {
-      map['completed'] = Variable<bool>(completed);
-    }
+    map['completed'] = Variable<bool>(completed);
     if (!nullToAbsent || propableCause != null) {
       map['propable_cause'] = Variable<String>(propableCause);
     }
@@ -1402,9 +1481,7 @@ class RoundVariableData extends DataClass
   RoundVariableCompanion toCompanion(bool nullToAbsent) {
     return RoundVariableCompanion(
       id: Value(id),
-      completed: completed == null && nullToAbsent
-          ? const Value.absent()
-          : Value(completed),
+      completed: Value(completed),
       propableCause: propableCause == null && nullToAbsent
           ? const Value.absent()
           : Value(propableCause),
@@ -1429,7 +1506,7 @@ class RoundVariableData extends DataClass
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return RoundVariableData(
       id: serializer.fromJson<int>(json['id']),
-      completed: serializer.fromJson<bool?>(json['completed']),
+      completed: serializer.fromJson<bool>(json['completed']),
       propableCause: serializer.fromJson<String?>(json['propableCause']),
       plannedDuration: serializer.fromJson<int>(json['plannedDuration']),
       actuallyDoneDuration:
@@ -1445,7 +1522,7 @@ class RoundVariableData extends DataClass
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
-      'completed': serializer.toJson<bool?>(completed),
+      'completed': serializer.toJson<bool>(completed),
       'propableCause': serializer.toJson<String?>(propableCause),
       'plannedDuration': serializer.toJson<int>(plannedDuration),
       'actuallyDoneDuration': serializer.toJson<int?>(actuallyDoneDuration),
@@ -1458,7 +1535,7 @@ class RoundVariableData extends DataClass
 
   RoundVariableData copyWith(
           {int? id,
-          Value<bool?> completed = const Value.absent(),
+          bool? completed,
           Value<String?> propableCause = const Value.absent(),
           int? plannedDuration,
           Value<int?> actuallyDoneDuration = const Value.absent(),
@@ -1468,7 +1545,7 @@ class RoundVariableData extends DataClass
           Value<String?> notes = const Value.absent()}) =>
       RoundVariableData(
         id: id ?? this.id,
-        completed: completed.present ? completed.value : this.completed,
+        completed: completed ?? this.completed,
         propableCause:
             propableCause.present ? propableCause.value : this.propableCause,
         plannedDuration: plannedDuration ?? this.plannedDuration,
@@ -1542,7 +1619,7 @@ class RoundVariableData extends DataClass
 
 class RoundVariableCompanion extends UpdateCompanion<RoundVariableData> {
   final Value<int> id;
-  final Value<bool?> completed;
+  final Value<bool> completed;
   final Value<String?> propableCause;
   final Value<int> plannedDuration;
   final Value<int?> actuallyDoneDuration;
@@ -1600,7 +1677,7 @@ class RoundVariableCompanion extends UpdateCompanion<RoundVariableData> {
 
   RoundVariableCompanion copyWith(
       {Value<int>? id,
-      Value<bool?>? completed,
+      Value<bool>? completed,
       Value<String?>? propableCause,
       Value<int>? plannedDuration,
       Value<int?>? actuallyDoneDuration,
@@ -1727,9 +1804,25 @@ class $SubjectTable extends Subject with TableInfo<$SubjectTable, SubjectData> {
   late final GeneratedColumn<String> notes = GeneratedColumn<String>(
       'notes', aliasedName, true,
       type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _totalTimeSpentMeta =
+      const VerificationMeta('totalTimeSpent');
   @override
-  List<GeneratedColumn> get $columns =>
-      [id, name, subjectid, createdAt, updatedAt, lastWorkedOnSessionID, notes];
+  late final GeneratedColumn<int> totalTimeSpent = GeneratedColumn<int>(
+      'total_time_spent', aliasedName, false,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(0));
+  @override
+  List<GeneratedColumn> get $columns => [
+        id,
+        name,
+        subjectid,
+        createdAt,
+        updatedAt,
+        lastWorkedOnSessionID,
+        notes,
+        totalTimeSpent
+      ];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -1775,6 +1868,12 @@ class $SubjectTable extends Subject with TableInfo<$SubjectTable, SubjectData> {
       context.handle(
           _notesMeta, notes.isAcceptableOrUnknown(data['notes']!, _notesMeta));
     }
+    if (data.containsKey('total_time_spent')) {
+      context.handle(
+          _totalTimeSpentMeta,
+          totalTimeSpent.isAcceptableOrUnknown(
+              data['total_time_spent']!, _totalTimeSpentMeta));
+    }
     return context;
   }
 
@@ -1798,6 +1897,8 @@ class $SubjectTable extends Subject with TableInfo<$SubjectTable, SubjectData> {
           data['${effectivePrefix}last_worked_on_session_i_d']),
       notes: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}notes']),
+      totalTimeSpent: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}total_time_spent'])!,
     );
   }
 
@@ -1815,6 +1916,7 @@ class SubjectData extends DataClass implements Insertable<SubjectData> {
   final DateTime updatedAt;
   final int? lastWorkedOnSessionID;
   final String? notes;
+  final int totalTimeSpent;
   const SubjectData(
       {required this.id,
       required this.name,
@@ -1822,7 +1924,8 @@ class SubjectData extends DataClass implements Insertable<SubjectData> {
       required this.createdAt,
       required this.updatedAt,
       this.lastWorkedOnSessionID,
-      this.notes});
+      this.notes,
+      required this.totalTimeSpent});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -1839,6 +1942,7 @@ class SubjectData extends DataClass implements Insertable<SubjectData> {
     if (!nullToAbsent || notes != null) {
       map['notes'] = Variable<String>(notes);
     }
+    map['total_time_spent'] = Variable<int>(totalTimeSpent);
     return map;
   }
 
@@ -1856,6 +1960,7 @@ class SubjectData extends DataClass implements Insertable<SubjectData> {
           : Value(lastWorkedOnSessionID),
       notes:
           notes == null && nullToAbsent ? const Value.absent() : Value(notes),
+      totalTimeSpent: Value(totalTimeSpent),
     );
   }
 
@@ -1871,6 +1976,7 @@ class SubjectData extends DataClass implements Insertable<SubjectData> {
       lastWorkedOnSessionID:
           serializer.fromJson<int?>(json['lastWorkedOnSessionID']),
       notes: serializer.fromJson<String?>(json['notes']),
+      totalTimeSpent: serializer.fromJson<int>(json['totalTimeSpent']),
     );
   }
   @override
@@ -1884,6 +1990,7 @@ class SubjectData extends DataClass implements Insertable<SubjectData> {
       'updatedAt': serializer.toJson<DateTime>(updatedAt),
       'lastWorkedOnSessionID': serializer.toJson<int?>(lastWorkedOnSessionID),
       'notes': serializer.toJson<String?>(notes),
+      'totalTimeSpent': serializer.toJson<int>(totalTimeSpent),
     };
   }
 
@@ -1894,7 +2001,8 @@ class SubjectData extends DataClass implements Insertable<SubjectData> {
           DateTime? createdAt,
           DateTime? updatedAt,
           Value<int?> lastWorkedOnSessionID = const Value.absent(),
-          Value<String?> notes = const Value.absent()}) =>
+          Value<String?> notes = const Value.absent(),
+          int? totalTimeSpent}) =>
       SubjectData(
         id: id ?? this.id,
         name: name ?? this.name,
@@ -1905,6 +2013,7 @@ class SubjectData extends DataClass implements Insertable<SubjectData> {
             ? lastWorkedOnSessionID.value
             : this.lastWorkedOnSessionID,
         notes: notes.present ? notes.value : this.notes,
+        totalTimeSpent: totalTimeSpent ?? this.totalTimeSpent,
       );
   SubjectData copyWithCompanion(SubjectCompanion data) {
     return SubjectData(
@@ -1917,6 +2026,9 @@ class SubjectData extends DataClass implements Insertable<SubjectData> {
           ? data.lastWorkedOnSessionID.value
           : this.lastWorkedOnSessionID,
       notes: data.notes.present ? data.notes.value : this.notes,
+      totalTimeSpent: data.totalTimeSpent.present
+          ? data.totalTimeSpent.value
+          : this.totalTimeSpent,
     );
   }
 
@@ -1929,14 +2041,15 @@ class SubjectData extends DataClass implements Insertable<SubjectData> {
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
           ..write('lastWorkedOnSessionID: $lastWorkedOnSessionID, ')
-          ..write('notes: $notes')
+          ..write('notes: $notes, ')
+          ..write('totalTimeSpent: $totalTimeSpent')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(
-      id, name, subjectid, createdAt, updatedAt, lastWorkedOnSessionID, notes);
+  int get hashCode => Object.hash(id, name, subjectid, createdAt, updatedAt,
+      lastWorkedOnSessionID, notes, totalTimeSpent);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -1947,7 +2060,8 @@ class SubjectData extends DataClass implements Insertable<SubjectData> {
           other.createdAt == this.createdAt &&
           other.updatedAt == this.updatedAt &&
           other.lastWorkedOnSessionID == this.lastWorkedOnSessionID &&
-          other.notes == this.notes);
+          other.notes == this.notes &&
+          other.totalTimeSpent == this.totalTimeSpent);
 }
 
 class SubjectCompanion extends UpdateCompanion<SubjectData> {
@@ -1958,6 +2072,7 @@ class SubjectCompanion extends UpdateCompanion<SubjectData> {
   final Value<DateTime> updatedAt;
   final Value<int?> lastWorkedOnSessionID;
   final Value<String?> notes;
+  final Value<int> totalTimeSpent;
   const SubjectCompanion({
     this.id = const Value.absent(),
     this.name = const Value.absent(),
@@ -1966,6 +2081,7 @@ class SubjectCompanion extends UpdateCompanion<SubjectData> {
     this.updatedAt = const Value.absent(),
     this.lastWorkedOnSessionID = const Value.absent(),
     this.notes = const Value.absent(),
+    this.totalTimeSpent = const Value.absent(),
   });
   SubjectCompanion.insert({
     this.id = const Value.absent(),
@@ -1975,6 +2091,7 @@ class SubjectCompanion extends UpdateCompanion<SubjectData> {
     required DateTime updatedAt,
     this.lastWorkedOnSessionID = const Value.absent(),
     this.notes = const Value.absent(),
+    this.totalTimeSpent = const Value.absent(),
   })  : name = Value(name),
         createdAt = Value(createdAt),
         updatedAt = Value(updatedAt);
@@ -1986,6 +2103,7 @@ class SubjectCompanion extends UpdateCompanion<SubjectData> {
     Expression<DateTime>? updatedAt,
     Expression<int>? lastWorkedOnSessionID,
     Expression<String>? notes,
+    Expression<int>? totalTimeSpent,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -1996,6 +2114,7 @@ class SubjectCompanion extends UpdateCompanion<SubjectData> {
       if (lastWorkedOnSessionID != null)
         'last_worked_on_session_i_d': lastWorkedOnSessionID,
       if (notes != null) 'notes': notes,
+      if (totalTimeSpent != null) 'total_time_spent': totalTimeSpent,
     });
   }
 
@@ -2006,7 +2125,8 @@ class SubjectCompanion extends UpdateCompanion<SubjectData> {
       Value<DateTime>? createdAt,
       Value<DateTime>? updatedAt,
       Value<int?>? lastWorkedOnSessionID,
-      Value<String?>? notes}) {
+      Value<String?>? notes,
+      Value<int>? totalTimeSpent}) {
     return SubjectCompanion(
       id: id ?? this.id,
       name: name ?? this.name,
@@ -2016,6 +2136,7 @@ class SubjectCompanion extends UpdateCompanion<SubjectData> {
       lastWorkedOnSessionID:
           lastWorkedOnSessionID ?? this.lastWorkedOnSessionID,
       notes: notes ?? this.notes,
+      totalTimeSpent: totalTimeSpent ?? this.totalTimeSpent,
     );
   }
 
@@ -2044,6 +2165,9 @@ class SubjectCompanion extends UpdateCompanion<SubjectData> {
     if (notes.present) {
       map['notes'] = Variable<String>(notes.value);
     }
+    if (totalTimeSpent.present) {
+      map['total_time_spent'] = Variable<int>(totalTimeSpent.value);
+    }
     return map;
   }
 
@@ -2056,7 +2180,8 @@ class SubjectCompanion extends UpdateCompanion<SubjectData> {
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
           ..write('lastWorkedOnSessionID: $lastWorkedOnSessionID, ')
-          ..write('notes: $notes')
+          ..write('notes: $notes, ')
+          ..write('totalTimeSpent: $totalTimeSpent')
           ..write(')'))
         .toString();
   }
@@ -2297,7 +2422,7 @@ typedef $$MemorySessionVariableTableCreateCompanionBuilder
   required int roundGoal,
   required int roundId,
   Value<int?> durationLeft,
-  required int runTime,
+  required int roundRunTime,
   required int plannedDuration,
   Value<int?> actuallyDoneDuration,
   required DateTime expStartingTime,
@@ -2305,8 +2430,10 @@ typedef $$MemorySessionVariableTableCreateCompanionBuilder
   Value<DateTime?> expFinishTime,
   Value<DateTime?> finishTime,
   Value<bool?> completed,
+  Value<bool> active,
   required String type,
   Value<int?> subject,
+  Value<String?> notes,
 });
 typedef $$MemorySessionVariableTableUpdateCompanionBuilder
     = MemorySessionVariableCompanion Function({
@@ -2314,7 +2441,7 @@ typedef $$MemorySessionVariableTableUpdateCompanionBuilder
   Value<int> roundGoal,
   Value<int> roundId,
   Value<int?> durationLeft,
-  Value<int> runTime,
+  Value<int> roundRunTime,
   Value<int> plannedDuration,
   Value<int?> actuallyDoneDuration,
   Value<DateTime> expStartingTime,
@@ -2322,8 +2449,10 @@ typedef $$MemorySessionVariableTableUpdateCompanionBuilder
   Value<DateTime?> expFinishTime,
   Value<DateTime?> finishTime,
   Value<bool?> completed,
+  Value<bool> active,
   Value<String> type,
   Value<int?> subject,
+  Value<String?> notes,
 });
 
 final class $$MemorySessionVariableTableReferences extends BaseReferences<
@@ -2368,8 +2497,8 @@ class $$MemorySessionVariableTableFilterComposer
   ColumnFilters<int> get durationLeft => $composableBuilder(
       column: $table.durationLeft, builder: (column) => ColumnFilters(column));
 
-  ColumnFilters<int> get runTime => $composableBuilder(
-      column: $table.runTime, builder: (column) => ColumnFilters(column));
+  ColumnFilters<int> get roundRunTime => $composableBuilder(
+      column: $table.roundRunTime, builder: (column) => ColumnFilters(column));
 
   ColumnFilters<int> get plannedDuration => $composableBuilder(
       column: $table.plannedDuration,
@@ -2395,11 +2524,17 @@ class $$MemorySessionVariableTableFilterComposer
   ColumnFilters<bool> get completed => $composableBuilder(
       column: $table.completed, builder: (column) => ColumnFilters(column));
 
+  ColumnFilters<bool> get active => $composableBuilder(
+      column: $table.active, builder: (column) => ColumnFilters(column));
+
   ColumnFilters<String> get type => $composableBuilder(
       column: $table.type, builder: (column) => ColumnFilters(column));
 
   ColumnFilters<int> get subject => $composableBuilder(
       column: $table.subject, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get notes => $composableBuilder(
+      column: $table.notes, builder: (column) => ColumnFilters(column));
 
   Expression<bool> subjectRefs(
       Expression<bool> Function($$SubjectTableFilterComposer f) f) {
@@ -2445,8 +2580,9 @@ class $$MemorySessionVariableTableOrderingComposer
       column: $table.durationLeft,
       builder: (column) => ColumnOrderings(column));
 
-  ColumnOrderings<int> get runTime => $composableBuilder(
-      column: $table.runTime, builder: (column) => ColumnOrderings(column));
+  ColumnOrderings<int> get roundRunTime => $composableBuilder(
+      column: $table.roundRunTime,
+      builder: (column) => ColumnOrderings(column));
 
   ColumnOrderings<int> get plannedDuration => $composableBuilder(
       column: $table.plannedDuration,
@@ -2474,11 +2610,17 @@ class $$MemorySessionVariableTableOrderingComposer
   ColumnOrderings<bool> get completed => $composableBuilder(
       column: $table.completed, builder: (column) => ColumnOrderings(column));
 
+  ColumnOrderings<bool> get active => $composableBuilder(
+      column: $table.active, builder: (column) => ColumnOrderings(column));
+
   ColumnOrderings<String> get type => $composableBuilder(
       column: $table.type, builder: (column) => ColumnOrderings(column));
 
   ColumnOrderings<int> get subject => $composableBuilder(
       column: $table.subject, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get notes => $composableBuilder(
+      column: $table.notes, builder: (column) => ColumnOrderings(column));
 }
 
 class $$MemorySessionVariableTableAnnotationComposer
@@ -2502,8 +2644,8 @@ class $$MemorySessionVariableTableAnnotationComposer
   GeneratedColumn<int> get durationLeft => $composableBuilder(
       column: $table.durationLeft, builder: (column) => column);
 
-  GeneratedColumn<int> get runTime =>
-      $composableBuilder(column: $table.runTime, builder: (column) => column);
+  GeneratedColumn<int> get roundRunTime => $composableBuilder(
+      column: $table.roundRunTime, builder: (column) => column);
 
   GeneratedColumn<int> get plannedDuration => $composableBuilder(
       column: $table.plannedDuration, builder: (column) => column);
@@ -2526,11 +2668,17 @@ class $$MemorySessionVariableTableAnnotationComposer
   GeneratedColumn<bool> get completed =>
       $composableBuilder(column: $table.completed, builder: (column) => column);
 
+  GeneratedColumn<bool> get active =>
+      $composableBuilder(column: $table.active, builder: (column) => column);
+
   GeneratedColumn<String> get type =>
       $composableBuilder(column: $table.type, builder: (column) => column);
 
   GeneratedColumn<int> get subject =>
       $composableBuilder(column: $table.subject, builder: (column) => column);
+
+  GeneratedColumn<String> get notes =>
+      $composableBuilder(column: $table.notes, builder: (column) => column);
 
   Expression<T> subjectRefs<T extends Object>(
       Expression<T> Function($$SubjectTableAnnotationComposer a) f) {
@@ -2585,7 +2733,7 @@ class $$MemorySessionVariableTableTableManager extends RootTableManager<
             Value<int> roundGoal = const Value.absent(),
             Value<int> roundId = const Value.absent(),
             Value<int?> durationLeft = const Value.absent(),
-            Value<int> runTime = const Value.absent(),
+            Value<int> roundRunTime = const Value.absent(),
             Value<int> plannedDuration = const Value.absent(),
             Value<int?> actuallyDoneDuration = const Value.absent(),
             Value<DateTime> expStartingTime = const Value.absent(),
@@ -2593,15 +2741,17 @@ class $$MemorySessionVariableTableTableManager extends RootTableManager<
             Value<DateTime?> expFinishTime = const Value.absent(),
             Value<DateTime?> finishTime = const Value.absent(),
             Value<bool?> completed = const Value.absent(),
+            Value<bool> active = const Value.absent(),
             Value<String> type = const Value.absent(),
             Value<int?> subject = const Value.absent(),
+            Value<String?> notes = const Value.absent(),
           }) =>
               MemorySessionVariableCompanion(
             id: id,
             roundGoal: roundGoal,
             roundId: roundId,
             durationLeft: durationLeft,
-            runTime: runTime,
+            roundRunTime: roundRunTime,
             plannedDuration: plannedDuration,
             actuallyDoneDuration: actuallyDoneDuration,
             expStartingTime: expStartingTime,
@@ -2609,15 +2759,17 @@ class $$MemorySessionVariableTableTableManager extends RootTableManager<
             expFinishTime: expFinishTime,
             finishTime: finishTime,
             completed: completed,
+            active: active,
             type: type,
             subject: subject,
+            notes: notes,
           ),
           createCompanionCallback: ({
             Value<int> id = const Value.absent(),
             required int roundGoal,
             required int roundId,
             Value<int?> durationLeft = const Value.absent(),
-            required int runTime,
+            required int roundRunTime,
             required int plannedDuration,
             Value<int?> actuallyDoneDuration = const Value.absent(),
             required DateTime expStartingTime,
@@ -2625,15 +2777,17 @@ class $$MemorySessionVariableTableTableManager extends RootTableManager<
             Value<DateTime?> expFinishTime = const Value.absent(),
             Value<DateTime?> finishTime = const Value.absent(),
             Value<bool?> completed = const Value.absent(),
+            Value<bool> active = const Value.absent(),
             required String type,
             Value<int?> subject = const Value.absent(),
+            Value<String?> notes = const Value.absent(),
           }) =>
               MemorySessionVariableCompanion.insert(
             id: id,
             roundGoal: roundGoal,
             roundId: roundId,
             durationLeft: durationLeft,
-            runTime: runTime,
+            roundRunTime: roundRunTime,
             plannedDuration: plannedDuration,
             actuallyDoneDuration: actuallyDoneDuration,
             expStartingTime: expStartingTime,
@@ -2641,8 +2795,10 @@ class $$MemorySessionVariableTableTableManager extends RootTableManager<
             expFinishTime: expFinishTime,
             finishTime: finishTime,
             completed: completed,
+            active: active,
             type: type,
             subject: subject,
+            notes: notes,
           ),
           withReferenceMapper: (p0) => p0
               .map((e) => (
@@ -2694,7 +2850,7 @@ typedef $$MemorySessionVariableTableProcessedTableManager
 typedef $$RoundVariableTableCreateCompanionBuilder = RoundVariableCompanion
     Function({
   Value<int> id,
-  Value<bool?> completed,
+  Value<bool> completed,
   Value<String?> propableCause,
   required int plannedDuration,
   Value<int?> actuallyDoneDuration,
@@ -2706,7 +2862,7 @@ typedef $$RoundVariableTableCreateCompanionBuilder = RoundVariableCompanion
 typedef $$RoundVariableTableUpdateCompanionBuilder = RoundVariableCompanion
     Function({
   Value<int> id,
-  Value<bool?> completed,
+  Value<bool> completed,
   Value<String?> propableCause,
   Value<int> plannedDuration,
   Value<int?> actuallyDoneDuration,
@@ -2861,7 +3017,7 @@ class $$RoundVariableTableTableManager extends RootTableManager<
               $$RoundVariableTableAnnotationComposer($db: db, $table: table),
           updateCompanionCallback: ({
             Value<int> id = const Value.absent(),
-            Value<bool?> completed = const Value.absent(),
+            Value<bool> completed = const Value.absent(),
             Value<String?> propableCause = const Value.absent(),
             Value<int> plannedDuration = const Value.absent(),
             Value<int?> actuallyDoneDuration = const Value.absent(),
@@ -2883,7 +3039,7 @@ class $$RoundVariableTableTableManager extends RootTableManager<
           ),
           createCompanionCallback: ({
             Value<int> id = const Value.absent(),
-            Value<bool?> completed = const Value.absent(),
+            Value<bool> completed = const Value.absent(),
             Value<String?> propableCause = const Value.absent(),
             required int plannedDuration,
             Value<int?> actuallyDoneDuration = const Value.absent(),
@@ -2933,6 +3089,7 @@ typedef $$SubjectTableCreateCompanionBuilder = SubjectCompanion Function({
   required DateTime updatedAt,
   Value<int?> lastWorkedOnSessionID,
   Value<String?> notes,
+  Value<int> totalTimeSpent,
 });
 typedef $$SubjectTableUpdateCompanionBuilder = SubjectCompanion Function({
   Value<int> id,
@@ -2942,6 +3099,7 @@ typedef $$SubjectTableUpdateCompanionBuilder = SubjectCompanion Function({
   Value<DateTime> updatedAt,
   Value<int?> lastWorkedOnSessionID,
   Value<String?> notes,
+  Value<int> totalTimeSpent,
 });
 
 final class $$SubjectTableReferences
@@ -2994,6 +3152,10 @@ class $$SubjectTableFilterComposer
   ColumnFilters<String> get notes => $composableBuilder(
       column: $table.notes, builder: (column) => ColumnFilters(column));
 
+  ColumnFilters<int> get totalTimeSpent => $composableBuilder(
+      column: $table.totalTimeSpent,
+      builder: (column) => ColumnFilters(column));
+
   $$MemorySessionVariableTableFilterComposer get lastWorkedOnSessionID {
     final $$MemorySessionVariableTableFilterComposer composer =
         $composerBuilder(
@@ -3043,6 +3205,10 @@ class $$SubjectTableOrderingComposer
   ColumnOrderings<String> get notes => $composableBuilder(
       column: $table.notes, builder: (column) => ColumnOrderings(column));
 
+  ColumnOrderings<int> get totalTimeSpent => $composableBuilder(
+      column: $table.totalTimeSpent,
+      builder: (column) => ColumnOrderings(column));
+
   $$MemorySessionVariableTableOrderingComposer get lastWorkedOnSessionID {
     final $$MemorySessionVariableTableOrderingComposer composer =
         $composerBuilder(
@@ -3091,6 +3257,9 @@ class $$SubjectTableAnnotationComposer
 
   GeneratedColumn<String> get notes =>
       $composableBuilder(column: $table.notes, builder: (column) => column);
+
+  GeneratedColumn<int> get totalTimeSpent => $composableBuilder(
+      column: $table.totalTimeSpent, builder: (column) => column);
 
   $$MemorySessionVariableTableAnnotationComposer get lastWorkedOnSessionID {
     final $$MemorySessionVariableTableAnnotationComposer composer =
@@ -3144,6 +3313,7 @@ class $$SubjectTableTableManager extends RootTableManager<
             Value<DateTime> updatedAt = const Value.absent(),
             Value<int?> lastWorkedOnSessionID = const Value.absent(),
             Value<String?> notes = const Value.absent(),
+            Value<int> totalTimeSpent = const Value.absent(),
           }) =>
               SubjectCompanion(
             id: id,
@@ -3153,6 +3323,7 @@ class $$SubjectTableTableManager extends RootTableManager<
             updatedAt: updatedAt,
             lastWorkedOnSessionID: lastWorkedOnSessionID,
             notes: notes,
+            totalTimeSpent: totalTimeSpent,
           ),
           createCompanionCallback: ({
             Value<int> id = const Value.absent(),
@@ -3162,6 +3333,7 @@ class $$SubjectTableTableManager extends RootTableManager<
             required DateTime updatedAt,
             Value<int?> lastWorkedOnSessionID = const Value.absent(),
             Value<String?> notes = const Value.absent(),
+            Value<int> totalTimeSpent = const Value.absent(),
           }) =>
               SubjectCompanion.insert(
             id: id,
@@ -3171,6 +3343,7 @@ class $$SubjectTableTableManager extends RootTableManager<
             updatedAt: updatedAt,
             lastWorkedOnSessionID: lastWorkedOnSessionID,
             notes: notes,
+            totalTimeSpent: totalTimeSpent,
           ),
           withReferenceMapper: (p0) => p0
               .map((e) =>

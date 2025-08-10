@@ -67,6 +67,8 @@ final class TimerRunPause extends PomodoroTimerState {
       this.currentRoundID,
       this.sessions,
       this.type,
+      this.roundDuration,
+      this.actualRoundDuration,
       [this.subject]);
   final int runTimes;
   final int showTime;
@@ -77,6 +79,8 @@ final class TimerRunPause extends PomodoroTimerState {
   final List<SessionVariablePlanning> sessions;
   final String type;
   final SubjectData? subject;
+  final int roundDuration;
+  final int actualRoundDuration;
   @override
   String toString() =>
       'TimerRunPause { duration: $duration , workTimes: $runTimes}';
@@ -93,6 +97,8 @@ final class TimerRunInProgress extends PomodoroTimerState {
       this.currentRoundID,
       this.sessions,
       this.type,
+      this.roundDuration,
+      this.actualRoundDuration,
       [this.subject]);
   final int duration;
   final int runTimes;
@@ -103,6 +109,8 @@ final class TimerRunInProgress extends PomodoroTimerState {
   final List<SessionVariablePlanning> sessions;
   final SubjectData? subject;
   final String type;
+  final int roundDuration;
+  final int actualRoundDuration;
   @override
   List<Object> get props => [
         duration,
@@ -113,6 +121,8 @@ final class TimerRunInProgress extends PomodoroTimerState {
         currentRoundID,
         sessions,
         type,
+        roundDuration,
+        actualRoundDuration,
         [subject],
       ];
   @override

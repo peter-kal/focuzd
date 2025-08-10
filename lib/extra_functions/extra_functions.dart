@@ -39,7 +39,8 @@ mixin class ExtraFunctions {
         type: type,
         roundGoal: list.length ~/ 2,
         roundId: roundID,
-        runTime: i++,
+        roundRunTime: i++,
+        active: false,
         plannedDuration: list[i].plannedDuration,
         subject: list[i].subject!.id,
         expStartingTime: list[i]
@@ -50,7 +51,7 @@ mixin class ExtraFunctions {
           type: Value(type),
           roundGoal: Value(list.length ~/ 2),
           roundId: Value(roundID),
-          runTime: Value(i++),
+          roundRunTime: Value(i++),
           plannedDuration: Value(list[i].plannedDuration),
           subject: Value(list[i].subject!.id),
           expStartingTime: Value(

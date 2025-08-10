@@ -4,6 +4,7 @@ import 'package:focuzd/blocs/blocs.dart';
 import 'package:focuzd/extra_functions/extra_functions.dart';
 import 'package:focuzd/extra_widgets/bottom_appBar_interface.dart';
 import 'package:focuzd/extra_widgets/countdown_interface.dart';
+import 'package:focuzd/extra_widgets/roundProgressBar.dart';
 
 
 import 'package:yaru/yaru.dart';
@@ -133,7 +134,9 @@ class _MainPageState extends State<MainPage> with ExtraFunctions {
                             hoursStr: hoursString(state.duration),
                             selectedDuration: state.selectedDuration,
                             duration: state.duration,
-                          ))
+                          )),
+
+                      SizedBox(width:240, child: RoundProgressBar(progress: (state.actualRoundDuration + ( state.selectedDuration - state.duration ))/state.roundDuration, sessionNumber: 2, subjectName: state.subject?.name,))
                     ])),
             TimerRunPause() => SizedBox(
                 width: double.infinity,
