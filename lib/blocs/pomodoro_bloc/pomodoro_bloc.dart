@@ -383,12 +383,36 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
               completed: Value(true),
               finishTime: Value(now),
             ));
+        if(state.subject != null){
+          var sub = await subjectRepo.fetchSubjectByID(state.subject!.id);
+          int? totalTimeSpent = sub?.totalTimeSpent;
+          await subjectRepo.editSubjectWrite(
+            state.subject!.id,
+            SubjectCompanion(
+              updatedAt: Value(now),
+              lastWorkedOnSessionID: Value(state.currentMemorySessionID),
+              totalTimeSpent: Value(totalTimeSpent != null ? totalTimeSpent + (state.selectedDuration - state.duration) : (state.selectedDuration - state.duration)),
+            ),
+          );
+        }
         add(TimerInit());
 
       } else if ((state.runTimes + 1) < state.sessions.length) {
         int actuallyDoneSession = state.selectedDuration - state.duration;
         var roundid = await roundRepo.getCurrentRound();
         int? actuallyDoneRound = roundid!.actuallyDoneDuration;
+        if(state.subject != null){
+          var sub = await subjectRepo.fetchSubjectByID(state.subject!.id);
+          int? totalTimeSpent = sub?.totalTimeSpent;
+          await subjectRepo.editSubjectWrite(
+            state.subject!.id,
+            SubjectCompanion(
+              updatedAt: Value(now),
+              lastWorkedOnSessionID: Value(state.currentMemorySessionID),
+              totalTimeSpent: Value(totalTimeSpent != null ? totalTimeSpent + actuallyDoneSession : actuallyDoneSession),
+            ),
+          );
+        }
         await memorySessionRepo.updateMemorySessionWrite(
             state.currentMemorySessionID,
             MemorySessionVariableCompanion(
