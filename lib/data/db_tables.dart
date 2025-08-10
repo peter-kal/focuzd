@@ -63,4 +63,6 @@ class Subject extends Table {
       integer().nullable().references(MemorySessionVariable, #id)();
   TextColumn get notes =>
       text().nullable()(); // can also be the sum of session's notes
+  IntColumn get totalTimeSpent =>
+      integer().withDefault(const Constant(0))(); // total time spent on the subject
 }
