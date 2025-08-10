@@ -217,6 +217,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Start'**
   String get startButtonOnPlanning;
+
+  /// No description provided for @changeDurationLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Change Duration'**
+  String get changeDurationLabel;
+
+  /// No description provided for @selectSubjectLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a Subject'**
+  String get selectSubjectLabel;
+
+  /// No description provided for @deleteSessionTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Session'**
+  String get deleteSessionTooltip;
 }
 
 class _AppLocalizationsDelegate

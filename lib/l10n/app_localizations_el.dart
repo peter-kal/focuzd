@@ -68,4 +68,13 @@ class AppLocalizationsEl extends AppLocalizations {
 
   @override
   String get startButtonOnPlanning => 'Έναρξη';
+
+  @override
+  String get changeDurationLabel => 'Άλλαξε Διάρκεια';
+
+  @override
+  String get selectSubjectLabel => 'Επίλεξε Θέμα';
+
+  @override
+  String get deleteSessionTooltip => 'Διαγραφή Session';
 }

@@ -24,7 +24,10 @@
 
     "roundPlanningTitleBar": "Round Plan",
     "addSessionButton": "Add Session",
-    "startButtonOnPlanning": "Start"
+    "startButtonOnPlanning": "Start",
+    "changeDurationLabel": "Change Duration",
+    "selectSubjectLabel": "Select a Subject",
+    "deleteSessionTooltip": "Delete Session"
 
 
 

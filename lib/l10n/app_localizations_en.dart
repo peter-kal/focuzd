@@ -68,4 +68,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get startButtonOnPlanning => 'Start';
+
+  @override
+  String get changeDurationLabel => 'Change Duration';
+
+  @override
+  String get selectSubjectLabel => 'Select a Subject';
+
+  @override
+  String get deleteSessionTooltip => 'Delete Session';
 }

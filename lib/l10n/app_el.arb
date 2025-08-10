@@ -23,6 +23,9 @@
 
     "roundPlanningTitleBar": "Σχεδίασε Γύρο",
     "addSessionButton": "Νέο session",
-    "startButtonOnPlanning": "Έναρξη"
+    "startButtonOnPlanning": "Έναρξη",
+    "changeDurationLabel": "Άλλαξε Διάρκεια",
+    "selectSubjectLabel": "Επίλεξε Θέμα",
+    "deleteSessionTooltip": "Διαγραφή Session"
 
 }
