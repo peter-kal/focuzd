@@ -135,8 +135,7 @@ class _MainPageState extends State<MainPage> with ExtraFunctions {
                             selectedDuration: state.selectedDuration,
                             duration: state.duration,
                           )),
-
-                      SizedBox(width:240, child: RoundProgressBar(progress: (state.actualRoundDuration + ( state.selectedDuration - state.duration ))/state.roundDuration, sessionNumber: 2, subjectName: state.subject?.name,))
+                      SizedBox(width:240, child: RoundProgressBar(progress: (state.actualRoundDuration + ( state.selectedDuration - state.duration ))/state.roundDuration, sessionNumber: 2, subjectName: state.subject?.name,type: state.type,))
                     ])),
             TimerRunPause() => SizedBox(
                 width: double.infinity,
