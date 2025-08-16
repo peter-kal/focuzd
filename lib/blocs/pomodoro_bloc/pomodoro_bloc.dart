@@ -36,20 +36,19 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
       // This event is not used in the current implementation
       // but can be used to set initial time if needed.
       final stored = await settingsRepo.fetchSettingsById(1);
-    final workTimeDuration = stored!.selectedWorkDurationStored * 60;
-    final reqRounds = stored.requestedNumberOfSessions;
-    emit(TimerInitial(1, workTimeDuration, reqRounds));
+      final workTimeDuration = stored!.selectedWorkDurationStored * 60;
+      final reqRounds = stored.requestedNumberOfSessions;
+      emit(TimerInitial(1, workTimeDuration, reqRounds));
     });
   }
   Timer? _planningRefreshTimer;
   // This timer is used to refresh the planning time in the RoundPlanning state.
-  int timesRun = 1;
   final Ticker _ticker;
   final settingsRepo = SettingsRepository(AppDatabase.instance);
   final memorySessionRepo = MemorySessionRepository(AppDatabase.instance);
   final subjectRepo = SubjectRepository(AppDatabase.instance);
   final roundRepo = RoundRepository(AppDatabase.instance);
-  var client;
+  NotificationsClient client;
   StreamSubscription<int>? _tickerSubscription;
   @override
   Future<void> close() {
@@ -57,15 +56,17 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
     _tickerSubscription?.cancel();
     return super.close();
   }
-  void _startPlanningRefresh(){
+
+  void _startPlanningRefresh() {
     _planningRefreshTimer?.cancel();
-    _planningRefreshTimer = Timer.periodic(const Duration(seconds: 5), (_) => add(ChangePlan(4)));
+    _planningRefreshTimer =
+        Timer.periodic(const Duration(seconds: 3), (_) => add(ChangePlan(4)));
   }
+
   void _cancelPlanningRefresh() {
     _planningRefreshTimer?.cancel();
     _planningRefreshTimer = null;
   }
-  
 
   void _onTimerInit(TimerInit event, Emitter<PomodoroTimerState> emit) async {
     // done for now 17:25 17/05
@@ -81,10 +82,10 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
     final subjects = await subjectRepo.fetchAllSubjects();
     final workTimeDuration = stored!.selectedWorkDurationStored;
     final breakDuration = stored.selectedBreakDurationStored;
-    final LongBreakDuration = stored.selectedLongBreakDurationStored;
-    final SessionsperRound = stored.requestedNumberOfSessions;
+    final longBreakDuration = stored.selectedLongBreakDurationStored;
+    final sessionsPerRound = stored.requestedNumberOfSessions;
     List<SessionVariablePlanning> planlist = ExtraFunctions().getList(
-        SessionsperRound, LongBreakDuration, breakDuration, workTimeDuration);
+        sessionsPerRound, longBreakDuration, breakDuration, workTimeDuration);
 
     var now = DateTime.now().toLocal();
     var nowperthen = DateTime.now().toLocal();
@@ -95,15 +96,15 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
     }
 
     emit(RoundPlanning(
-        SessionsperRound,
+        sessionsPerRound,
         breakDuration,
         workTimeDuration,
-        LongBreakDuration,
+        longBreakDuration,
         subjects,
         planlist,
         nowperthen,
         (nowperthen.difference(now).inSeconds)));
-        _startPlanningRefresh();
+    _startPlanningRefresh();
   }
 
   void _onChangePlan(ChangePlan event, Emitter<PomodoroTimerState> emit) async {
@@ -114,13 +115,12 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
     final longBreakDuration = stored.selectedLongBreakDurationStored;
     final sessionsperRound = stored.requestedNumberOfSessions;
     final state = this.state;
-    var newlist;
-    var nowperthen;
-    var now;
-    var durationOfRound;
+    int durationOfRound = 0;
+    DateTime nowPerThen = DateTime.now();
+    List<SessionVariablePlanning> newlist = [];
     if (state is RoundPlanning) {
       newlist = state.planlist;
-     
+
       if (event.actionCode == 1) {
         // add a session
         var newlist = state.planlist;
@@ -137,29 +137,29 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
         // change subject
       } else if (event.actionCode == 3) {
         int pos = event.position!;
-        await newlist.removeAt(pos);
-        await newlist.removeAt(pos++);
+        newlist.removeAt(pos);
+        newlist.removeAt(pos++);
         // delete
-      }else if(event.actionCode == 4 ){
-        print("just for refreshing time");
-      }else if (event.actionCode == 5) {
+      } else if (event.actionCode == 4) {
+        //just for refreshing time
+      } else if (event.actionCode == 5) {
         // change duration
         newlist[event.position!].plannedDuration = event.newduration!;
       }
-     
-      now = DateTime.now().toLocal();
-      nowperthen = DateTime.now().toLocal();
+
+      DateTime now = DateTime.now();
+      nowPerThen = DateTime.now();
       for (int i = 0; i < newlist.length; i++) {
-        nowperthen =
-            nowperthen.add(Duration(seconds: newlist[i].plannedDuration));
-        newlist[i].expFinishTime = nowperthen;
+        nowPerThen =
+            nowPerThen.add(Duration(seconds: newlist[i].plannedDuration));
+        newlist[i].expFinishTime = nowPerThen;
       }
-      Duration x = nowperthen.difference(now);
+      Duration x = nowPerThen.difference(now);
       durationOfRound = x.inSeconds;
     }
 
     emit(RoundPlanning(sessionsperRound, breakDuration, workTimeDuration,
-        longBreakDuration, subjects, newlist, nowperthen, durationOfRound));
+        longBreakDuration, subjects, newlist, nowPerThen, durationOfRound));
   }
 
   void _onStart(StartRound event, Emitter<PomodoroTimerState> emit) async {
@@ -209,21 +209,21 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
       var memoryid = await memorySessionRepo.getTheNextClosest();
       await memorySessionRepo.updateMemorySessionWrite(memoryid!.id,
           MemorySessionVariableCompanion(startingTime: Value(DateTime.now())));
-      
+
       emit(TimerRunInProgress(
-          state.planlist.first.plannedDuration,
-          0,
-          1,
-          state.planlist.first.plannedDuration,
-          memoryid!.id,
-          state.planlist.length ~/ 2,
-          roundid!.id,
-          state.planlist,
-          state.planlist.first.type,
-          roundid.plannedDuration,
-          0,
-          state.planlist.first.subject,
-          ));
+        state.planlist.first.plannedDuration,
+        0,
+        1,
+        state.planlist.first.plannedDuration,
+        memoryid!.id,
+        state.planlist.length ~/ 2,
+        roundid!.id,
+        state.planlist,
+        state.planlist.first.type,
+        roundid.plannedDuration,
+        0,
+        state.planlist.first.subject,
+      ));
       _tickerSubscription?.cancel();
       if (Platform.isLinux) {
         client = NotificationsClient();
@@ -240,7 +240,7 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
     // to be taken care of later on
     final state = this.state;
     if (state is TimerRunInProgress) {
-      if (event.duration > 0) { 
+      if (event.duration > 0) {
         emit(TimerRunInProgress(
             event.duration,
             state.runTimes,
@@ -252,7 +252,7 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
             state.sessions,
             state.type,
             state.roundDuration,
-            state.actualRoundDuration ,
+            state.actualRoundDuration,
             state.subject));
       } else {
         emit(TimerRunInProgress(
@@ -272,7 +272,7 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
       }
     }
   }
-  
+
   void _onPause(TimerPaused event, Emitter<PomodoroTimerState> emit) {
     final state = this.state;
     if (state is TimerRunInProgress) {
@@ -313,11 +313,12 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
     }
   }
 
-  void _onReset(TimerReset event, Emitter<PomodoroTimerState> emit) async { // Foundamentally wrong, it only emits TimerInitial, while it should just reload the session in TimerRunInProgress
+  void _onReset(TimerReset event, Emitter<PomodoroTimerState> emit) async {
+    // Foundamentally wrong, it only emits TimerInitial, while it should just reload the session in TimerRunInProgress
     _tickerSubscription?.cancel();
-    
+
     final stored = await settingsRepo.fetchSettingsById(1);
-    
+
     final workTimeDuration = stored!.selectedWorkDurationStored * 60;
     final now = DateTime.now();
     final startTime = await memorySessionRepo.getCurrentSession();
@@ -336,8 +337,8 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
       }
       emit(TimerInitial(
           state.runTimes, workTimeDuration, state.defaultSessionsPerRound));
-    } else if (state is TimerInitial){
-     add(TimerInit());
+    } else if (state is TimerInitial) {
+      add(TimerInit());
     } else if (state is TimerRunPause) {
       if (startTime != null) {
         memorySessionRepo.updateMemorySessionWrite(
@@ -354,36 +355,40 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
     }
   }
 
-  void _onNextPomodoro(
+  Future<void> _onNextPomodoro(
       NextPomodoroTimer event, Emitter<PomodoroTimerState> emit) async {
-          _tickerSubscription?.cancel();
+    _tickerSubscription?.cancel();
     final now = DateTime.now();
     final state = this.state;
     if (state is TimerRunInProgress) {
       if ((state.runTimes + 1) >= state.sessions.length) {
         // TASK: End the round
 
-        
         await memorySessionRepo.updateMemorySessionWrite(
             state.currentMemorySessionID,
             MemorySessionVariableCompanion(
               durationLeft: Value(state.duration),
               finishTime: Value(now),
               actuallyDoneDuration: Value(
-               state.selectedDuration - state.duration, 
+                state.selectedDuration - state.duration,
               ),
-              completed: Value(state.duration == 0 ? true : false), // what if it's skipped, is it considered completed? Actually done duration is not added tho it should
+              completed: Value(state.duration == 0
+                  ? true
+                  : false), // what if it's skipped, is it considered completed? Actually done duration is not added tho it should
             ));
         var roundid = await roundRepo.getCurrentRound();
         int? actuallydoneduration = roundid!.actuallyDoneDuration;
         await roundRepo.updateRoundWrite(
             state.currentRoundID,
             RoundVariableCompanion(
-              actuallyDoneDuration: Value(actuallydoneduration != null ? actuallydoneduration + (state.selectedDuration - state.duration) : (state.selectedDuration - state.duration)),
+              actuallyDoneDuration: Value(actuallydoneduration != null
+                  ? actuallydoneduration +
+                      (state.selectedDuration - state.duration)
+                  : (state.selectedDuration - state.duration)),
               completed: Value(true),
               finishTime: Value(now),
             ));
-        if(state.subject != null){
+        if (state.subject != null) {
           var sub = await subjectRepo.fetchSubjectByID(state.subject!.id);
           int? totalTimeSpent = sub?.totalTimeSpent;
           await subjectRepo.editSubjectWrite(
@@ -391,17 +396,18 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
             SubjectCompanion(
               updatedAt: Value(now),
               lastWorkedOnSessionID: Value(state.currentMemorySessionID),
-              totalTimeSpent: Value(totalTimeSpent != null ? totalTimeSpent + (state.selectedDuration - state.duration) : (state.selectedDuration - state.duration)),
+              totalTimeSpent: Value(totalTimeSpent != null
+                  ? totalTimeSpent + (state.selectedDuration - state.duration)
+                  : (state.selectedDuration - state.duration)),
             ),
           );
         }
         add(TimerInit());
-
       } else if ((state.runTimes + 1) < state.sessions.length) {
         int actuallyDoneSession = state.selectedDuration - state.duration;
         var roundid = await roundRepo.getCurrentRound();
         int? actuallyDoneRound = roundid!.actuallyDoneDuration;
-        if(state.subject != null){
+        if (state.subject != null) {
           var sub = await subjectRepo.fetchSubjectByID(state.subject!.id);
           int? totalTimeSpent = sub?.totalTimeSpent;
           await subjectRepo.editSubjectWrite(
@@ -409,7 +415,9 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
             SubjectCompanion(
               updatedAt: Value(now),
               lastWorkedOnSessionID: Value(state.currentMemorySessionID),
-              totalTimeSpent: Value(totalTimeSpent != null ? totalTimeSpent + actuallyDoneSession : actuallyDoneSession),
+              totalTimeSpent: Value(totalTimeSpent != null
+                  ? totalTimeSpent + actuallyDoneSession
+                  : actuallyDoneSession),
             ),
           );
         }
@@ -419,14 +427,17 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
               durationLeft: Value(state.duration),
               finishTime: Value(now),
               completed: Value(state.duration == 0 ? true : false),
-              actuallyDoneDuration: Value(
-               actuallyDoneSession 
-              ),
+              actuallyDoneDuration: Value(actuallyDoneSession),
             ));
         var sessionathand = await memorySessionRepo.getTheNextClosest();
-        await roundRepo.updateRoundWrite(state.currentRoundID, RoundVariableCompanion(
-                        actuallyDoneDuration: Value(actuallyDoneRound != null ? actuallyDoneRound + (state.selectedDuration - state.duration) : (state.selectedDuration - state.duration)),
-        ));
+        await roundRepo.updateRoundWrite(
+            state.currentRoundID,
+            RoundVariableCompanion(
+              actuallyDoneDuration: Value(actuallyDoneRound != null
+                  ? actuallyDoneRound +
+                      (state.selectedDuration - state.duration)
+                  : (state.selectedDuration - state.duration)),
+            ));
         await memorySessionRepo.updateMemorySessionWrite(
             state.currentMemorySessionID + 1,
             MemorySessionVariableCompanion(
@@ -436,7 +447,7 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
         emit(TimerRunInProgress(
             state.sessions[state.runTimes + 1].plannedDuration,
             state.runTimes + 1,
-            (state.runTimes + 1 ) % 2 == 0 ? state.showTime + 1 : state.showTime,
+            (state.runTimes + 1) % 2 == 0 ? state.showTime + 1 : state.showTime,
             state.sessions[state.runTimes + 1].plannedDuration,
             sessionathand!.id,
             state
@@ -445,7 +456,8 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
             state.sessions,
             state.sessions[state.runTimes + 1].type,
             state.roundDuration,
-            state.actualRoundDuration + (state.selectedDuration - state.duration),
+            state.actualRoundDuration +
+                (state.selectedDuration - state.duration),
             state.sessions[state.runTimes + 1].subject));
 
         _tickerSubscription = _ticker
