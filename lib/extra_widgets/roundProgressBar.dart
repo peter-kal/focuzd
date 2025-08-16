@@ -39,7 +39,7 @@ class RoundProgressBar extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               mainAxisSize: MainAxisSize.min, // Add this line
               children: [
-                if (type == "work")
+                if (type == "focus")
                   Tooltip(
                     message: AppLocalizations.of(context)!.tooltipTakeNotes,
                     child: InkWell(
@@ -79,7 +79,7 @@ class RoundProgressBar extends StatelessWidget {
                       ),
                     ),
                   ),
-                if (subjectName == null && type == "work") SizedBox(width: 10),
+                if (subjectName == null && type == "focus") SizedBox(width: 10),
                 Tooltip(
                   message:
                       '${AppLocalizations.of(context)!.tooltipRoundProgressEnd} ${(progress * 100).floor()}% , ${DateFormat('kk:mm').format(endRound)}.',

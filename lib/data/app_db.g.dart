@@ -39,11 +39,11 @@ class $SettingsVariablesTable extends SettingsVariables
   late final GeneratedColumn<int> selectedBreakDurationStored =
       GeneratedColumn<int>('selected_break_duration_stored', aliasedName, false,
           type: DriftSqlType.int, requiredDuringInsert: true);
-  static const VerificationMeta _selectedWorkDurationStoredMeta =
-      const VerificationMeta('selectedWorkDurationStored');
+  static const VerificationMeta _selectedFocusDurationStoredMeta =
+      const VerificationMeta('selectedFocusDurationStored');
   @override
-  late final GeneratedColumn<int> selectedWorkDurationStored =
-      GeneratedColumn<int>('selected_work_duration_stored', aliasedName, false,
+  late final GeneratedColumn<int> selectedFocusDurationStored =
+      GeneratedColumn<int>('selected_focus_duration_stored', aliasedName, false,
           type: DriftSqlType.int, requiredDuringInsert: true);
   static const VerificationMeta _selectedLongBreakDurationStoredMeta =
       const VerificationMeta('selectedLongBreakDurationStored');
@@ -68,7 +68,7 @@ class $SettingsVariablesTable extends SettingsVariables
         windowOnTop,
         requestedNumberOfSessions,
         selectedBreakDurationStored,
-        selectedWorkDurationStored,
+        selectedFocusDurationStored,
         selectedLongBreakDurationStored,
         roundPlanningByDefault
       ];
@@ -111,14 +111,14 @@ class $SettingsVariablesTable extends SettingsVariables
     } else if (isInserting) {
       context.missing(_selectedBreakDurationStoredMeta);
     }
-    if (data.containsKey('selected_work_duration_stored')) {
+    if (data.containsKey('selected_focus_duration_stored')) {
       context.handle(
-          _selectedWorkDurationStoredMeta,
-          selectedWorkDurationStored.isAcceptableOrUnknown(
-              data['selected_work_duration_stored']!,
-              _selectedWorkDurationStoredMeta));
+          _selectedFocusDurationStoredMeta,
+          selectedFocusDurationStored.isAcceptableOrUnknown(
+              data['selected_focus_duration_stored']!,
+              _selectedFocusDurationStoredMeta));
     } else if (isInserting) {
-      context.missing(_selectedWorkDurationStoredMeta);
+      context.missing(_selectedFocusDurationStoredMeta);
     }
     if (data.containsKey('selected_long_break_duration_stored')) {
       context.handle(
@@ -154,9 +154,9 @@ class $SettingsVariablesTable extends SettingsVariables
       selectedBreakDurationStored: attachedDatabase.typeMapping.read(
           DriftSqlType.int,
           data['${effectivePrefix}selected_break_duration_stored'])!,
-      selectedWorkDurationStored: attachedDatabase.typeMapping.read(
+      selectedFocusDurationStored: attachedDatabase.typeMapping.read(
           DriftSqlType.int,
-          data['${effectivePrefix}selected_work_duration_stored'])!,
+          data['${effectivePrefix}selected_focus_duration_stored'])!,
       selectedLongBreakDurationStored: attachedDatabase.typeMapping.read(
           DriftSqlType.int,
           data['${effectivePrefix}selected_long_break_duration_stored'])!,
@@ -178,7 +178,7 @@ class SettingsVariable extends DataClass
   final bool windowOnTop;
   final int requestedNumberOfSessions;
   final int selectedBreakDurationStored;
-  final int selectedWorkDurationStored;
+  final int selectedFocusDurationStored;
   final int selectedLongBreakDurationStored;
   final bool roundPlanningByDefault;
   const SettingsVariable(
@@ -186,7 +186,7 @@ class SettingsVariable extends DataClass
       required this.windowOnTop,
       required this.requestedNumberOfSessions,
       required this.selectedBreakDurationStored,
-      required this.selectedWorkDurationStored,
+      required this.selectedFocusDurationStored,
       required this.selectedLongBreakDurationStored,
       required this.roundPlanningByDefault});
   @override
@@ -198,8 +198,8 @@ class SettingsVariable extends DataClass
         Variable<int>(requestedNumberOfSessions);
     map['selected_break_duration_stored'] =
         Variable<int>(selectedBreakDurationStored);
-    map['selected_work_duration_stored'] =
-        Variable<int>(selectedWorkDurationStored);
+    map['selected_focus_duration_stored'] =
+        Variable<int>(selectedFocusDurationStored);
     map['selected_long_break_duration_stored'] =
         Variable<int>(selectedLongBreakDurationStored);
     map['round_planning_by_default'] = Variable<bool>(roundPlanningByDefault);
@@ -212,7 +212,7 @@ class SettingsVariable extends DataClass
       windowOnTop: Value(windowOnTop),
       requestedNumberOfSessions: Value(requestedNumberOfSessions),
       selectedBreakDurationStored: Value(selectedBreakDurationStored),
-      selectedWorkDurationStored: Value(selectedWorkDurationStored),
+      selectedFocusDurationStored: Value(selectedFocusDurationStored),
       selectedLongBreakDurationStored: Value(selectedLongBreakDurationStored),
       roundPlanningByDefault: Value(roundPlanningByDefault),
     );
@@ -228,8 +228,8 @@ class SettingsVariable extends DataClass
           serializer.fromJson<int>(json['requestedNumberOfSessions']),
       selectedBreakDurationStored:
           serializer.fromJson<int>(json['selectedBreakDurationStored']),
-      selectedWorkDurationStored:
-          serializer.fromJson<int>(json['selectedWorkDurationStored']),
+      selectedFocusDurationStored:
+          serializer.fromJson<int>(json['selectedFocusDurationStored']),
       selectedLongBreakDurationStored:
           serializer.fromJson<int>(json['selectedLongBreakDurationStored']),
       roundPlanningByDefault:
@@ -246,8 +246,8 @@ class SettingsVariable extends DataClass
           serializer.toJson<int>(requestedNumberOfSessions),
       'selectedBreakDurationStored':
           serializer.toJson<int>(selectedBreakDurationStored),
-      'selectedWorkDurationStored':
-          serializer.toJson<int>(selectedWorkDurationStored),
+      'selectedFocusDurationStored':
+          serializer.toJson<int>(selectedFocusDurationStored),
       'selectedLongBreakDurationStored':
           serializer.toJson<int>(selectedLongBreakDurationStored),
       'roundPlanningByDefault': serializer.toJson<bool>(roundPlanningByDefault),
@@ -259,7 +259,7 @@ class SettingsVariable extends DataClass
           bool? windowOnTop,
           int? requestedNumberOfSessions,
           int? selectedBreakDurationStored,
-          int? selectedWorkDurationStored,
+          int? selectedFocusDurationStored,
           int? selectedLongBreakDurationStored,
           bool? roundPlanningByDefault}) =>
       SettingsVariable(
@@ -269,8 +269,8 @@ class SettingsVariable extends DataClass
             requestedNumberOfSessions ?? this.requestedNumberOfSessions,
         selectedBreakDurationStored:
             selectedBreakDurationStored ?? this.selectedBreakDurationStored,
-        selectedWorkDurationStored:
-            selectedWorkDurationStored ?? this.selectedWorkDurationStored,
+        selectedFocusDurationStored:
+            selectedFocusDurationStored ?? this.selectedFocusDurationStored,
         selectedLongBreakDurationStored: selectedLongBreakDurationStored ??
             this.selectedLongBreakDurationStored,
         roundPlanningByDefault:
@@ -287,9 +287,9 @@ class SettingsVariable extends DataClass
       selectedBreakDurationStored: data.selectedBreakDurationStored.present
           ? data.selectedBreakDurationStored.value
           : this.selectedBreakDurationStored,
-      selectedWorkDurationStored: data.selectedWorkDurationStored.present
-          ? data.selectedWorkDurationStored.value
-          : this.selectedWorkDurationStored,
+      selectedFocusDurationStored: data.selectedFocusDurationStored.present
+          ? data.selectedFocusDurationStored.value
+          : this.selectedFocusDurationStored,
       selectedLongBreakDurationStored:
           data.selectedLongBreakDurationStored.present
               ? data.selectedLongBreakDurationStored.value
@@ -307,7 +307,7 @@ class SettingsVariable extends DataClass
           ..write('windowOnTop: $windowOnTop, ')
           ..write('requestedNumberOfSessions: $requestedNumberOfSessions, ')
           ..write('selectedBreakDurationStored: $selectedBreakDurationStored, ')
-          ..write('selectedWorkDurationStored: $selectedWorkDurationStored, ')
+          ..write('selectedFocusDurationStored: $selectedFocusDurationStored, ')
           ..write(
               'selectedLongBreakDurationStored: $selectedLongBreakDurationStored, ')
           ..write('roundPlanningByDefault: $roundPlanningByDefault')
@@ -321,7 +321,7 @@ class SettingsVariable extends DataClass
       windowOnTop,
       requestedNumberOfSessions,
       selectedBreakDurationStored,
-      selectedWorkDurationStored,
+      selectedFocusDurationStored,
       selectedLongBreakDurationStored,
       roundPlanningByDefault);
   @override
@@ -333,7 +333,8 @@ class SettingsVariable extends DataClass
           other.requestedNumberOfSessions == this.requestedNumberOfSessions &&
           other.selectedBreakDurationStored ==
               this.selectedBreakDurationStored &&
-          other.selectedWorkDurationStored == this.selectedWorkDurationStored &&
+          other.selectedFocusDurationStored ==
+              this.selectedFocusDurationStored &&
           other.selectedLongBreakDurationStored ==
               this.selectedLongBreakDurationStored &&
           other.roundPlanningByDefault == this.roundPlanningByDefault);
@@ -344,7 +345,7 @@ class SettingsVariablesCompanion extends UpdateCompanion<SettingsVariable> {
   final Value<bool> windowOnTop;
   final Value<int> requestedNumberOfSessions;
   final Value<int> selectedBreakDurationStored;
-  final Value<int> selectedWorkDurationStored;
+  final Value<int> selectedFocusDurationStored;
   final Value<int> selectedLongBreakDurationStored;
   final Value<bool> roundPlanningByDefault;
   const SettingsVariablesCompanion({
@@ -352,7 +353,7 @@ class SettingsVariablesCompanion extends UpdateCompanion<SettingsVariable> {
     this.windowOnTop = const Value.absent(),
     this.requestedNumberOfSessions = const Value.absent(),
     this.selectedBreakDurationStored = const Value.absent(),
-    this.selectedWorkDurationStored = const Value.absent(),
+    this.selectedFocusDurationStored = const Value.absent(),
     this.selectedLongBreakDurationStored = const Value.absent(),
     this.roundPlanningByDefault = const Value.absent(),
   });
@@ -361,13 +362,13 @@ class SettingsVariablesCompanion extends UpdateCompanion<SettingsVariable> {
     required bool windowOnTop,
     required int requestedNumberOfSessions,
     required int selectedBreakDurationStored,
-    required int selectedWorkDurationStored,
+    required int selectedFocusDurationStored,
     required int selectedLongBreakDurationStored,
     this.roundPlanningByDefault = const Value.absent(),
   })  : windowOnTop = Value(windowOnTop),
         requestedNumberOfSessions = Value(requestedNumberOfSessions),
         selectedBreakDurationStored = Value(selectedBreakDurationStored),
-        selectedWorkDurationStored = Value(selectedWorkDurationStored),
+        selectedFocusDurationStored = Value(selectedFocusDurationStored),
         selectedLongBreakDurationStored =
             Value(selectedLongBreakDurationStored);
   static Insertable<SettingsVariable> custom({
@@ -375,7 +376,7 @@ class SettingsVariablesCompanion extends UpdateCompanion<SettingsVariable> {
     Expression<bool>? windowOnTop,
     Expression<int>? requestedNumberOfSessions,
     Expression<int>? selectedBreakDurationStored,
-    Expression<int>? selectedWorkDurationStored,
+    Expression<int>? selectedFocusDurationStored,
     Expression<int>? selectedLongBreakDurationStored,
     Expression<bool>? roundPlanningByDefault,
   }) {
@@ -386,8 +387,8 @@ class SettingsVariablesCompanion extends UpdateCompanion<SettingsVariable> {
         'requested_number_of_sessions': requestedNumberOfSessions,
       if (selectedBreakDurationStored != null)
         'selected_break_duration_stored': selectedBreakDurationStored,
-      if (selectedWorkDurationStored != null)
-        'selected_work_duration_stored': selectedWorkDurationStored,
+      if (selectedFocusDurationStored != null)
+        'selected_focus_duration_stored': selectedFocusDurationStored,
       if (selectedLongBreakDurationStored != null)
         'selected_long_break_duration_stored': selectedLongBreakDurationStored,
       if (roundPlanningByDefault != null)
@@ -400,7 +401,7 @@ class SettingsVariablesCompanion extends UpdateCompanion<SettingsVariable> {
       Value<bool>? windowOnTop,
       Value<int>? requestedNumberOfSessions,
       Value<int>? selectedBreakDurationStored,
-      Value<int>? selectedWorkDurationStored,
+      Value<int>? selectedFocusDurationStored,
       Value<int>? selectedLongBreakDurationStored,
       Value<bool>? roundPlanningByDefault}) {
     return SettingsVariablesCompanion(
@@ -410,8 +411,8 @@ class SettingsVariablesCompanion extends UpdateCompanion<SettingsVariable> {
           requestedNumberOfSessions ?? this.requestedNumberOfSessions,
       selectedBreakDurationStored:
           selectedBreakDurationStored ?? this.selectedBreakDurationStored,
-      selectedWorkDurationStored:
-          selectedWorkDurationStored ?? this.selectedWorkDurationStored,
+      selectedFocusDurationStored:
+          selectedFocusDurationStored ?? this.selectedFocusDurationStored,
       selectedLongBreakDurationStored: selectedLongBreakDurationStored ??
           this.selectedLongBreakDurationStored,
       roundPlanningByDefault:
@@ -436,9 +437,9 @@ class SettingsVariablesCompanion extends UpdateCompanion<SettingsVariable> {
       map['selected_break_duration_stored'] =
           Variable<int>(selectedBreakDurationStored.value);
     }
-    if (selectedWorkDurationStored.present) {
-      map['selected_work_duration_stored'] =
-          Variable<int>(selectedWorkDurationStored.value);
+    if (selectedFocusDurationStored.present) {
+      map['selected_focus_duration_stored'] =
+          Variable<int>(selectedFocusDurationStored.value);
     }
     if (selectedLongBreakDurationStored.present) {
       map['selected_long_break_duration_stored'] =
@@ -458,7 +459,7 @@ class SettingsVariablesCompanion extends UpdateCompanion<SettingsVariable> {
           ..write('windowOnTop: $windowOnTop, ')
           ..write('requestedNumberOfSessions: $requestedNumberOfSessions, ')
           ..write('selectedBreakDurationStored: $selectedBreakDurationStored, ')
-          ..write('selectedWorkDurationStored: $selectedWorkDurationStored, ')
+          ..write('selectedFocusDurationStored: $selectedFocusDurationStored, ')
           ..write(
               'selectedLongBreakDurationStored: $selectedLongBreakDurationStored, ')
           ..write('roundPlanningByDefault: $roundPlanningByDefault')
@@ -467,12 +468,12 @@ class SettingsVariablesCompanion extends UpdateCompanion<SettingsVariable> {
   }
 }
 
-class $MemorySessionVariableTable extends MemorySessionVariable
-    with TableInfo<$MemorySessionVariableTable, MemorySessionVariableData> {
+class $MemoryCountdownVariableTable extends MemoryCountdownVariable
+    with TableInfo<$MemoryCountdownVariableTable, MemoryCountdownVariableData> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
-  $MemorySessionVariableTable(this.attachedDatabase, [this._alias]);
+  $MemoryCountdownVariableTable(this.attachedDatabase, [this._alias]);
   static const VerificationMeta _idMeta = const VerificationMeta('id');
   @override
   late final GeneratedColumn<int> id = GeneratedColumn<int>(
@@ -494,6 +495,12 @@ class $MemorySessionVariableTable extends MemorySessionVariable
   late final GeneratedColumn<int> roundId = GeneratedColumn<int>(
       'round_id', aliasedName, false,
       type: DriftSqlType.int, requiredDuringInsert: true);
+  static const VerificationMeta _propableCauseMeta =
+      const VerificationMeta('propableCause');
+  @override
+  late final GeneratedColumn<String> propableCause = GeneratedColumn<String>(
+      'propable_cause', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
   static const VerificationMeta _durationLeftMeta =
       const VerificationMeta('durationLeft');
   @override
@@ -582,6 +589,7 @@ class $MemorySessionVariableTable extends MemorySessionVariable
         id,
         roundGoal,
         roundId,
+        propableCause,
         durationLeft,
         roundRunTime,
         plannedDuration,
@@ -600,10 +608,10 @@ class $MemorySessionVariableTable extends MemorySessionVariable
   String get aliasedName => _alias ?? actualTableName;
   @override
   String get actualTableName => $name;
-  static const String $name = 'memory_session_variable';
+  static const String $name = 'memory_countdown_variable';
   @override
   VerificationContext validateIntegrity(
-      Insertable<MemorySessionVariableData> instance,
+      Insertable<MemoryCountdownVariableData> instance,
       {bool isInserting = false}) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
@@ -621,6 +629,12 @@ class $MemorySessionVariableTable extends MemorySessionVariable
           roundId.isAcceptableOrUnknown(data['round_id']!, _roundIdMeta));
     } else if (isInserting) {
       context.missing(_roundIdMeta);
+    }
+    if (data.containsKey('propable_cause')) {
+      context.handle(
+          _propableCauseMeta,
+          propableCause.isAcceptableOrUnknown(
+              data['propable_cause']!, _propableCauseMeta));
     }
     if (data.containsKey('duration_left')) {
       context.handle(
@@ -704,16 +718,18 @@ class $MemorySessionVariableTable extends MemorySessionVariable
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  MemorySessionVariableData map(Map<String, dynamic> data,
+  MemoryCountdownVariableData map(Map<String, dynamic> data,
       {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return MemorySessionVariableData(
+    return MemoryCountdownVariableData(
       id: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
       roundGoal: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}round_goal'])!,
       roundId: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}round_id'])!,
+      propableCause: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}propable_cause']),
       durationLeft: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}duration_left']),
       roundRunTime: attachedDatabase.typeMapping
@@ -744,16 +760,17 @@ class $MemorySessionVariableTable extends MemorySessionVariable
   }
 
   @override
-  $MemorySessionVariableTable createAlias(String alias) {
-    return $MemorySessionVariableTable(attachedDatabase, alias);
+  $MemoryCountdownVariableTable createAlias(String alias) {
+    return $MemoryCountdownVariableTable(attachedDatabase, alias);
   }
 }
 
-class MemorySessionVariableData extends DataClass
-    implements Insertable<MemorySessionVariableData> {
+class MemoryCountdownVariableData extends DataClass
+    implements Insertable<MemoryCountdownVariableData> {
   final int id;
   final int roundGoal;
   final int roundId;
+  final String? propableCause;
   final int? durationLeft;
   final int roundRunTime;
   final int plannedDuration;
@@ -767,10 +784,11 @@ class MemorySessionVariableData extends DataClass
   final String type;
   final int? subject;
   final String? notes;
-  const MemorySessionVariableData(
+  const MemoryCountdownVariableData(
       {required this.id,
       required this.roundGoal,
       required this.roundId,
+      this.propableCause,
       this.durationLeft,
       required this.roundRunTime,
       required this.plannedDuration,
@@ -790,6 +808,9 @@ class MemorySessionVariableData extends DataClass
     map['id'] = Variable<int>(id);
     map['round_goal'] = Variable<int>(roundGoal);
     map['round_id'] = Variable<int>(roundId);
+    if (!nullToAbsent || propableCause != null) {
+      map['propable_cause'] = Variable<String>(propableCause);
+    }
     if (!nullToAbsent || durationLeft != null) {
       map['duration_left'] = Variable<int>(durationLeft);
     }
@@ -822,11 +843,14 @@ class MemorySessionVariableData extends DataClass
     return map;
   }
 
-  MemorySessionVariableCompanion toCompanion(bool nullToAbsent) {
-    return MemorySessionVariableCompanion(
+  MemoryCountdownVariableCompanion toCompanion(bool nullToAbsent) {
+    return MemoryCountdownVariableCompanion(
       id: Value(id),
       roundGoal: Value(roundGoal),
       roundId: Value(roundId),
+      propableCause: propableCause == null && nullToAbsent
+          ? const Value.absent()
+          : Value(propableCause),
       durationLeft: durationLeft == null && nullToAbsent
           ? const Value.absent()
           : Value(durationLeft),
@@ -858,13 +882,14 @@ class MemorySessionVariableData extends DataClass
     );
   }
 
-  factory MemorySessionVariableData.fromJson(Map<String, dynamic> json,
+  factory MemoryCountdownVariableData.fromJson(Map<String, dynamic> json,
       {ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
-    return MemorySessionVariableData(
+    return MemoryCountdownVariableData(
       id: serializer.fromJson<int>(json['id']),
       roundGoal: serializer.fromJson<int>(json['roundGoal']),
       roundId: serializer.fromJson<int>(json['roundId']),
+      propableCause: serializer.fromJson<String?>(json['propableCause']),
       durationLeft: serializer.fromJson<int?>(json['durationLeft']),
       roundRunTime: serializer.fromJson<int>(json['roundRunTime']),
       plannedDuration: serializer.fromJson<int>(json['plannedDuration']),
@@ -888,6 +913,7 @@ class MemorySessionVariableData extends DataClass
       'id': serializer.toJson<int>(id),
       'roundGoal': serializer.toJson<int>(roundGoal),
       'roundId': serializer.toJson<int>(roundId),
+      'propableCause': serializer.toJson<String?>(propableCause),
       'durationLeft': serializer.toJson<int?>(durationLeft),
       'roundRunTime': serializer.toJson<int>(roundRunTime),
       'plannedDuration': serializer.toJson<int>(plannedDuration),
@@ -904,10 +930,11 @@ class MemorySessionVariableData extends DataClass
     };
   }
 
-  MemorySessionVariableData copyWith(
+  MemoryCountdownVariableData copyWith(
           {int? id,
           int? roundGoal,
           int? roundId,
+          Value<String?> propableCause = const Value.absent(),
           Value<int?> durationLeft = const Value.absent(),
           int? roundRunTime,
           int? plannedDuration,
@@ -921,10 +948,12 @@ class MemorySessionVariableData extends DataClass
           String? type,
           Value<int?> subject = const Value.absent(),
           Value<String?> notes = const Value.absent()}) =>
-      MemorySessionVariableData(
+      MemoryCountdownVariableData(
         id: id ?? this.id,
         roundGoal: roundGoal ?? this.roundGoal,
         roundId: roundId ?? this.roundId,
+        propableCause:
+            propableCause.present ? propableCause.value : this.propableCause,
         durationLeft:
             durationLeft.present ? durationLeft.value : this.durationLeft,
         roundRunTime: roundRunTime ?? this.roundRunTime,
@@ -944,12 +973,15 @@ class MemorySessionVariableData extends DataClass
         subject: subject.present ? subject.value : this.subject,
         notes: notes.present ? notes.value : this.notes,
       );
-  MemorySessionVariableData copyWithCompanion(
-      MemorySessionVariableCompanion data) {
-    return MemorySessionVariableData(
+  MemoryCountdownVariableData copyWithCompanion(
+      MemoryCountdownVariableCompanion data) {
+    return MemoryCountdownVariableData(
       id: data.id.present ? data.id.value : this.id,
       roundGoal: data.roundGoal.present ? data.roundGoal.value : this.roundGoal,
       roundId: data.roundId.present ? data.roundId.value : this.roundId,
+      propableCause: data.propableCause.present
+          ? data.propableCause.value
+          : this.propableCause,
       durationLeft: data.durationLeft.present
           ? data.durationLeft.value
           : this.durationLeft,
@@ -983,10 +1015,11 @@ class MemorySessionVariableData extends DataClass
 
   @override
   String toString() {
-    return (StringBuffer('MemorySessionVariableData(')
+    return (StringBuffer('MemoryCountdownVariableData(')
           ..write('id: $id, ')
           ..write('roundGoal: $roundGoal, ')
           ..write('roundId: $roundId, ')
+          ..write('propableCause: $propableCause, ')
           ..write('durationLeft: $durationLeft, ')
           ..write('roundRunTime: $roundRunTime, ')
           ..write('plannedDuration: $plannedDuration, ')
@@ -1009,6 +1042,7 @@ class MemorySessionVariableData extends DataClass
       id,
       roundGoal,
       roundId,
+      propableCause,
       durationLeft,
       roundRunTime,
       plannedDuration,
@@ -1025,10 +1059,11 @@ class MemorySessionVariableData extends DataClass
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      (other is MemorySessionVariableData &&
+      (other is MemoryCountdownVariableData &&
           other.id == this.id &&
           other.roundGoal == this.roundGoal &&
           other.roundId == this.roundId &&
+          other.propableCause == this.propableCause &&
           other.durationLeft == this.durationLeft &&
           other.roundRunTime == this.roundRunTime &&
           other.plannedDuration == this.plannedDuration &&
@@ -1044,11 +1079,12 @@ class MemorySessionVariableData extends DataClass
           other.notes == this.notes);
 }
 
-class MemorySessionVariableCompanion
-    extends UpdateCompanion<MemorySessionVariableData> {
+class MemoryCountdownVariableCompanion
+    extends UpdateCompanion<MemoryCountdownVariableData> {
   final Value<int> id;
   final Value<int> roundGoal;
   final Value<int> roundId;
+  final Value<String?> propableCause;
   final Value<int?> durationLeft;
   final Value<int> roundRunTime;
   final Value<int> plannedDuration;
@@ -1062,10 +1098,11 @@ class MemorySessionVariableCompanion
   final Value<String> type;
   final Value<int?> subject;
   final Value<String?> notes;
-  const MemorySessionVariableCompanion({
+  const MemoryCountdownVariableCompanion({
     this.id = const Value.absent(),
     this.roundGoal = const Value.absent(),
     this.roundId = const Value.absent(),
+    this.propableCause = const Value.absent(),
     this.durationLeft = const Value.absent(),
     this.roundRunTime = const Value.absent(),
     this.plannedDuration = const Value.absent(),
@@ -1080,10 +1117,11 @@ class MemorySessionVariableCompanion
     this.subject = const Value.absent(),
     this.notes = const Value.absent(),
   });
-  MemorySessionVariableCompanion.insert({
+  MemoryCountdownVariableCompanion.insert({
     this.id = const Value.absent(),
     required int roundGoal,
     required int roundId,
+    this.propableCause = const Value.absent(),
     this.durationLeft = const Value.absent(),
     required int roundRunTime,
     required int plannedDuration,
@@ -1103,10 +1141,11 @@ class MemorySessionVariableCompanion
         plannedDuration = Value(plannedDuration),
         expStartingTime = Value(expStartingTime),
         type = Value(type);
-  static Insertable<MemorySessionVariableData> custom({
+  static Insertable<MemoryCountdownVariableData> custom({
     Expression<int>? id,
     Expression<int>? roundGoal,
     Expression<int>? roundId,
+    Expression<String>? propableCause,
     Expression<int>? durationLeft,
     Expression<int>? roundRunTime,
     Expression<int>? plannedDuration,
@@ -1125,6 +1164,7 @@ class MemorySessionVariableCompanion
       if (id != null) 'id': id,
       if (roundGoal != null) 'round_goal': roundGoal,
       if (roundId != null) 'round_id': roundId,
+      if (propableCause != null) 'propable_cause': propableCause,
       if (durationLeft != null) 'duration_left': durationLeft,
       if (roundRunTime != null) 'round_run_time': roundRunTime,
       if (plannedDuration != null) 'planned_duration': plannedDuration,
@@ -1142,10 +1182,11 @@ class MemorySessionVariableCompanion
     });
   }
 
-  MemorySessionVariableCompanion copyWith(
+  MemoryCountdownVariableCompanion copyWith(
       {Value<int>? id,
       Value<int>? roundGoal,
       Value<int>? roundId,
+      Value<String?>? propableCause,
       Value<int?>? durationLeft,
       Value<int>? roundRunTime,
       Value<int>? plannedDuration,
@@ -1159,10 +1200,11 @@ class MemorySessionVariableCompanion
       Value<String>? type,
       Value<int?>? subject,
       Value<String?>? notes}) {
-    return MemorySessionVariableCompanion(
+    return MemoryCountdownVariableCompanion(
       id: id ?? this.id,
       roundGoal: roundGoal ?? this.roundGoal,
       roundId: roundId ?? this.roundId,
+      propableCause: propableCause ?? this.propableCause,
       durationLeft: durationLeft ?? this.durationLeft,
       roundRunTime: roundRunTime ?? this.roundRunTime,
       plannedDuration: plannedDuration ?? this.plannedDuration,
@@ -1190,6 +1232,9 @@ class MemorySessionVariableCompanion
     }
     if (roundId.present) {
       map['round_id'] = Variable<int>(roundId.value);
+    }
+    if (propableCause.present) {
+      map['propable_cause'] = Variable<String>(propableCause.value);
     }
     if (durationLeft.present) {
       map['duration_left'] = Variable<int>(durationLeft.value);
@@ -1235,10 +1280,11 @@ class MemorySessionVariableCompanion
 
   @override
   String toString() {
-    return (StringBuffer('MemorySessionVariableCompanion(')
+    return (StringBuffer('MemoryCountdownVariableCompanion(')
           ..write('id: $id, ')
           ..write('roundGoal: $roundGoal, ')
           ..write('roundId: $roundId, ')
+          ..write('propableCause: $propableCause, ')
           ..write('durationLeft: $durationLeft, ')
           ..write('roundRunTime: $roundRunTime, ')
           ..write('plannedDuration: $plannedDuration, ')
@@ -1790,15 +1836,15 @@ class $SubjectTable extends Subject with TableInfo<$SubjectTable, SubjectData> {
   late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
       'updated_at', aliasedName, false,
       type: DriftSqlType.dateTime, requiredDuringInsert: true);
-  static const VerificationMeta _lastWorkedOnSessionIDMeta =
-      const VerificationMeta('lastWorkedOnSessionID');
+  static const VerificationMeta _lastFocuzdOnSessionIDMeta =
+      const VerificationMeta('lastFocuzdOnSessionID');
   @override
-  late final GeneratedColumn<int> lastWorkedOnSessionID = GeneratedColumn<int>(
-      'last_worked_on_session_i_d', aliasedName, true,
+  late final GeneratedColumn<int> lastFocuzdOnSessionID = GeneratedColumn<int>(
+      'last_focuzd_on_session_i_d', aliasedName, true,
       type: DriftSqlType.int,
       requiredDuringInsert: false,
       defaultConstraints: GeneratedColumn.constraintIsAlways(
-          'REFERENCES memory_session_variable (id)'));
+          'REFERENCES memory_countdown_variable (id)'));
   static const VerificationMeta _notesMeta = const VerificationMeta('notes');
   @override
   late final GeneratedColumn<String> notes = GeneratedColumn<String>(
@@ -1819,7 +1865,7 @@ class $SubjectTable extends Subject with TableInfo<$SubjectTable, SubjectData> {
         subjectid,
         createdAt,
         updatedAt,
-        lastWorkedOnSessionID,
+        lastFocuzdOnSessionID,
         notes,
         totalTimeSpent
       ];
@@ -1858,11 +1904,11 @@ class $SubjectTable extends Subject with TableInfo<$SubjectTable, SubjectData> {
     } else if (isInserting) {
       context.missing(_updatedAtMeta);
     }
-    if (data.containsKey('last_worked_on_session_i_d')) {
+    if (data.containsKey('last_focuzd_on_session_i_d')) {
       context.handle(
-          _lastWorkedOnSessionIDMeta,
-          lastWorkedOnSessionID.isAcceptableOrUnknown(
-              data['last_worked_on_session_i_d']!, _lastWorkedOnSessionIDMeta));
+          _lastFocuzdOnSessionIDMeta,
+          lastFocuzdOnSessionID.isAcceptableOrUnknown(
+              data['last_focuzd_on_session_i_d']!, _lastFocuzdOnSessionIDMeta));
     }
     if (data.containsKey('notes')) {
       context.handle(
@@ -1893,8 +1939,8 @@ class $SubjectTable extends Subject with TableInfo<$SubjectTable, SubjectData> {
           .read(DriftSqlType.dateTime, data['${effectivePrefix}created_at'])!,
       updatedAt: attachedDatabase.typeMapping
           .read(DriftSqlType.dateTime, data['${effectivePrefix}updated_at'])!,
-      lastWorkedOnSessionID: attachedDatabase.typeMapping.read(DriftSqlType.int,
-          data['${effectivePrefix}last_worked_on_session_i_d']),
+      lastFocuzdOnSessionID: attachedDatabase.typeMapping.read(DriftSqlType.int,
+          data['${effectivePrefix}last_focuzd_on_session_i_d']),
       notes: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}notes']),
       totalTimeSpent: attachedDatabase.typeMapping
@@ -1914,7 +1960,7 @@ class SubjectData extends DataClass implements Insertable<SubjectData> {
   final int? subjectid;
   final DateTime createdAt;
   final DateTime updatedAt;
-  final int? lastWorkedOnSessionID;
+  final int? lastFocuzdOnSessionID;
   final String? notes;
   final int totalTimeSpent;
   const SubjectData(
@@ -1923,7 +1969,7 @@ class SubjectData extends DataClass implements Insertable<SubjectData> {
       this.subjectid,
       required this.createdAt,
       required this.updatedAt,
-      this.lastWorkedOnSessionID,
+      this.lastFocuzdOnSessionID,
       this.notes,
       required this.totalTimeSpent});
   @override
@@ -1936,8 +1982,8 @@ class SubjectData extends DataClass implements Insertable<SubjectData> {
     }
     map['created_at'] = Variable<DateTime>(createdAt);
     map['updated_at'] = Variable<DateTime>(updatedAt);
-    if (!nullToAbsent || lastWorkedOnSessionID != null) {
-      map['last_worked_on_session_i_d'] = Variable<int>(lastWorkedOnSessionID);
+    if (!nullToAbsent || lastFocuzdOnSessionID != null) {
+      map['last_focuzd_on_session_i_d'] = Variable<int>(lastFocuzdOnSessionID);
     }
     if (!nullToAbsent || notes != null) {
       map['notes'] = Variable<String>(notes);
@@ -1955,9 +2001,9 @@ class SubjectData extends DataClass implements Insertable<SubjectData> {
           : Value(subjectid),
       createdAt: Value(createdAt),
       updatedAt: Value(updatedAt),
-      lastWorkedOnSessionID: lastWorkedOnSessionID == null && nullToAbsent
+      lastFocuzdOnSessionID: lastFocuzdOnSessionID == null && nullToAbsent
           ? const Value.absent()
-          : Value(lastWorkedOnSessionID),
+          : Value(lastFocuzdOnSessionID),
       notes:
           notes == null && nullToAbsent ? const Value.absent() : Value(notes),
       totalTimeSpent: Value(totalTimeSpent),
@@ -1973,8 +2019,8 @@ class SubjectData extends DataClass implements Insertable<SubjectData> {
       subjectid: serializer.fromJson<int?>(json['subjectid']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
       updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
-      lastWorkedOnSessionID:
-          serializer.fromJson<int?>(json['lastWorkedOnSessionID']),
+      lastFocuzdOnSessionID:
+          serializer.fromJson<int?>(json['lastFocuzdOnSessionID']),
       notes: serializer.fromJson<String?>(json['notes']),
       totalTimeSpent: serializer.fromJson<int>(json['totalTimeSpent']),
     );
@@ -1988,7 +2034,7 @@ class SubjectData extends DataClass implements Insertable<SubjectData> {
       'subjectid': serializer.toJson<int?>(subjectid),
       'createdAt': serializer.toJson<DateTime>(createdAt),
       'updatedAt': serializer.toJson<DateTime>(updatedAt),
-      'lastWorkedOnSessionID': serializer.toJson<int?>(lastWorkedOnSessionID),
+      'lastFocuzdOnSessionID': serializer.toJson<int?>(lastFocuzdOnSessionID),
       'notes': serializer.toJson<String?>(notes),
       'totalTimeSpent': serializer.toJson<int>(totalTimeSpent),
     };
@@ -2000,7 +2046,7 @@ class SubjectData extends DataClass implements Insertable<SubjectData> {
           Value<int?> subjectid = const Value.absent(),
           DateTime? createdAt,
           DateTime? updatedAt,
-          Value<int?> lastWorkedOnSessionID = const Value.absent(),
+          Value<int?> lastFocuzdOnSessionID = const Value.absent(),
           Value<String?> notes = const Value.absent(),
           int? totalTimeSpent}) =>
       SubjectData(
@@ -2009,9 +2055,9 @@ class SubjectData extends DataClass implements Insertable<SubjectData> {
         subjectid: subjectid.present ? subjectid.value : this.subjectid,
         createdAt: createdAt ?? this.createdAt,
         updatedAt: updatedAt ?? this.updatedAt,
-        lastWorkedOnSessionID: lastWorkedOnSessionID.present
-            ? lastWorkedOnSessionID.value
-            : this.lastWorkedOnSessionID,
+        lastFocuzdOnSessionID: lastFocuzdOnSessionID.present
+            ? lastFocuzdOnSessionID.value
+            : this.lastFocuzdOnSessionID,
         notes: notes.present ? notes.value : this.notes,
         totalTimeSpent: totalTimeSpent ?? this.totalTimeSpent,
       );
@@ -2022,9 +2068,9 @@ class SubjectData extends DataClass implements Insertable<SubjectData> {
       subjectid: data.subjectid.present ? data.subjectid.value : this.subjectid,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
-      lastWorkedOnSessionID: data.lastWorkedOnSessionID.present
-          ? data.lastWorkedOnSessionID.value
-          : this.lastWorkedOnSessionID,
+      lastFocuzdOnSessionID: data.lastFocuzdOnSessionID.present
+          ? data.lastFocuzdOnSessionID.value
+          : this.lastFocuzdOnSessionID,
       notes: data.notes.present ? data.notes.value : this.notes,
       totalTimeSpent: data.totalTimeSpent.present
           ? data.totalTimeSpent.value
@@ -2040,7 +2086,7 @@ class SubjectData extends DataClass implements Insertable<SubjectData> {
           ..write('subjectid: $subjectid, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
-          ..write('lastWorkedOnSessionID: $lastWorkedOnSessionID, ')
+          ..write('lastFocuzdOnSessionID: $lastFocuzdOnSessionID, ')
           ..write('notes: $notes, ')
           ..write('totalTimeSpent: $totalTimeSpent')
           ..write(')'))
@@ -2049,7 +2095,7 @@ class SubjectData extends DataClass implements Insertable<SubjectData> {
 
   @override
   int get hashCode => Object.hash(id, name, subjectid, createdAt, updatedAt,
-      lastWorkedOnSessionID, notes, totalTimeSpent);
+      lastFocuzdOnSessionID, notes, totalTimeSpent);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -2059,7 +2105,7 @@ class SubjectData extends DataClass implements Insertable<SubjectData> {
           other.subjectid == this.subjectid &&
           other.createdAt == this.createdAt &&
           other.updatedAt == this.updatedAt &&
-          other.lastWorkedOnSessionID == this.lastWorkedOnSessionID &&
+          other.lastFocuzdOnSessionID == this.lastFocuzdOnSessionID &&
           other.notes == this.notes &&
           other.totalTimeSpent == this.totalTimeSpent);
 }
@@ -2070,7 +2116,7 @@ class SubjectCompanion extends UpdateCompanion<SubjectData> {
   final Value<int?> subjectid;
   final Value<DateTime> createdAt;
   final Value<DateTime> updatedAt;
-  final Value<int?> lastWorkedOnSessionID;
+  final Value<int?> lastFocuzdOnSessionID;
   final Value<String?> notes;
   final Value<int> totalTimeSpent;
   const SubjectCompanion({
@@ -2079,7 +2125,7 @@ class SubjectCompanion extends UpdateCompanion<SubjectData> {
     this.subjectid = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
-    this.lastWorkedOnSessionID = const Value.absent(),
+    this.lastFocuzdOnSessionID = const Value.absent(),
     this.notes = const Value.absent(),
     this.totalTimeSpent = const Value.absent(),
   });
@@ -2089,7 +2135,7 @@ class SubjectCompanion extends UpdateCompanion<SubjectData> {
     this.subjectid = const Value.absent(),
     required DateTime createdAt,
     required DateTime updatedAt,
-    this.lastWorkedOnSessionID = const Value.absent(),
+    this.lastFocuzdOnSessionID = const Value.absent(),
     this.notes = const Value.absent(),
     this.totalTimeSpent = const Value.absent(),
   })  : name = Value(name),
@@ -2101,7 +2147,7 @@ class SubjectCompanion extends UpdateCompanion<SubjectData> {
     Expression<int>? subjectid,
     Expression<DateTime>? createdAt,
     Expression<DateTime>? updatedAt,
-    Expression<int>? lastWorkedOnSessionID,
+    Expression<int>? lastFocuzdOnSessionID,
     Expression<String>? notes,
     Expression<int>? totalTimeSpent,
   }) {
@@ -2111,8 +2157,8 @@ class SubjectCompanion extends UpdateCompanion<SubjectData> {
       if (subjectid != null) 'subjectid': subjectid,
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
-      if (lastWorkedOnSessionID != null)
-        'last_worked_on_session_i_d': lastWorkedOnSessionID,
+      if (lastFocuzdOnSessionID != null)
+        'last_focuzd_on_session_i_d': lastFocuzdOnSessionID,
       if (notes != null) 'notes': notes,
       if (totalTimeSpent != null) 'total_time_spent': totalTimeSpent,
     });
@@ -2124,7 +2170,7 @@ class SubjectCompanion extends UpdateCompanion<SubjectData> {
       Value<int?>? subjectid,
       Value<DateTime>? createdAt,
       Value<DateTime>? updatedAt,
-      Value<int?>? lastWorkedOnSessionID,
+      Value<int?>? lastFocuzdOnSessionID,
       Value<String?>? notes,
       Value<int>? totalTimeSpent}) {
     return SubjectCompanion(
@@ -2133,8 +2179,8 @@ class SubjectCompanion extends UpdateCompanion<SubjectData> {
       subjectid: subjectid ?? this.subjectid,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
-      lastWorkedOnSessionID:
-          lastWorkedOnSessionID ?? this.lastWorkedOnSessionID,
+      lastFocuzdOnSessionID:
+          lastFocuzdOnSessionID ?? this.lastFocuzdOnSessionID,
       notes: notes ?? this.notes,
       totalTimeSpent: totalTimeSpent ?? this.totalTimeSpent,
     );
@@ -2158,9 +2204,9 @@ class SubjectCompanion extends UpdateCompanion<SubjectData> {
     if (updatedAt.present) {
       map['updated_at'] = Variable<DateTime>(updatedAt.value);
     }
-    if (lastWorkedOnSessionID.present) {
-      map['last_worked_on_session_i_d'] =
-          Variable<int>(lastWorkedOnSessionID.value);
+    if (lastFocuzdOnSessionID.present) {
+      map['last_focuzd_on_session_i_d'] =
+          Variable<int>(lastFocuzdOnSessionID.value);
     }
     if (notes.present) {
       map['notes'] = Variable<String>(notes.value);
@@ -2179,7 +2225,7 @@ class SubjectCompanion extends UpdateCompanion<SubjectData> {
           ..write('subjectid: $subjectid, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
-          ..write('lastWorkedOnSessionID: $lastWorkedOnSessionID, ')
+          ..write('lastFocuzdOnSessionID: $lastFocuzdOnSessionID, ')
           ..write('notes: $notes, ')
           ..write('totalTimeSpent: $totalTimeSpent')
           ..write(')'))
@@ -2192,8 +2238,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
   late final $SettingsVariablesTable settingsVariables =
       $SettingsVariablesTable(this);
-  late final $MemorySessionVariableTable memorySessionVariable =
-      $MemorySessionVariableTable(this);
+  late final $MemoryCountdownVariableTable memoryCountdownVariable =
+      $MemoryCountdownVariableTable(this);
   late final $RoundVariableTable roundVariable = $RoundVariableTable(this);
   late final $SubjectTable subject = $SubjectTable(this);
   @override
@@ -2201,7 +2247,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
   @override
   List<DatabaseSchemaEntity> get allSchemaEntities =>
-      [settingsVariables, memorySessionVariable, roundVariable, subject];
+      [settingsVariables, memoryCountdownVariable, roundVariable, subject];
 }
 
 typedef $$SettingsVariablesTableCreateCompanionBuilder
@@ -2210,7 +2256,7 @@ typedef $$SettingsVariablesTableCreateCompanionBuilder
   required bool windowOnTop,
   required int requestedNumberOfSessions,
   required int selectedBreakDurationStored,
-  required int selectedWorkDurationStored,
+  required int selectedFocusDurationStored,
   required int selectedLongBreakDurationStored,
   Value<bool> roundPlanningByDefault,
 });
@@ -2220,7 +2266,7 @@ typedef $$SettingsVariablesTableUpdateCompanionBuilder
   Value<bool> windowOnTop,
   Value<int> requestedNumberOfSessions,
   Value<int> selectedBreakDurationStored,
-  Value<int> selectedWorkDurationStored,
+  Value<int> selectedFocusDurationStored,
   Value<int> selectedLongBreakDurationStored,
   Value<bool> roundPlanningByDefault,
 });
@@ -2248,8 +2294,8 @@ class $$SettingsVariablesTableFilterComposer
       column: $table.selectedBreakDurationStored,
       builder: (column) => ColumnFilters(column));
 
-  ColumnFilters<int> get selectedWorkDurationStored => $composableBuilder(
-      column: $table.selectedWorkDurationStored,
+  ColumnFilters<int> get selectedFocusDurationStored => $composableBuilder(
+      column: $table.selectedFocusDurationStored,
       builder: (column) => ColumnFilters(column));
 
   ColumnFilters<int> get selectedLongBreakDurationStored => $composableBuilder(
@@ -2284,8 +2330,8 @@ class $$SettingsVariablesTableOrderingComposer
       column: $table.selectedBreakDurationStored,
       builder: (column) => ColumnOrderings(column));
 
-  ColumnOrderings<int> get selectedWorkDurationStored => $composableBuilder(
-      column: $table.selectedWorkDurationStored,
+  ColumnOrderings<int> get selectedFocusDurationStored => $composableBuilder(
+      column: $table.selectedFocusDurationStored,
       builder: (column) => ColumnOrderings(column));
 
   ColumnOrderings<int> get selectedLongBreakDurationStored =>
@@ -2319,8 +2365,8 @@ class $$SettingsVariablesTableAnnotationComposer
   GeneratedColumn<int> get selectedBreakDurationStored => $composableBuilder(
       column: $table.selectedBreakDurationStored, builder: (column) => column);
 
-  GeneratedColumn<int> get selectedWorkDurationStored => $composableBuilder(
-      column: $table.selectedWorkDurationStored, builder: (column) => column);
+  GeneratedColumn<int> get selectedFocusDurationStored => $composableBuilder(
+      column: $table.selectedFocusDurationStored, builder: (column) => column);
 
   GeneratedColumn<int> get selectedLongBreakDurationStored =>
       $composableBuilder(
@@ -2363,7 +2409,7 @@ class $$SettingsVariablesTableTableManager extends RootTableManager<
             Value<bool> windowOnTop = const Value.absent(),
             Value<int> requestedNumberOfSessions = const Value.absent(),
             Value<int> selectedBreakDurationStored = const Value.absent(),
-            Value<int> selectedWorkDurationStored = const Value.absent(),
+            Value<int> selectedFocusDurationStored = const Value.absent(),
             Value<int> selectedLongBreakDurationStored = const Value.absent(),
             Value<bool> roundPlanningByDefault = const Value.absent(),
           }) =>
@@ -2372,7 +2418,7 @@ class $$SettingsVariablesTableTableManager extends RootTableManager<
             windowOnTop: windowOnTop,
             requestedNumberOfSessions: requestedNumberOfSessions,
             selectedBreakDurationStored: selectedBreakDurationStored,
-            selectedWorkDurationStored: selectedWorkDurationStored,
+            selectedFocusDurationStored: selectedFocusDurationStored,
             selectedLongBreakDurationStored: selectedLongBreakDurationStored,
             roundPlanningByDefault: roundPlanningByDefault,
           ),
@@ -2381,7 +2427,7 @@ class $$SettingsVariablesTableTableManager extends RootTableManager<
             required bool windowOnTop,
             required int requestedNumberOfSessions,
             required int selectedBreakDurationStored,
-            required int selectedWorkDurationStored,
+            required int selectedFocusDurationStored,
             required int selectedLongBreakDurationStored,
             Value<bool> roundPlanningByDefault = const Value.absent(),
           }) =>
@@ -2390,7 +2436,7 @@ class $$SettingsVariablesTableTableManager extends RootTableManager<
             windowOnTop: windowOnTop,
             requestedNumberOfSessions: requestedNumberOfSessions,
             selectedBreakDurationStored: selectedBreakDurationStored,
-            selectedWorkDurationStored: selectedWorkDurationStored,
+            selectedFocusDurationStored: selectedFocusDurationStored,
             selectedLongBreakDurationStored: selectedLongBreakDurationStored,
             roundPlanningByDefault: roundPlanningByDefault,
           ),
@@ -2416,11 +2462,12 @@ typedef $$SettingsVariablesTableProcessedTableManager = ProcessedTableManager<
     ),
     SettingsVariable,
     PrefetchHooks Function()>;
-typedef $$MemorySessionVariableTableCreateCompanionBuilder
-    = MemorySessionVariableCompanion Function({
+typedef $$MemoryCountdownVariableTableCreateCompanionBuilder
+    = MemoryCountdownVariableCompanion Function({
   Value<int> id,
   required int roundGoal,
   required int roundId,
+  Value<String?> propableCause,
   Value<int?> durationLeft,
   required int roundRunTime,
   required int plannedDuration,
@@ -2435,11 +2482,12 @@ typedef $$MemorySessionVariableTableCreateCompanionBuilder
   Value<int?> subject,
   Value<String?> notes,
 });
-typedef $$MemorySessionVariableTableUpdateCompanionBuilder
-    = MemorySessionVariableCompanion Function({
+typedef $$MemoryCountdownVariableTableUpdateCompanionBuilder
+    = MemoryCountdownVariableCompanion Function({
   Value<int> id,
   Value<int> roundGoal,
   Value<int> roundId,
+  Value<String?> propableCause,
   Value<int?> durationLeft,
   Value<int> roundRunTime,
   Value<int> plannedDuration,
@@ -2455,20 +2503,20 @@ typedef $$MemorySessionVariableTableUpdateCompanionBuilder
   Value<String?> notes,
 });
 
-final class $$MemorySessionVariableTableReferences extends BaseReferences<
-    _$AppDatabase, $MemorySessionVariableTable, MemorySessionVariableData> {
-  $$MemorySessionVariableTableReferences(
+final class $$MemoryCountdownVariableTableReferences extends BaseReferences<
+    _$AppDatabase, $MemoryCountdownVariableTable, MemoryCountdownVariableData> {
+  $$MemoryCountdownVariableTableReferences(
       super.$_db, super.$_table, super.$_typedResult);
 
   static MultiTypedResultKey<$SubjectTable, List<SubjectData>>
       _subjectRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
           db.subject,
           aliasName: $_aliasNameGenerator(
-              db.memorySessionVariable.id, db.subject.lastWorkedOnSessionID));
+              db.memoryCountdownVariable.id, db.subject.lastFocuzdOnSessionID));
 
   $$SubjectTableProcessedTableManager get subjectRefs {
     final manager = $$SubjectTableTableManager($_db, $_db.subject).filter(
-        (f) => f.lastWorkedOnSessionID.id.sqlEquals($_itemColumn<int>('id')!));
+        (f) => f.lastFocuzdOnSessionID.id.sqlEquals($_itemColumn<int>('id')!));
 
     final cache = $_typedResult.readTableOrNull(_subjectRefsTable($_db));
     return ProcessedTableManager(
@@ -2476,9 +2524,9 @@ final class $$MemorySessionVariableTableReferences extends BaseReferences<
   }
 }
 
-class $$MemorySessionVariableTableFilterComposer
-    extends Composer<_$AppDatabase, $MemorySessionVariableTable> {
-  $$MemorySessionVariableTableFilterComposer({
+class $$MemoryCountdownVariableTableFilterComposer
+    extends Composer<_$AppDatabase, $MemoryCountdownVariableTable> {
+  $$MemoryCountdownVariableTableFilterComposer({
     required super.$db,
     required super.$table,
     super.joinBuilder,
@@ -2493,6 +2541,9 @@ class $$MemorySessionVariableTableFilterComposer
 
   ColumnFilters<int> get roundId => $composableBuilder(
       column: $table.roundId, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get propableCause => $composableBuilder(
+      column: $table.propableCause, builder: (column) => ColumnFilters(column));
 
   ColumnFilters<int> get durationLeft => $composableBuilder(
       column: $table.durationLeft, builder: (column) => ColumnFilters(column));
@@ -2542,7 +2593,7 @@ class $$MemorySessionVariableTableFilterComposer
         composer: this,
         getCurrentColumn: (t) => t.id,
         referencedTable: $db.subject,
-        getReferencedColumn: (t) => t.lastWorkedOnSessionID,
+        getReferencedColumn: (t) => t.lastFocuzdOnSessionID,
         builder: (joinBuilder,
                 {$addJoinBuilderToRootComposer,
                 $removeJoinBuilderFromRootComposer}) =>
@@ -2558,9 +2609,9 @@ class $$MemorySessionVariableTableFilterComposer
   }
 }
 
-class $$MemorySessionVariableTableOrderingComposer
-    extends Composer<_$AppDatabase, $MemorySessionVariableTable> {
-  $$MemorySessionVariableTableOrderingComposer({
+class $$MemoryCountdownVariableTableOrderingComposer
+    extends Composer<_$AppDatabase, $MemoryCountdownVariableTable> {
+  $$MemoryCountdownVariableTableOrderingComposer({
     required super.$db,
     required super.$table,
     super.joinBuilder,
@@ -2575,6 +2626,10 @@ class $$MemorySessionVariableTableOrderingComposer
 
   ColumnOrderings<int> get roundId => $composableBuilder(
       column: $table.roundId, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get propableCause => $composableBuilder(
+      column: $table.propableCause,
+      builder: (column) => ColumnOrderings(column));
 
   ColumnOrderings<int> get durationLeft => $composableBuilder(
       column: $table.durationLeft,
@@ -2623,9 +2678,9 @@ class $$MemorySessionVariableTableOrderingComposer
       column: $table.notes, builder: (column) => ColumnOrderings(column));
 }
 
-class $$MemorySessionVariableTableAnnotationComposer
-    extends Composer<_$AppDatabase, $MemorySessionVariableTable> {
-  $$MemorySessionVariableTableAnnotationComposer({
+class $$MemoryCountdownVariableTableAnnotationComposer
+    extends Composer<_$AppDatabase, $MemoryCountdownVariableTable> {
+  $$MemoryCountdownVariableTableAnnotationComposer({
     required super.$db,
     required super.$table,
     super.joinBuilder,
@@ -2640,6 +2695,9 @@ class $$MemorySessionVariableTableAnnotationComposer
 
   GeneratedColumn<int> get roundId =>
       $composableBuilder(column: $table.roundId, builder: (column) => column);
+
+  GeneratedColumn<String> get propableCause => $composableBuilder(
+      column: $table.propableCause, builder: (column) => column);
 
   GeneratedColumn<int> get durationLeft => $composableBuilder(
       column: $table.durationLeft, builder: (column) => column);
@@ -2686,7 +2744,7 @@ class $$MemorySessionVariableTableAnnotationComposer
         composer: this,
         getCurrentColumn: (t) => t.id,
         referencedTable: $db.subject,
-        getReferencedColumn: (t) => t.lastWorkedOnSessionID,
+        getReferencedColumn: (t) => t.lastFocuzdOnSessionID,
         builder: (joinBuilder,
                 {$addJoinBuilderToRootComposer,
                 $removeJoinBuilderFromRootComposer}) =>
@@ -2702,36 +2760,37 @@ class $$MemorySessionVariableTableAnnotationComposer
   }
 }
 
-class $$MemorySessionVariableTableTableManager extends RootTableManager<
+class $$MemoryCountdownVariableTableTableManager extends RootTableManager<
     _$AppDatabase,
-    $MemorySessionVariableTable,
-    MemorySessionVariableData,
-    $$MemorySessionVariableTableFilterComposer,
-    $$MemorySessionVariableTableOrderingComposer,
-    $$MemorySessionVariableTableAnnotationComposer,
-    $$MemorySessionVariableTableCreateCompanionBuilder,
-    $$MemorySessionVariableTableUpdateCompanionBuilder,
-    (MemorySessionVariableData, $$MemorySessionVariableTableReferences),
-    MemorySessionVariableData,
+    $MemoryCountdownVariableTable,
+    MemoryCountdownVariableData,
+    $$MemoryCountdownVariableTableFilterComposer,
+    $$MemoryCountdownVariableTableOrderingComposer,
+    $$MemoryCountdownVariableTableAnnotationComposer,
+    $$MemoryCountdownVariableTableCreateCompanionBuilder,
+    $$MemoryCountdownVariableTableUpdateCompanionBuilder,
+    (MemoryCountdownVariableData, $$MemoryCountdownVariableTableReferences),
+    MemoryCountdownVariableData,
     PrefetchHooks Function({bool subjectRefs})> {
-  $$MemorySessionVariableTableTableManager(
-      _$AppDatabase db, $MemorySessionVariableTable table)
+  $$MemoryCountdownVariableTableTableManager(
+      _$AppDatabase db, $MemoryCountdownVariableTable table)
       : super(TableManagerState(
           db: db,
           table: table,
           createFilteringComposer: () =>
-              $$MemorySessionVariableTableFilterComposer(
+              $$MemoryCountdownVariableTableFilterComposer(
                   $db: db, $table: table),
           createOrderingComposer: () =>
-              $$MemorySessionVariableTableOrderingComposer(
+              $$MemoryCountdownVariableTableOrderingComposer(
                   $db: db, $table: table),
           createComputedFieldComposer: () =>
-              $$MemorySessionVariableTableAnnotationComposer(
+              $$MemoryCountdownVariableTableAnnotationComposer(
                   $db: db, $table: table),
           updateCompanionCallback: ({
             Value<int> id = const Value.absent(),
             Value<int> roundGoal = const Value.absent(),
             Value<int> roundId = const Value.absent(),
+            Value<String?> propableCause = const Value.absent(),
             Value<int?> durationLeft = const Value.absent(),
             Value<int> roundRunTime = const Value.absent(),
             Value<int> plannedDuration = const Value.absent(),
@@ -2746,10 +2805,11 @@ class $$MemorySessionVariableTableTableManager extends RootTableManager<
             Value<int?> subject = const Value.absent(),
             Value<String?> notes = const Value.absent(),
           }) =>
-              MemorySessionVariableCompanion(
+              MemoryCountdownVariableCompanion(
             id: id,
             roundGoal: roundGoal,
             roundId: roundId,
+            propableCause: propableCause,
             durationLeft: durationLeft,
             roundRunTime: roundRunTime,
             plannedDuration: plannedDuration,
@@ -2768,6 +2828,7 @@ class $$MemorySessionVariableTableTableManager extends RootTableManager<
             Value<int> id = const Value.absent(),
             required int roundGoal,
             required int roundId,
+            Value<String?> propableCause = const Value.absent(),
             Value<int?> durationLeft = const Value.absent(),
             required int roundRunTime,
             required int plannedDuration,
@@ -2782,10 +2843,11 @@ class $$MemorySessionVariableTableTableManager extends RootTableManager<
             Value<int?> subject = const Value.absent(),
             Value<String?> notes = const Value.absent(),
           }) =>
-              MemorySessionVariableCompanion.insert(
+              MemoryCountdownVariableCompanion.insert(
             id: id,
             roundGoal: roundGoal,
             roundId: roundId,
+            propableCause: propableCause,
             durationLeft: durationLeft,
             roundRunTime: roundRunTime,
             plannedDuration: plannedDuration,
@@ -2803,7 +2865,7 @@ class $$MemorySessionVariableTableTableManager extends RootTableManager<
           withReferenceMapper: (p0) => p0
               .map((e) => (
                     e.readTable(table),
-                    $$MemorySessionVariableTableReferences(db, table, e)
+                    $$MemoryCountdownVariableTableReferences(db, table, e)
                   ))
               .toList(),
           prefetchHooksCallback: ({subjectRefs = false}) {
@@ -2814,18 +2876,19 @@ class $$MemorySessionVariableTableTableManager extends RootTableManager<
               getPrefetchedDataCallback: (items) async {
                 return [
                   if (subjectRefs)
-                    await $_getPrefetchedData<MemorySessionVariableData,
-                            $MemorySessionVariableTable, SubjectData>(
+                    await $_getPrefetchedData<MemoryCountdownVariableData,
+                            $MemoryCountdownVariableTable, SubjectData>(
                         currentTable: table,
-                        referencedTable: $$MemorySessionVariableTableReferences
-                            ._subjectRefsTable(db),
+                        referencedTable:
+                            $$MemoryCountdownVariableTableReferences
+                                ._subjectRefsTable(db),
                         managerFromTypedResult: (p0) =>
-                            $$MemorySessionVariableTableReferences(
+                            $$MemoryCountdownVariableTableReferences(
                                     db, table, p0)
                                 .subjectRefs,
                         referencedItemsForCurrentItem:
                             (item, referencedItems) => referencedItems.where(
-                                (e) => e.lastWorkedOnSessionID == item.id),
+                                (e) => e.lastFocuzdOnSessionID == item.id),
                         typedResults: items)
                 ];
               },
@@ -2834,18 +2897,18 @@ class $$MemorySessionVariableTableTableManager extends RootTableManager<
         ));
 }
 
-typedef $$MemorySessionVariableTableProcessedTableManager
+typedef $$MemoryCountdownVariableTableProcessedTableManager
     = ProcessedTableManager<
         _$AppDatabase,
-        $MemorySessionVariableTable,
-        MemorySessionVariableData,
-        $$MemorySessionVariableTableFilterComposer,
-        $$MemorySessionVariableTableOrderingComposer,
-        $$MemorySessionVariableTableAnnotationComposer,
-        $$MemorySessionVariableTableCreateCompanionBuilder,
-        $$MemorySessionVariableTableUpdateCompanionBuilder,
-        (MemorySessionVariableData, $$MemorySessionVariableTableReferences),
-        MemorySessionVariableData,
+        $MemoryCountdownVariableTable,
+        MemoryCountdownVariableData,
+        $$MemoryCountdownVariableTableFilterComposer,
+        $$MemoryCountdownVariableTableOrderingComposer,
+        $$MemoryCountdownVariableTableAnnotationComposer,
+        $$MemoryCountdownVariableTableCreateCompanionBuilder,
+        $$MemoryCountdownVariableTableUpdateCompanionBuilder,
+        (MemoryCountdownVariableData, $$MemoryCountdownVariableTableReferences),
+        MemoryCountdownVariableData,
         PrefetchHooks Function({bool subjectRefs})>;
 typedef $$RoundVariableTableCreateCompanionBuilder = RoundVariableCompanion
     Function({
@@ -3087,7 +3150,7 @@ typedef $$SubjectTableCreateCompanionBuilder = SubjectCompanion Function({
   Value<int?> subjectid,
   required DateTime createdAt,
   required DateTime updatedAt,
-  Value<int?> lastWorkedOnSessionID,
+  Value<int?> lastFocuzdOnSessionID,
   Value<String?> notes,
   Value<int> totalTimeSpent,
 });
@@ -3097,7 +3160,7 @@ typedef $$SubjectTableUpdateCompanionBuilder = SubjectCompanion Function({
   Value<int?> subjectid,
   Value<DateTime> createdAt,
   Value<DateTime> updatedAt,
-  Value<int?> lastWorkedOnSessionID,
+  Value<int?> lastFocuzdOnSessionID,
   Value<String?> notes,
   Value<int> totalTimeSpent,
 });
@@ -3106,19 +3169,20 @@ final class $$SubjectTableReferences
     extends BaseReferences<_$AppDatabase, $SubjectTable, SubjectData> {
   $$SubjectTableReferences(super.$_db, super.$_table, super.$_typedResult);
 
-  static $MemorySessionVariableTable _lastWorkedOnSessionIDTable(
+  static $MemoryCountdownVariableTable _lastFocuzdOnSessionIDTable(
           _$AppDatabase db) =>
-      db.memorySessionVariable.createAlias($_aliasNameGenerator(
-          db.subject.lastWorkedOnSessionID, db.memorySessionVariable.id));
+      db.memoryCountdownVariable.createAlias($_aliasNameGenerator(
+          db.subject.lastFocuzdOnSessionID, db.memoryCountdownVariable.id));
 
-  $$MemorySessionVariableTableProcessedTableManager? get lastWorkedOnSessionID {
-    final $_column = $_itemColumn<int>('last_worked_on_session_i_d');
+  $$MemoryCountdownVariableTableProcessedTableManager?
+      get lastFocuzdOnSessionID {
+    final $_column = $_itemColumn<int>('last_focuzd_on_session_i_d');
     if ($_column == null) return null;
-    final manager = $$MemorySessionVariableTableTableManager(
-            $_db, $_db.memorySessionVariable)
+    final manager = $$MemoryCountdownVariableTableTableManager(
+            $_db, $_db.memoryCountdownVariable)
         .filter((f) => f.id.sqlEquals($_column));
     final item =
-        $_typedResult.readTableOrNull(_lastWorkedOnSessionIDTable($_db));
+        $_typedResult.readTableOrNull(_lastFocuzdOnSessionIDTable($_db));
     if (item == null) return manager;
     return ProcessedTableManager(
         manager.$state.copyWith(prefetchedData: [item]));
@@ -3156,19 +3220,19 @@ class $$SubjectTableFilterComposer
       column: $table.totalTimeSpent,
       builder: (column) => ColumnFilters(column));
 
-  $$MemorySessionVariableTableFilterComposer get lastWorkedOnSessionID {
-    final $$MemorySessionVariableTableFilterComposer composer =
+  $$MemoryCountdownVariableTableFilterComposer get lastFocuzdOnSessionID {
+    final $$MemoryCountdownVariableTableFilterComposer composer =
         $composerBuilder(
             composer: this,
-            getCurrentColumn: (t) => t.lastWorkedOnSessionID,
-            referencedTable: $db.memorySessionVariable,
+            getCurrentColumn: (t) => t.lastFocuzdOnSessionID,
+            referencedTable: $db.memoryCountdownVariable,
             getReferencedColumn: (t) => t.id,
             builder: (joinBuilder,
                     {$addJoinBuilderToRootComposer,
                     $removeJoinBuilderFromRootComposer}) =>
-                $$MemorySessionVariableTableFilterComposer(
+                $$MemoryCountdownVariableTableFilterComposer(
                   $db: $db,
-                  $table: $db.memorySessionVariable,
+                  $table: $db.memoryCountdownVariable,
                   $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
                   joinBuilder: joinBuilder,
                   $removeJoinBuilderFromRootComposer:
@@ -3209,19 +3273,19 @@ class $$SubjectTableOrderingComposer
       column: $table.totalTimeSpent,
       builder: (column) => ColumnOrderings(column));
 
-  $$MemorySessionVariableTableOrderingComposer get lastWorkedOnSessionID {
-    final $$MemorySessionVariableTableOrderingComposer composer =
+  $$MemoryCountdownVariableTableOrderingComposer get lastFocuzdOnSessionID {
+    final $$MemoryCountdownVariableTableOrderingComposer composer =
         $composerBuilder(
             composer: this,
-            getCurrentColumn: (t) => t.lastWorkedOnSessionID,
-            referencedTable: $db.memorySessionVariable,
+            getCurrentColumn: (t) => t.lastFocuzdOnSessionID,
+            referencedTable: $db.memoryCountdownVariable,
             getReferencedColumn: (t) => t.id,
             builder: (joinBuilder,
                     {$addJoinBuilderToRootComposer,
                     $removeJoinBuilderFromRootComposer}) =>
-                $$MemorySessionVariableTableOrderingComposer(
+                $$MemoryCountdownVariableTableOrderingComposer(
                   $db: $db,
-                  $table: $db.memorySessionVariable,
+                  $table: $db.memoryCountdownVariable,
                   $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
                   joinBuilder: joinBuilder,
                   $removeJoinBuilderFromRootComposer:
@@ -3261,19 +3325,19 @@ class $$SubjectTableAnnotationComposer
   GeneratedColumn<int> get totalTimeSpent => $composableBuilder(
       column: $table.totalTimeSpent, builder: (column) => column);
 
-  $$MemorySessionVariableTableAnnotationComposer get lastWorkedOnSessionID {
-    final $$MemorySessionVariableTableAnnotationComposer composer =
+  $$MemoryCountdownVariableTableAnnotationComposer get lastFocuzdOnSessionID {
+    final $$MemoryCountdownVariableTableAnnotationComposer composer =
         $composerBuilder(
             composer: this,
-            getCurrentColumn: (t) => t.lastWorkedOnSessionID,
-            referencedTable: $db.memorySessionVariable,
+            getCurrentColumn: (t) => t.lastFocuzdOnSessionID,
+            referencedTable: $db.memoryCountdownVariable,
             getReferencedColumn: (t) => t.id,
             builder: (joinBuilder,
                     {$addJoinBuilderToRootComposer,
                     $removeJoinBuilderFromRootComposer}) =>
-                $$MemorySessionVariableTableAnnotationComposer(
+                $$MemoryCountdownVariableTableAnnotationComposer(
                   $db: $db,
-                  $table: $db.memorySessionVariable,
+                  $table: $db.memoryCountdownVariable,
                   $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
                   joinBuilder: joinBuilder,
                   $removeJoinBuilderFromRootComposer:
@@ -3294,7 +3358,7 @@ class $$SubjectTableTableManager extends RootTableManager<
     $$SubjectTableUpdateCompanionBuilder,
     (SubjectData, $$SubjectTableReferences),
     SubjectData,
-    PrefetchHooks Function({bool lastWorkedOnSessionID})> {
+    PrefetchHooks Function({bool lastFocuzdOnSessionID})> {
   $$SubjectTableTableManager(_$AppDatabase db, $SubjectTable table)
       : super(TableManagerState(
           db: db,
@@ -3311,7 +3375,7 @@ class $$SubjectTableTableManager extends RootTableManager<
             Value<int?> subjectid = const Value.absent(),
             Value<DateTime> createdAt = const Value.absent(),
             Value<DateTime> updatedAt = const Value.absent(),
-            Value<int?> lastWorkedOnSessionID = const Value.absent(),
+            Value<int?> lastFocuzdOnSessionID = const Value.absent(),
             Value<String?> notes = const Value.absent(),
             Value<int> totalTimeSpent = const Value.absent(),
           }) =>
@@ -3321,7 +3385,7 @@ class $$SubjectTableTableManager extends RootTableManager<
             subjectid: subjectid,
             createdAt: createdAt,
             updatedAt: updatedAt,
-            lastWorkedOnSessionID: lastWorkedOnSessionID,
+            lastFocuzdOnSessionID: lastFocuzdOnSessionID,
             notes: notes,
             totalTimeSpent: totalTimeSpent,
           ),
@@ -3331,7 +3395,7 @@ class $$SubjectTableTableManager extends RootTableManager<
             Value<int?> subjectid = const Value.absent(),
             required DateTime createdAt,
             required DateTime updatedAt,
-            Value<int?> lastWorkedOnSessionID = const Value.absent(),
+            Value<int?> lastFocuzdOnSessionID = const Value.absent(),
             Value<String?> notes = const Value.absent(),
             Value<int> totalTimeSpent = const Value.absent(),
           }) =>
@@ -3341,7 +3405,7 @@ class $$SubjectTableTableManager extends RootTableManager<
             subjectid: subjectid,
             createdAt: createdAt,
             updatedAt: updatedAt,
-            lastWorkedOnSessionID: lastWorkedOnSessionID,
+            lastFocuzdOnSessionID: lastFocuzdOnSessionID,
             notes: notes,
             totalTimeSpent: totalTimeSpent,
           ),
@@ -3349,7 +3413,7 @@ class $$SubjectTableTableManager extends RootTableManager<
               .map((e) =>
                   (e.readTable(table), $$SubjectTableReferences(db, table, e)))
               .toList(),
-          prefetchHooksCallback: ({lastWorkedOnSessionID = false}) {
+          prefetchHooksCallback: ({lastFocuzdOnSessionID = false}) {
             return PrefetchHooks(
               db: db,
               explicitlyWatchedTables: [],
@@ -3366,14 +3430,14 @@ class $$SubjectTableTableManager extends RootTableManager<
                       dynamic,
                       dynamic,
                       dynamic>>(state) {
-                if (lastWorkedOnSessionID) {
+                if (lastFocuzdOnSessionID) {
                   state = state.withJoin(
                     currentTable: table,
-                    currentColumn: table.lastWorkedOnSessionID,
+                    currentColumn: table.lastFocuzdOnSessionID,
                     referencedTable: $$SubjectTableReferences
-                        ._lastWorkedOnSessionIDTable(db),
+                        ._lastFocuzdOnSessionIDTable(db),
                     referencedColumn: $$SubjectTableReferences
-                        ._lastWorkedOnSessionIDTable(db)
+                        ._lastFocuzdOnSessionIDTable(db)
                         .id,
                   ) as T;
                 }
@@ -3399,15 +3463,16 @@ typedef $$SubjectTableProcessedTableManager = ProcessedTableManager<
     $$SubjectTableUpdateCompanionBuilder,
     (SubjectData, $$SubjectTableReferences),
     SubjectData,
-    PrefetchHooks Function({bool lastWorkedOnSessionID})>;
+    PrefetchHooks Function({bool lastFocuzdOnSessionID})>;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
   $AppDatabaseManager(this._db);
   $$SettingsVariablesTableTableManager get settingsVariables =>
       $$SettingsVariablesTableTableManager(_db, _db.settingsVariables);
-  $$MemorySessionVariableTableTableManager get memorySessionVariable =>
-      $$MemorySessionVariableTableTableManager(_db, _db.memorySessionVariable);
+  $$MemoryCountdownVariableTableTableManager get memoryCountdownVariable =>
+      $$MemoryCountdownVariableTableTableManager(
+          _db, _db.memoryCountdownVariable);
   $$RoundVariableTableTableManager get roundVariable =>
       $$RoundVariableTableTableManager(_db, _db.roundVariable);
   $$SubjectTableTableManager get subject =>

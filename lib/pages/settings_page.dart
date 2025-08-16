@@ -38,9 +38,9 @@ class _SettingsPageState extends State<SettingsPage> {
               children: [
                 SettingsCardSpinBox(
                     kind: l10n.AppLocalizations.of(context)!.minutes,
-                    label: l10n.AppLocalizations.of(context)!.workTimeLabel,
+                    label: l10n.AppLocalizations.of(context)!.focusTimeLabel,
                     changeable: 4,
-                    value: state.selectedWorkDurationStored),
+                    value: state.selectedFocusDurationStored),
                 SettingsCardSpinBox(
                     kind: l10n.AppLocalizations.of(context)!.minutes,
                     label: l10n.AppLocalizations.of(context)!.breakTimeLabel,

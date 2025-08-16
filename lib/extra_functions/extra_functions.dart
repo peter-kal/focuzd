@@ -11,7 +11,7 @@ import 'package:window_manager/window_manager.dart';
 mixin class ExtraFunctions {
   Future<void> getThePermanentList(List<SessionVariablePlanning> list,
       MemorySessionRepository memoryrepo, int roundID) async {
-    List<MemorySessionVariableData> historyList = [];
+    List<MemoryCountdownVariableData> historyList = [];
 
     DateTime now = DateTime.now().toLocal();
     DateTime nowperthen = DateTime.now().toLocal();
@@ -21,20 +21,20 @@ mixin class ExtraFunctions {
     }
 
     for (int i = 0; i < list.length; i++) {
-      bool isWork = ((i + 1) % 2) != 0;
+      bool isFocus = ((i + 1) % 2) != 0;
       bool islongBreak = ((i + 1) % 8) == 0;
       String type;
 
-      if (isWork == false && islongBreak == false) {
+      if (isFocus == false && islongBreak == false) {
         type = "break";
-      } else if (isWork == true) {
-        type = "work";
+      } else if (isFocus == true) {
+        type = "focus";
       } else if (islongBreak == true) {
         type = "longBreak";
       } else {
         type = "e";
       }
-      historyList.add(MemorySessionVariableData(
+      historyList.add(MemoryCountdownVariableData(
         id: i,
         type: type,
         roundGoal: list.length ~/ 2,
@@ -47,7 +47,7 @@ mixin class ExtraFunctions {
             .expFinishTime!
             .subtract(Duration(seconds: list[i].plannedDuration)),
       ));
-      memoryrepo.insertMemorySession(MemorySessionVariableCompanion(
+      memoryrepo.insertMemorySession(MemoryCountdownVariableCompanion(
           type: Value(type),
           roundGoal: Value(list.length ~/ 2),
           roundId: Value(roundID),
@@ -92,34 +92,23 @@ mixin class ExtraFunctions {
   }
 
   String currentSessionStatus(String type, String longBreakTimeLabel,
-      String workTimeLabel, String breakTimeLabel) {
+      String focusTimeLabel, String breakTimeLabel) {
     if (type == 'longbreak') {
       return longBreakTimeLabel;
-    } else if (type == 'work') {
-      return workTimeLabel;
+    } else if (type == 'focus') {
+      return focusTimeLabel;
     } else if (type == 'break') {
       return breakTimeLabel;
     }
     return "error";
   }
 
-  int countingWorkRounds(int times) {
-    if (times == 1) {
-      return times;
-    } else if (times != 1 && (times % 2) == 0) {
-      return times ~/ 2;
-    } else if (times != 1 && (times % 2) != 0) {
-      return ((times + 2) - 1) ~/
-          2; // from the arithmetic progression of: An = A1st(which is 1) + (n - 1) * d(which is 2)
-    }
-    return 0;
-  }
 
   List<SessionVariablePlanning> getList(
       int defaultSessionsPerRound, // multiply by 60 so to display you have to divide by 60
       int defaultLongBreakTime,
       int defaultBreakTime,
-      defaultWorkTime) {
+      defaultFocusTime) {
     List<SessionVariablePlanning> list = [];
     for (int i = 1; i < (defaultSessionsPerRound * 2) + 1; i++) {
       if ((i % 2) == 0 && (i % 8) == 0) {
@@ -128,7 +117,7 @@ mixin class ExtraFunctions {
       } else if ((i % 2) == 0) {
         list.add(SessionVariablePlanning("break", defaultBreakTime * 60, null));
       } else if ((i % 2) != 0) {
-        list.add(SessionVariablePlanning("work", defaultWorkTime * 60, null));
+        list.add(SessionVariablePlanning("focus", defaultFocusTime * 60, null));
       }
     }
     return list;

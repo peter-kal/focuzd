@@ -15,7 +15,7 @@
     "resetSessionButtonTooltip": "Επανάφερε",
     "nextSessionButtonTooltip": "Επόμενο",
 
-    "workTimeLabel": "Χρόνος Συγκέντρωσης",
+    "focusTimeLabel": "Χρόνος Συγκέντρωσης",
     "breakTimeLabel": "Χρόνος Διάλειμματος",
     "longBreakTimeLabel": "Χρόνος Μεγάλου Διάλειμματος",
     "numberLabelSettings": "Ακέραιος",

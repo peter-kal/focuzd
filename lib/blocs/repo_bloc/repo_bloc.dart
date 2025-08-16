@@ -40,7 +40,7 @@ class RepoBloc extends Bloc<RepoEvent, RepoState> {
         await settingsRepo.updateSetting(
             1,
             SettingsVariablesCompanion(
-                selectedWorkDurationStored: Value(event.changedVar)));
+                selectedFocusDurationStored: Value(event.changedVar)));
         break;
       case 5:
         await settingsRepo.updateSetting(
@@ -71,7 +71,7 @@ class RepoBloc extends Bloc<RepoEvent, RepoState> {
         requestedNumberOfSessions: has.requestedNumberOfSessions,
         selectedBreakDurationStored: has.selectedBreakDurationStored,
         selectedLongBreakDuration: has.selectedLongBreakDurationStored,
-        selectedWorkDurationStored: has.selectedWorkDurationStored,
+        selectedFocusDurationStored: has.selectedFocusDurationStored,
         windowOnTop: has.windowOnTop,
         sessions: memorysessionlist));
   }
@@ -85,7 +85,7 @@ class RepoBloc extends Bloc<RepoEvent, RepoState> {
           requestedNumberOfSessions: Value(4),
           selectedBreakDurationStored: Value(5),
           selectedLongBreakDurationStored: Value(15),
-          selectedWorkDurationStored: Value(25),
+          selectedFocusDurationStored: Value(25),
         ));
     add(EmitStateWithDBVars());
   }

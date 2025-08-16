@@ -5,7 +5,7 @@ class SettingsVariables extends Table {
   BoolColumn get windowOnTop => boolean()();
   IntColumn get requestedNumberOfSessions => integer()();
   IntColumn get selectedBreakDurationStored => integer()();
-  IntColumn get selectedWorkDurationStored => integer()();
+  IntColumn get selectedFocusDurationStored => integer()();
   IntColumn get selectedLongBreakDurationStored => integer()();
   BoolColumn get roundPlanningByDefault =>
       boolean().withDefault(Constant(true))();
@@ -26,11 +26,13 @@ class RoundVariable extends Table {
   TextColumn get notes => text().nullable()();
 }
 
-class MemorySessionVariable extends Table {
+class MemoryCountdownVariable extends Table {
   IntColumn get id => integer().autoIncrement()();
   IntColumn get roundGoal =>
       integer()(); // will be deprecated, keeping it just for testing, an ensuring the session will be part of the right round
   IntColumn get roundId => integer()(); //what round it belongs to
+  TextColumn get propableCause =>
+      text().nullable()(); // to be used when the session hasn't gone as planned
   IntColumn get durationLeft => integer().nullable()();
   IntColumn get roundRunTime =>
       integer()(); // in roundcentric that's it's pos is the list, prev runTime
@@ -46,7 +48,7 @@ class MemorySessionVariable extends Table {
       boolean().withDefault(const Constant(false)).nullable()();
   BoolColumn get active => boolean().withDefault(const Constant(
       false))(); //opposites with completed in some form, in completed true active must be false
-  TextColumn get type => text()(); //'work' 'break' 'longbreak'
+  TextColumn get type => text()(); //'focus' 'break' 'longbreak'
   IntColumn get subject => integer().nullable()();
   TextColumn get notes =>
       text().nullable()(); // for noting progress done on a session
@@ -59,8 +61,8 @@ class Subject extends Table {
       integer().nullable().customConstraint('REFERENCES subject(id)')();
   DateTimeColumn get createdAt => dateTime()();
   DateTimeColumn get updatedAt => dateTime()();
-  IntColumn get lastWorkedOnSessionID =>
-      integer().nullable().references(MemorySessionVariable, #id)();
+  IntColumn get lastFocuzdOnSessionID =>
+      integer().nullable().references(MemoryCountdownVariable, #id)();
   TextColumn get notes =>
       text().nullable()(); // can also be the sum of session's notes
   IntColumn get totalTimeSpent =>

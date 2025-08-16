@@ -36,9 +36,9 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
       // This event is not used in the current implementation
       // but can be used to set initial time if needed.
       final stored = await settingsRepo.fetchSettingsById(1);
-      final workTimeDuration = stored!.selectedWorkDurationStored * 60;
+      final focusTimeDuration = stored!.selectedFocusDurationStored * 60;
       final reqRounds = stored.requestedNumberOfSessions;
-      emit(TimerInitial(1, workTimeDuration, reqRounds));
+      emit(TimerInitial(1, focusTimeDuration, reqRounds));
     });
   }
   Timer? _planningRefreshTimer;
@@ -71,21 +71,21 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
   void _onTimerInit(TimerInit event, Emitter<PomodoroTimerState> emit) async {
     // done for now 17:25 17/05
     final stored = await settingsRepo.fetchSettingsById(1);
-    final workTimeDuration = stored!.selectedWorkDurationStored * 60;
+    final focusTimeDuration = stored!.selectedFocusDurationStored * 60;
     final reqRounds = stored.requestedNumberOfSessions;
     _cancelPlanningRefresh();
-    emit(TimerInitial(1, workTimeDuration, reqRounds));
+    emit(TimerInitial(1, focusTimeDuration, reqRounds));
   }
 
   void _onRoundPlan(RoundPlan event, Emitter<PomodoroTimerState> emit) async {
     final stored = await settingsRepo.fetchSettingsById(1);
     final subjects = await subjectRepo.fetchAllSubjects();
-    final workTimeDuration = stored!.selectedWorkDurationStored;
+    final focusTimeDuration = stored!.selectedFocusDurationStored;
     final breakDuration = stored.selectedBreakDurationStored;
     final longBreakDuration = stored.selectedLongBreakDurationStored;
     final sessionsPerRound = stored.requestedNumberOfSessions;
     List<SessionVariablePlanning> planlist = ExtraFunctions().getList(
-        sessionsPerRound, longBreakDuration, breakDuration, workTimeDuration);
+        sessionsPerRound, longBreakDuration, breakDuration, focusTimeDuration);
 
     var now = DateTime.now().toLocal();
     var nowperthen = DateTime.now().toLocal();
@@ -98,7 +98,7 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
     emit(RoundPlanning(
         sessionsPerRound,
         breakDuration,
-        workTimeDuration,
+        focusTimeDuration,
         longBreakDuration,
         subjects,
         planlist,
@@ -110,7 +110,7 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
   void _onChangePlan(ChangePlan event, Emitter<PomodoroTimerState> emit) async {
     final stored = await settingsRepo.fetchSettingsById(1);
     final subjects = await subjectRepo.fetchAllSubjects();
-    final workTimeDuration = stored!.selectedWorkDurationStored;
+    final focusTimeDuration = stored!.selectedFocusDurationStored;
     final breakDuration = stored.selectedBreakDurationStored;
     final longBreakDuration = stored.selectedLongBreakDurationStored;
     final sessionsperRound = stored.requestedNumberOfSessions;
@@ -124,7 +124,7 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
       if (event.actionCode == 1) {
         // add a session
         var newlist = state.planlist;
-        newlist.add(SessionVariablePlanning('work', workTimeDuration * 60, null,
+        newlist.add(SessionVariablePlanning('focus', focusTimeDuration * 60, null,
             expFinishTime: null));
         ((newlist.length + 1) % 8) == 0
             ? newlist.add(SessionVariablePlanning(
@@ -158,7 +158,7 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
       durationOfRound = x.inSeconds;
     }
 
-    emit(RoundPlanning(sessionsperRound, breakDuration, workTimeDuration,
+    emit(RoundPlanning(sessionsperRound, breakDuration, focusTimeDuration,
         longBreakDuration, subjects, newlist, nowPerThen, durationOfRound));
   }
 
@@ -175,13 +175,13 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
       var roundid = await roundRepo.getCurrentRound();
 
       for (int i = 0; i < state.planlist.length; i++) {
-        bool isWork = ((i + 1) % 2) != 0;
+        bool isFocus = ((i + 1) % 2) != 0;
         bool islongBreak = ((i + 1) % 8) == 0;
         String type;
-        if (isWork == false && islongBreak == false) {
+        if (isFocus == false && islongBreak == false) {
           type = "break";
-        } else if (isWork == true) {
-          type = "work";
+        } else if (isFocus == true) {
+          type = "focus";
         } else if (islongBreak == true) {
           type = "longBreak";
         } else {
@@ -194,7 +194,7 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
           idSub = state.planlist[i].subject!.id;
         }
         await memorySessionRepo
-            .insertMemorySession(MemorySessionVariableCompanion(
+            .insertMemorySession(MemoryCountdownVariableCompanion(
                 type: Value(type),
                 roundGoal: Value(state.planlist.length ~/ 2),
                 roundId: Value(roundid!.id),
@@ -208,7 +208,7 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
       }
       var memoryid = await memorySessionRepo.getTheNextClosest();
       await memorySessionRepo.updateMemorySessionWrite(memoryid!.id,
-          MemorySessionVariableCompanion(startingTime: Value(DateTime.now())));
+          MemoryCountdownVariableCompanion(startingTime: Value(DateTime.now())));
 
       emit(TimerRunInProgress(
           state.planlist.first.plannedDuration,
@@ -323,7 +323,7 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
 
     final stored = await settingsRepo.fetchSettingsById(1);
 
-    final workTimeDuration = stored!.selectedWorkDurationStored * 60;
+    final focusTimeDuration = stored!.selectedFocusDurationStored * 60;
     final now = DateTime.now();
     final startTime = await memorySessionRepo.getCurrentSession();
 
@@ -332,7 +332,7 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
       if (startTime != null) {
         memorySessionRepo.updateMemorySessionWrite(
             state.currentMemorySessionID,
-            MemorySessionVariableCompanion(
+            MemoryCountdownVariableCompanion(
                 id: Value(state.currentMemorySessionID),
                 finishTime: Value(now),
                 durationLeft: Value(state.duration),
@@ -340,21 +340,21 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
                     Value(now.difference(startTime.startingTime!).inSeconds)));
       }
       emit(TimerInitial(
-          state.runTimes, workTimeDuration, state.defaultSessionsPerRound));
+          state.runTimes, focusTimeDuration, state.defaultSessionsPerRound));
     } else if (state is TimerInitial) {
       add(TimerInit());
     } else if (state is TimerRunPause) {
       if (startTime != null) {
         memorySessionRepo.updateMemorySessionWrite(
             state.currentMemorySessionID,
-            MemorySessionVariableCompanion(
+            MemoryCountdownVariableCompanion(
                 id: Value(state.currentMemorySessionID),
                 finishTime: Value(now),
                 durationLeft: Value(state.duration),
                 actuallyDoneDuration:
                     Value(now.difference(startTime.startingTime!).inSeconds)));
         emit(TimerInitial(
-            state.runTimes, workTimeDuration, state.defaultSessionsPerRound));
+            state.runTimes, focusTimeDuration, state.defaultSessionsPerRound));
       }
     }
   }
@@ -370,7 +370,7 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
 
         await memorySessionRepo.updateMemorySessionWrite(
             state.currentMemorySessionID,
-            MemorySessionVariableCompanion(
+            MemoryCountdownVariableCompanion(
               durationLeft: Value(state.duration),
               finishTime: Value(now),
               actuallyDoneDuration: Value(
@@ -400,7 +400,7 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
             state.subject!.id,
             SubjectCompanion(
               updatedAt: Value(now),
-              lastWorkedOnSessionID: Value(state.currentMemorySessionID),
+              lastFocuzdOnSessionID: Value(state.currentMemorySessionID),
               totalTimeSpent: Value(totalTimeSpent != null
                   ? totalTimeSpent + (state.selectedDuration - state.duration)
                   : (state.selectedDuration - state.duration)),
@@ -419,7 +419,7 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
             state.subject!.id,
             SubjectCompanion(
               updatedAt: Value(now),
-              lastWorkedOnSessionID: Value(state.currentMemorySessionID),
+              lastFocuzdOnSessionID: Value(state.currentMemorySessionID),
               totalTimeSpent: Value(totalTimeSpent != null
                   ? totalTimeSpent + actuallyDoneSession
                   : actuallyDoneSession),
@@ -428,7 +428,7 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
         }
         await memorySessionRepo.updateMemorySessionWrite(
             state.currentMemorySessionID,
-            MemorySessionVariableCompanion(
+            MemoryCountdownVariableCompanion(
               durationLeft: Value(state.duration),
               finishTime: Value(now),
               completed: Value(state.duration == 0 ? true : false),
@@ -446,7 +446,7 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
             ));
         await memorySessionRepo.updateMemorySessionWrite(
             state.currentMemorySessionID + 1,
-            MemorySessionVariableCompanion(
+            MemoryCountdownVariableCompanion(
               startingTime: Value(now),
             ));
         emit(TimerRunInProgress(
@@ -479,7 +479,7 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
               state.sessions[state.runTimes + 1].type == 'longbreak') {
             await client.notify(
                 "Take a break for the next ${(state.sessions[state.runTimes + 1].plannedDuration / 60).round()} minutes!");
-          } else if (state.sessions[state.runTimes + 1].type == 'work') {
+          } else if (state.sessions[state.runTimes + 1].type == 'focus') {
             await client.notify(
                 "Focus for the next ${(state.sessions[state.runTimes + 1].plannedDuration / 60).round()} minutes!");
           }
@@ -497,7 +497,7 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
       if (currentSession != null) {
         await memorySessionRepo.updateMemorySessionWrite(
           currentSession.id,
-          MemorySessionVariableCompanion(
+          MemoryCountdownVariableCompanion(
             finishTime: Value(now),
             durationLeft: Value(state.duration),
             actuallyDoneDuration: Value(
@@ -512,7 +512,7 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
       if (currentSession != null) {
         await memorySessionRepo.updateMemorySessionWrite(
           currentSession.id,
-          MemorySessionVariableCompanion(
+          MemoryCountdownVariableCompanion(
             finishTime: Value(now),
             durationLeft: Value(state.duration),
             actuallyDoneDuration: Value(

@@ -46,7 +46,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get nextSessionButtonTooltip => 'Next';
 
   @override
-  String get workTimeLabel => 'Focus Time';
+  String get focusTimeLabel => 'Focus Time';
 
   @override
   String get breakTimeLabel => 'Break Time';

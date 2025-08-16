@@ -35,7 +35,7 @@ class SessionTilePlanning extends StatelessWidget {
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                         color:
-                            prototype.type == "work" ? Theme.of(context).primaryColor : Colors.green)),
+                            prototype.type == "focus" ? Theme.of(context).primaryColor : Colors.green)),
               ),
               SizedBox(
                 width: 10,
@@ -51,7 +51,7 @@ class SessionTilePlanning extends StatelessWidget {
               children: [
                 Text(DateFormat('HH:mm').format(prototype.expFinishTime!),
                     style: TextStyle(color: Theme.of(context).primaryColor)),
-                prototype.type == "work"
+                prototype.type == "focus"
                     ? YaruIconButton(
                         icon: Icon(YaruIcons.trash),
                         tooltip: AppLocalizations.of(context)!.deleteSessionTooltip,
@@ -77,7 +77,7 @@ class SessionTilePlanning extends StatelessWidget {
                   .add(ChangePlan(5, position, null, value.inSeconds)); 
             }, ),
           ),
-          prototype.type == 'work'
+          prototype.type == 'focus'
           ? Column(
             children: [
               Text("${AppLocalizations.of(context)!.selectSubjectLabel}:"),

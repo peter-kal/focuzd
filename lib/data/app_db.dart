@@ -6,7 +6,7 @@ import 'db_tables.dart';
 part 'app_db.g.dart';
 
 @DriftDatabase(
-    tables: [SettingsVariables, MemorySessionVariable, RoundVariable, Subject])
+    tables: [SettingsVariables, MemoryCountdownVariable, RoundVariable, Subject])
 class AppDatabase extends _$AppDatabase {
   static final AppDatabase instance = AppDatabase._internal();
 
@@ -24,12 +24,20 @@ class AppDatabase extends _$AppDatabase {
             name: Value("Mathematics"),
             createdAt: Value(DateTime.now()),
             updatedAt: Value(DateTime.now())));
+        await into(subject).insert(SubjectCompanion(
+            name: Value("Microbiology"),
+            createdAt: Value(DateTime.now()),
+            updatedAt: Value(DateTime.now())));
+        await into(subject).insert(SubjectCompanion(
+            name: Value("Ergotherapy"),
+            createdAt: Value(DateTime.now()),
+            updatedAt: Value(DateTime.now())));
         await into(settingsVariables).insert(SettingsVariablesCompanion(
             windowOnTop: Value(false),
             requestedNumberOfSessions: Value(4),
             selectedBreakDurationStored: Value(5),
             selectedLongBreakDurationStored: Value(15),
-            selectedWorkDurationStored: Value(25)));
+            selectedFocusDurationStored: Value(25)));
       },
       onUpgrade: (Migrator m, int from, int to) async {
         if (from < 2) {}
@@ -43,7 +51,7 @@ class AppDatabase extends _$AppDatabase {
 
 LazyDatabase _openConnection() {
   return LazyDatabase(() async {
-    final directory = await getApplicationSupportDirectory();
+    final directory = await getApplicationDocumentsDirectory();
     return driftDatabase(
       name: 'focuzd_app_db',
       native: DriftNativeOptions(databaseDirectory: () async => directory),

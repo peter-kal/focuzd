@@ -7,7 +7,7 @@ import 'package:yaru/widgets.dart';
 
 class SessionCard extends StatelessWidget {
   SessionCard(this.id, {super.key});
-  MemorySessionVariableData id;
+  MemoryCountdownVariableData id;
   var memoryrepo = MemorySessionRepository(AppDatabase.instance);
   var subjectRepo = SubjectRepository(AppDatabase.instance);
   Future<String?> getSubjectName(int subid) async {

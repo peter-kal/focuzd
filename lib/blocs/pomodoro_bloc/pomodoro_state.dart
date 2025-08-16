@@ -31,14 +31,14 @@ final class RoundPlanning extends PomodoroTimerState {
   const RoundPlanning(
       super.defaultSessionsPerRound,
       this.defaultBreakTime,
-      this.defaultWorkTime,
+      this.defaultFocusTime,
       this.defaultLongBreakTime,
       this.subjects,
       this.planlist,
       this.expFinishRoundTime,
       this.roundDuration);
   final int defaultBreakTime;
-  final int defaultWorkTime;
+  final int defaultFocusTime;
   final int defaultLongBreakTime;
   final List<SubjectData> subjects;
   final List<SessionVariablePlanning> planlist;
@@ -48,7 +48,7 @@ final class RoundPlanning extends PomodoroTimerState {
   @override
   List<Object> get props => [
         defaultBreakTime,
-        defaultWorkTime,
+        defaultFocusTime,
         defaultLongBreakTime,
         planlist,
         expFinishRoundTime,
@@ -85,7 +85,7 @@ final class TimerRunPause extends PomodoroTimerState {
   final DateTime endOfRound;
   @override
   String toString() =>
-      'TimerRunPause { duration: $duration , workTimes: $runTimes}';
+      'TimerRunPause { duration: $duration , focusTimes: $runTimes}';
 }
 
 final class TimerRunInProgress extends PomodoroTimerState {

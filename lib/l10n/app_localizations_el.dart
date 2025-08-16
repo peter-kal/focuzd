@@ -46,7 +46,7 @@ class AppLocalizationsEl extends AppLocalizations {
   String get nextSessionButtonTooltip => 'Επόμενο';
 
   @override
-  String get workTimeLabel => 'Χρόνος Συγκέντρωσης';
+  String get focusTimeLabel => 'Χρόνος Συγκέντρωσης';
 
   @override
   String get breakTimeLabel => 'Χρόνος Διάλειμματος';

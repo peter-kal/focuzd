@@ -55,17 +55,17 @@ class MemorySessionRepository {
 
   // Insert a new memory session
   Future<void> insertMemorySession(
-      MemorySessionVariableCompanion session) async {
-    await _db.into(_db.memorySessionVariable).insert(session);
+      MemoryCountdownVariableCompanion session) async {
+    await _db.into(_db.memoryCountdownVariable).insert(session);
   }
 
   // Fetch all memory sessions
-  Future<List<MemorySessionVariableData>> fetchAllMemorySessions() async {
-    return await _db.select(_db.memorySessionVariable).get();
+  Future<List<MemoryCountdownVariableData>> fetchAllMemorySessions() async {
+    return await _db.select(_db.memoryCountdownVariable).get();
   }
 
-  Future<MemorySessionVariableData?> getTheNextClosest() async {
-    return await (_db.select(_db.memorySessionVariable)
+  Future<MemoryCountdownVariableData?> getTheNextClosest() async {
+    return await (_db.select(_db.memoryCountdownVariable)
           ..where((tbl) => tbl.finishTime.isNull())
           ..orderBy([(tbl) => OrderingTerm.asc(tbl.expStartingTime)])
           ..limit(1))
@@ -73,8 +73,8 @@ class MemorySessionRepository {
   }
 
   // fetch the newest uncompleted memory session (max id AND uncompleted false )
-  Future<MemorySessionVariableData?> getCurrentSession() async {
-    return await (_db.select(_db.memorySessionVariable)
+  Future<MemoryCountdownVariableData?> getCurrentSession() async {
+    return await (_db.select(_db.memoryCountdownVariable)
           ..where((tbl) => tbl.finishTime.isNull()) // Uncompleted sessions
           ..orderBy([
             (tbl) =>
@@ -84,40 +84,40 @@ class MemorySessionRepository {
   }
 
   // Fetch memory session by ID
-  Future<MemorySessionVariableData?> fetchMemorySessionById(int id) async {
-    return await (_db.select(_db.memorySessionVariable)
+  Future<MemoryCountdownVariableData?> fetchMemorySessionById(int id) async {
+    return await (_db.select(_db.memoryCountdownVariable)
           ..where((tbl) => tbl.id.equals(id)))
         .getSingleOrNull();
   }
 
   // Update a memory session
   Future<void> updateMemorySession(
-      MemorySessionVariableCompanion updatedSession) async {
-    await _db.update(_db.memorySessionVariable).replace(updatedSession);
+      MemoryCountdownVariableCompanion updatedSession) async {
+    await _db.update(_db.memoryCountdownVariable).replace(updatedSession);
   }
 
   // edit specific with write not replace
   Future<void> updateMemorySessionWrite(
-      int id, MemorySessionVariableCompanion updatedSession) async {
-    await (_db.update(_db.memorySessionVariable)
+      int id, MemoryCountdownVariableCompanion updatedSession) async {
+    await (_db.update(_db.memoryCountdownVariable)
           ..where((tbl) => tbl.id.equals(id)))
         .write(updatedSession);
   }
 
   // Delete memory session by ID
   Future<void> deleteMemorySessionById(int id) async {
-    await (_db.delete(_db.memorySessionVariable)
+    await (_db.delete(_db.memoryCountdownVariable)
           ..where((tbl) => tbl.id.equals(id)))
         .go();
   }
 
   //Delete all memory sessions
   Future<void> deleteAllMemorySessions() async {
-    await _db.delete(_db.memorySessionVariable).go();
+    await _db.delete(_db.memoryCountdownVariable).go();
   }
 
-  Future<MemorySessionVariableData?> fetchLastMemorySession() async {
-    return await (_db.select(_db.memorySessionVariable)
+  Future<MemoryCountdownVariableData?> fetchLastMemorySession() async {
+    return await (_db.select(_db.memoryCountdownVariable)
           ..orderBy([(tbl) => OrderingTerm.desc(tbl.id)])
           ..limit(1))
         .getSingleOrNull();

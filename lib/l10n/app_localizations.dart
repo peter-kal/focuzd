@@ -170,11 +170,11 @@ abstract class AppLocalizations {
   /// **'Next'**
   String get nextSessionButtonTooltip;
 
-  /// No description provided for @workTimeLabel.
+  /// No description provided for @focusTimeLabel.
   ///
   /// In en, this message translates to:
   /// **'Focus Time'**
-  String get workTimeLabel;
+  String get focusTimeLabel;
 
   /// No description provided for @breakTimeLabel.
   ///
