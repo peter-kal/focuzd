@@ -6,16 +6,17 @@ class SubjectRepository {
   final AppDatabase _db;
   SubjectRepository(this._db);
   // TASK: Write a function that will insert sub-subjects time into the super-subjects, after updating in the Bloc
-  
+
   Future<SubjectData?> fetchSubjectByID(int id) async {
     return await (_db.select(_db.subject)..where((tbl) => tbl.id.equals(id)))
         .getSingleOrNull();
   }
-  Future<void> editSubjectWrite(
-      int id, SubjectCompanion updatedSubject) async {
+
+  Future<void> editSubjectWrite(int id, SubjectCompanion updatedSubject) async {
     await (_db.update(_db.subject)..where((tbl) => tbl.id.equals(id)))
         .write(updatedSubject);
   }
+
   Future<List<SubjectData>> fetchAllSubjects() async {
     return await _db.select(_db.subject).get();
   }
@@ -65,7 +66,7 @@ class MemorySessionRepository {
 
   Future<MemorySessionVariableData?> getTheNextClosest() async {
     return await (_db.select(_db.memorySessionVariable)
-          ..where((tbl) => tbl.completed.isValue(false))
+          ..where((tbl) => tbl.finishTime.isNull())
           ..orderBy([(tbl) => OrderingTerm.asc(tbl.expStartingTime)])
           ..limit(1))
         .getSingleOrNull();
