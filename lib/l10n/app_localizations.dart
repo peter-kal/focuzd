@@ -235,6 +235,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Delete Session'**
   String get deleteSessionTooltip;
+
+  /// No description provided for @tooltipTakeNotes.
+  ///
+  /// In en, this message translates to:
+  /// **'Take Notes'**
+  String get tooltipTakeNotes;
+
+  /// No description provided for @tooltipRoundProgressEnd.
+  ///
+  /// In en, this message translates to:
+  /// **'Round Progress:'**
+  String get tooltipRoundProgressEnd;
 }
 
 class _AppLocalizationsDelegate

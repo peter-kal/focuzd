@@ -22,7 +22,8 @@ class BottomAppBarInterface extends StatelessWidget with ExtraFunctions {
   final int duration;
   void initialFunction(BuildContext context) {
     BlocProvider.of<PomodoroBloc>(context).add(RoundPlan(duration: duration));
-    BlocProvider.of<PageNavigationBloc>(context).add(const RoundPlanningPageEvent());
+    BlocProvider.of<PageNavigationBloc>(context)
+        .add(const RoundPlanningPageEvent());
   }
 
   @override
@@ -52,8 +53,7 @@ class BottomAppBarInterface extends StatelessWidget with ExtraFunctions {
         SizedBox(
             child: YaruSection(
                 child: SelectableText(
-                    textAlign: TextAlign.center,
-                    "$showTime / $reqRounds"))),
+                    textAlign: TextAlign.center, "$showTime / $reqRounds"))),
         Column(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
@@ -74,7 +74,8 @@ class BottomAppBarInterface extends StatelessWidget with ExtraFunctions {
                 color: Theme.of(context).primaryColor,
               ),
               onPressed: () {
-                BlocProvider.of<PomodoroBloc>(context).add(const NextPomodoroTimer());
+                BlocProvider.of<PomodoroBloc>(context)
+                    .add(const NextPomodoroTimer(1));
               },
             )
           ],

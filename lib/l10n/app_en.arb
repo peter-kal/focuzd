@@ -27,7 +27,10 @@
     "startButtonOnPlanning": "Start",
     "changeDurationLabel": "Change Duration",
     "selectSubjectLabel": "Select a Subject",
-    "deleteSessionTooltip": "Delete Session"
+    "deleteSessionTooltip": "Delete Session",
+
+    "tooltipTakeNotes": "Take Notes",
+    "tooltipRoundProgressEnd": "Round Progress:"
 
 
 

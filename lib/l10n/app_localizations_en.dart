@@ -77,4 +77,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get deleteSessionTooltip => 'Delete Session';
+
+  @override
+  String get tooltipTakeNotes => 'Take Notes';
+
+  @override
+  String get tooltipRoundProgressEnd => 'Round Progress:';
 }
