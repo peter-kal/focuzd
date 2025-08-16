@@ -16,7 +16,8 @@ final class RoundPlan extends PomodoroTimerEvent {
 }
 
 final class ChangePlan extends PomodoroTimerEvent {
-  const ChangePlan(this.actionCode, [this.position, this.subject, this.newduration]);
+  const ChangePlan(this.actionCode,
+      [this.position, this.subject, this.newduration]);
   final int actionCode;
   final int? newduration;
   final int? position;
@@ -37,7 +38,6 @@ final class TimerResumed extends PomodoroTimerEvent {
 
 final class SetTimeInnit extends PomodoroTimerEvent {
   const SetTimeInnit();
-
 }
 
 class TimerReset extends PomodoroTimerEvent {
@@ -50,7 +50,8 @@ class _TimerTicked extends PomodoroTimerEvent {
 }
 
 class NextPomodoroTimer extends PomodoroTimerEvent {
-  const NextPomodoroTimer();
+  const NextPomodoroTimer([this.nextCode]);
+  final int? nextCode;
 }
 
 class WindowIsClosing extends PomodoroTimerEvent {}
