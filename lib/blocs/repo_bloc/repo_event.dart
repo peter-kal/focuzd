@@ -17,6 +17,8 @@ class UpdateSettingVariables extends RepoEvent {
   List<Object> get props => [selectedToChange, changedVar];
 }
 
-class EmitStateWithDBVars extends RepoEvent {}
+final class EmitStateWithDBVars extends RepoEvent {
+  const EmitStateWithDBVars();
+}
 
 class ResetSettings extends RepoEvent {}

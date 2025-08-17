@@ -31,12 +31,12 @@ Future<void> main() async {
           create: (context) => PageNavigationBloc()..add(const MainPageEvent()),
         ),
         BlocProvider(
-            create: (context) => RepoBloc()..add(EmitStateWithDBVars())),
+            create: (context) => RepoBloc()..add(const EmitStateWithDBVars())),
         BlocProvider(
             create: (context) =>
                 PomodoroBloc(ticker: const Ticker())..add(const TimerInit()))
       ],
-      child: Builder(builder: (context) {
+      child: Builder(builder: (context)  {
         windowManager.addListener(MyWindowListener(context: context));
         return const FocuzdApp();
       })));

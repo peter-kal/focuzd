@@ -1,4 +1,5 @@
 import 'package:drift/drift.dart';
+import 'package:focuzd/l10n/app_localizations.dart';
 
 import 'app_db.dart';
 
@@ -19,6 +20,38 @@ class SubjectRepository {
 
   Future<List<SubjectData>> fetchAllSubjects() async {
     return await _db.select(_db.subject).get();
+  }
+}
+
+class OutPlanningVariableRepo {
+  final AppDatabase _db;
+  OutPlanningVariableRepo(this._db);
+
+  Future<List<OutPlanningVariableData>> fetchOutPlanningsByCountdownID(
+      int id) async {
+    return await (_db.select(_db.outPlanningVariable)
+          ..where((tbl) => tbl.memoryCountdownID.equals(id)))
+        .get();
+  }
+
+  Future<void> updateOutPlanning(
+      int outPlanningID, OutPlanningVariableCompanion updatedOutPlanning) async {
+    await (_db.update(_db.outPlanningVariable)
+          ..where((tbl) => tbl.id.equals(outPlanningID)))
+        .write(updatedOutPlanning);
+  }
+
+  Future<void> insertOutPlanning(
+      OutPlanningVariableCompanion outplanning) async {
+    await _db.into(_db.outPlanningVariable).insert(outplanning);
+  }
+
+  Future<OutPlanningVariableData?> getActiveOutPlanning(int id)
+  async {
+    return await (_db.select(_db.outPlanningVariable)
+          ..where((tbl) => tbl.memoryCountdownID.equals(id))
+          ..where((tbl) => tbl.isActive.equals(true)))
+        .getSingleOrNull();
   }
 }
 

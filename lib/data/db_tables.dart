@@ -54,6 +54,16 @@ class MemoryCountdownVariable extends Table {
       text().nullable()(); // for noting progress done on a session
 }
 
+class OutPlanningVariable extends Table {
+  IntColumn get id => integer().autoIncrement()();
+  IntColumn get memoryCountdownID => integer()();
+  DateTimeColumn get startingTime => dateTime().nullable()();
+  DateTimeColumn get finishTime => dateTime().nullable()();
+  IntColumn get duration => integer().nullable()();
+  TextColumn get type => text().nullable()(); // pause time or reset time
+  BoolColumn get isActive => boolean().withDefault(const Constant(false))();
+}
+
 class Subject extends Table {
   IntColumn get id => integer().autoIncrement()();
   TextColumn get name => text().unique().withLength(max: 99)();
@@ -65,6 +75,6 @@ class Subject extends Table {
       integer().nullable().references(MemoryCountdownVariable, #id)();
   TextColumn get notes =>
       text().nullable()(); // can also be the sum of session's notes
-  IntColumn get totalTimeSpent =>
-      integer().withDefault(const Constant(0))(); // total time spent on the subject
+  IntColumn get totalTimeSpent => integer()
+      .withDefault(const Constant(0))(); // total time spent on the subject
 }

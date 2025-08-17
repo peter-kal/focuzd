@@ -55,3 +55,7 @@ class NextPomodoroTimer extends PomodoroTimerEvent {
 }
 
 class WindowIsClosing extends PomodoroTimerEvent {}
+
+class UpdatePausedState extends PomodoroTimerEvent {
+  const UpdatePausedState();
+}

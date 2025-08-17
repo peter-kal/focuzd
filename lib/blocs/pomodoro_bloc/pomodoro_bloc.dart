@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+
 import 'package:bloc/bloc.dart';
 import 'package:desktop_notifications/desktop_notifications.dart';
 import 'package:drift/drift.dart';
@@ -32,6 +33,7 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
     on<TimerReset>(_onReset);
     on<NextPomodoroTimer>(_onNextPomodoro);
     on<WindowIsClosing>(_onWindowIsClosing);
+    on<UpdatePausedState>(_onUpdatePausedState);
     on<SetTimeInnit>((event, emit) async {
       // This event is not used in the current implementation
       // but can be used to set initial time if needed.
@@ -42,20 +44,34 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
     });
   }
   Timer? _planningRefreshTimer;
+  Timer? _pauseRefreshTimer;
   // This timer is used to refresh the planning time in the RoundPlanning state.
   final Ticker _ticker;
   final settingsRepo = SettingsRepository(AppDatabase.instance);
   final memorySessionRepo = MemorySessionRepository(AppDatabase.instance);
   final subjectRepo = SubjectRepository(AppDatabase.instance);
   final roundRepo = RoundRepository(AppDatabase.instance);
+  final outPlanningRepo = OutPlanningVariableRepo(AppDatabase.instance);
   dynamic client;
   StreamSubscription<int>? _tickerSubscription;
   @override
   Future<void> close() {
     _planningRefreshTimer?.cancel();
+    _pauseRefreshTimer?.cancel();
     _tickerSubscription?.cancel();
     return super.close();
   }
+  
+  void _startPauseRefreshTimer(){
+    _pauseRefreshTimer?.cancel();
+    _pauseRefreshTimer =
+        Timer.periodic(const Duration(seconds: 3), (_) => add(UpdatePausedState()));
+  }
+  void _cancelPauseRefresh() {
+    _pauseRefreshTimer?.cancel();
+    _pauseRefreshTimer = null;
+  }
+
 
   void _startPlanningRefresh() {
     _planningRefreshTimer?.cancel();
@@ -124,7 +140,8 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
       if (event.actionCode == 1) {
         // add a session
         var newlist = state.planlist;
-        newlist.add(SessionVariablePlanning('focus', focusTimeDuration * 60, null,
+        newlist.add(SessionVariablePlanning(
+            'focus', focusTimeDuration * 60, null,
             expFinishTime: null));
         ((newlist.length + 1) % 8) == 0
             ? newlist.add(SessionVariablePlanning(
@@ -207,8 +224,10 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
                 )));
       }
       var memoryid = await memorySessionRepo.getTheNextClosest();
-      await memorySessionRepo.updateMemorySessionWrite(memoryid!.id,
-          MemoryCountdownVariableCompanion(startingTime: Value(DateTime.now())));
+      await memorySessionRepo.updateMemorySessionWrite(
+          memoryid!.id,
+          MemoryCountdownVariableCompanion(
+              startingTime: Value(DateTime.now())));
 
       emit(TimerRunInProgress(
           state.planlist.first.plannedDuration,
@@ -275,10 +294,37 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
     }
   }
 
-  void _onPause(TimerPaused event, Emitter<PomodoroTimerState> emit) {
+  void _onUpdatePausedState(UpdatePausedState event, Emitter<PomodoroTimerState> emit) async {
+    final state = this.state;
+    if (state is TimerRunPause) {
+      emit(TimerRunPause(
+          state.defaultSessionsPerRound,
+          state.runTimes,
+          state.showTime,
+          state.duration,
+          state.selectedDuration,
+          state.currentMemorySessionID,
+          state.currentRoundID,
+          state.sessions,
+          state.type,
+          state.roundDuration,
+          state.actualRoundDuration,
+          state.endOfRound.add(Duration(seconds: 3)),
+          state.subject));
+    } 
+  }
+
+  void _onPause(TimerPaused event, Emitter<PomodoroTimerState> emit) async {
     final state = this.state;
     if (state is TimerRunInProgress) {
       _tickerSubscription?.pause();
+      _startPauseRefreshTimer();
+      await outPlanningRepo.insertOutPlanning(OutPlanningVariableCompanion(
+          memoryCountdownID: Value(state.currentMemorySessionID),
+          startingTime: Value(DateTime.now()),
+          isActive: Value(true),
+          type: Value("pause"),
+          ));
       emit(TimerRunPause(
           state.defaultSessionsPerRound,
           state.runTimes,
@@ -296,10 +342,17 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
     }
   }
 
-  void _onResumed(TimerResumed resume, Emitter<PomodoroTimerState> emit) {
+  void _onResumed(TimerResumed resume, Emitter<PomodoroTimerState> emit) async {
     final state = this.state;
     if (state is TimerRunPause) {
+      var now = DateTime.now();
+      var activeOutPlanning = await outPlanningRepo.getActiveOutPlanning(state.currentMemorySessionID);
+      await outPlanningRepo.updateOutPlanning(activeOutPlanning!.id, OutPlanningVariableCompanion(
+          finishTime: Value(now),
+          isActive: Value(false),
+          duration: Value(now.difference(activeOutPlanning.startingTime!).inSeconds)));
       _tickerSubscription?.resume();
+      _cancelPauseRefresh();
       emit(TimerRunInProgress(
           state.duration,
           state.runTimes,
@@ -321,41 +374,43 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
     // Foundamentally wrong, it only emits TimerInitial, while it should just reload the session in TimerRunInProgress
     _tickerSubscription?.cancel();
 
-    final stored = await settingsRepo.fetchSettingsById(1);
-
-    final focusTimeDuration = stored!.selectedFocusDurationStored * 60;
     final now = DateTime.now();
-    final startTime = await memorySessionRepo.getCurrentSession();
-
     final state = this.state;
+
     if (state is TimerRunInProgress) {
-      if (startTime != null) {
-        memorySessionRepo.updateMemorySessionWrite(
-            state.currentMemorySessionID,
-            MemoryCountdownVariableCompanion(
-                id: Value(state.currentMemorySessionID),
-                finishTime: Value(now),
-                durationLeft: Value(state.duration),
-                actuallyDoneDuration:
-                    Value(now.difference(startTime.startingTime!).inSeconds)));
-      }
-      emit(TimerInitial(
-          state.runTimes, focusTimeDuration, state.defaultSessionsPerRound));
-    } else if (state is TimerInitial) {
-      add(TimerInit());
-    } else if (state is TimerRunPause) {
-      if (startTime != null) {
-        memorySessionRepo.updateMemorySessionWrite(
-            state.currentMemorySessionID,
-            MemoryCountdownVariableCompanion(
-                id: Value(state.currentMemorySessionID),
-                finishTime: Value(now),
-                durationLeft: Value(state.duration),
-                actuallyDoneDuration:
-                    Value(now.difference(startTime.startingTime!).inSeconds)));
-        emit(TimerInitial(
-            state.runTimes, focusTimeDuration, state.defaultSessionsPerRound));
-      }
+      var countdown = await memorySessionRepo
+          .fetchMemorySessionById(state.currentMemorySessionID);
+      await outPlanningRepo.insertOutPlanning(OutPlanningVariableCompanion(
+          memoryCountdownID: Value(state.currentMemorySessionID),
+          startingTime: Value(countdown?.startingTime),
+          finishTime: Value(now),
+          type: Value("reset"),
+          duration: Value(state.selectedDuration - state.duration)));
+      await memorySessionRepo.updateMemorySessionWrite(
+          state.currentMemorySessionID,
+          MemoryCountdownVariableCompanion(
+              startingTime: Value(now),
+              propableCause: Value(countdown!.propableCause == "pause" ? "pause reset": "reset" ),
+              expFinishTime:
+                  Value(now.add(Duration(seconds: state.selectedDuration)))));
+      emit(TimerRunInProgress(
+          state.selectedDuration,
+          state.runTimes,
+          state.showTime,
+          state.selectedDuration,
+          state.currentMemorySessionID,
+          state.defaultSessionsPerRound,
+          state.currentRoundID,
+          state.sessions,
+          state.type,
+          state.roundDuration,
+          state.actualRoundDuration,
+          state.endOfRound
+              .add(Duration(seconds: state.selectedDuration - state.duration)),
+          state.subject));
+           _tickerSubscription = _ticker
+          .tick(ticks: state.selectedDuration)
+          .listen((duration) => add(_TimerTicked(duration: duration)));
     }
   }
 
@@ -524,3 +579,5 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
     }
   }
 }
+
+

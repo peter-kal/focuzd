@@ -2233,6 +2233,405 @@ class SubjectCompanion extends UpdateCompanion<SubjectData> {
   }
 }
 
+class $OutPlanningVariableTable extends OutPlanningVariable
+    with TableInfo<$OutPlanningVariableTable, OutPlanningVariableData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $OutPlanningVariableTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+      'id', aliasedName, false,
+      hasAutoIncrement: true,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'));
+  static const VerificationMeta _memoryCountdownIDMeta =
+      const VerificationMeta('memoryCountdownID');
+  @override
+  late final GeneratedColumn<int> memoryCountdownID = GeneratedColumn<int>(
+      'memory_countdown_i_d', aliasedName, false,
+      type: DriftSqlType.int, requiredDuringInsert: true);
+  static const VerificationMeta _startingTimeMeta =
+      const VerificationMeta('startingTime');
+  @override
+  late final GeneratedColumn<DateTime> startingTime = GeneratedColumn<DateTime>(
+      'starting_time', aliasedName, true,
+      type: DriftSqlType.dateTime, requiredDuringInsert: false);
+  static const VerificationMeta _finishTimeMeta =
+      const VerificationMeta('finishTime');
+  @override
+  late final GeneratedColumn<DateTime> finishTime = GeneratedColumn<DateTime>(
+      'finish_time', aliasedName, true,
+      type: DriftSqlType.dateTime, requiredDuringInsert: false);
+  static const VerificationMeta _durationMeta =
+      const VerificationMeta('duration');
+  @override
+  late final GeneratedColumn<int> duration = GeneratedColumn<int>(
+      'duration', aliasedName, true,
+      type: DriftSqlType.int, requiredDuringInsert: false);
+  static const VerificationMeta _typeMeta = const VerificationMeta('type');
+  @override
+  late final GeneratedColumn<String> type = GeneratedColumn<String>(
+      'type', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _isActiveMeta =
+      const VerificationMeta('isActive');
+  @override
+  late final GeneratedColumn<bool> isActive = GeneratedColumn<bool>(
+      'is_active', aliasedName, false,
+      type: DriftSqlType.bool,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('CHECK ("is_active" IN (0, 1))'),
+      defaultValue: const Constant(false));
+  @override
+  List<GeneratedColumn> get $columns => [
+        id,
+        memoryCountdownID,
+        startingTime,
+        finishTime,
+        duration,
+        type,
+        isActive
+      ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'out_planning_variable';
+  @override
+  VerificationContext validateIntegrity(
+      Insertable<OutPlanningVariableData> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('memory_countdown_i_d')) {
+      context.handle(
+          _memoryCountdownIDMeta,
+          memoryCountdownID.isAcceptableOrUnknown(
+              data['memory_countdown_i_d']!, _memoryCountdownIDMeta));
+    } else if (isInserting) {
+      context.missing(_memoryCountdownIDMeta);
+    }
+    if (data.containsKey('starting_time')) {
+      context.handle(
+          _startingTimeMeta,
+          startingTime.isAcceptableOrUnknown(
+              data['starting_time']!, _startingTimeMeta));
+    }
+    if (data.containsKey('finish_time')) {
+      context.handle(
+          _finishTimeMeta,
+          finishTime.isAcceptableOrUnknown(
+              data['finish_time']!, _finishTimeMeta));
+    }
+    if (data.containsKey('duration')) {
+      context.handle(_durationMeta,
+          duration.isAcceptableOrUnknown(data['duration']!, _durationMeta));
+    }
+    if (data.containsKey('type')) {
+      context.handle(
+          _typeMeta, type.isAcceptableOrUnknown(data['type']!, _typeMeta));
+    }
+    if (data.containsKey('is_active')) {
+      context.handle(_isActiveMeta,
+          isActive.isAcceptableOrUnknown(data['is_active']!, _isActiveMeta));
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  OutPlanningVariableData map(Map<String, dynamic> data,
+      {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return OutPlanningVariableData(
+      id: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
+      memoryCountdownID: attachedDatabase.typeMapping.read(
+          DriftSqlType.int, data['${effectivePrefix}memory_countdown_i_d'])!,
+      startingTime: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}starting_time']),
+      finishTime: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}finish_time']),
+      duration: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}duration']),
+      type: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}type']),
+      isActive: attachedDatabase.typeMapping
+          .read(DriftSqlType.bool, data['${effectivePrefix}is_active'])!,
+    );
+  }
+
+  @override
+  $OutPlanningVariableTable createAlias(String alias) {
+    return $OutPlanningVariableTable(attachedDatabase, alias);
+  }
+}
+
+class OutPlanningVariableData extends DataClass
+    implements Insertable<OutPlanningVariableData> {
+  final int id;
+  final int memoryCountdownID;
+  final DateTime? startingTime;
+  final DateTime? finishTime;
+  final int? duration;
+  final String? type;
+  final bool isActive;
+  const OutPlanningVariableData(
+      {required this.id,
+      required this.memoryCountdownID,
+      this.startingTime,
+      this.finishTime,
+      this.duration,
+      this.type,
+      required this.isActive});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['memory_countdown_i_d'] = Variable<int>(memoryCountdownID);
+    if (!nullToAbsent || startingTime != null) {
+      map['starting_time'] = Variable<DateTime>(startingTime);
+    }
+    if (!nullToAbsent || finishTime != null) {
+      map['finish_time'] = Variable<DateTime>(finishTime);
+    }
+    if (!nullToAbsent || duration != null) {
+      map['duration'] = Variable<int>(duration);
+    }
+    if (!nullToAbsent || type != null) {
+      map['type'] = Variable<String>(type);
+    }
+    map['is_active'] = Variable<bool>(isActive);
+    return map;
+  }
+
+  OutPlanningVariableCompanion toCompanion(bool nullToAbsent) {
+    return OutPlanningVariableCompanion(
+      id: Value(id),
+      memoryCountdownID: Value(memoryCountdownID),
+      startingTime: startingTime == null && nullToAbsent
+          ? const Value.absent()
+          : Value(startingTime),
+      finishTime: finishTime == null && nullToAbsent
+          ? const Value.absent()
+          : Value(finishTime),
+      duration: duration == null && nullToAbsent
+          ? const Value.absent()
+          : Value(duration),
+      type: type == null && nullToAbsent ? const Value.absent() : Value(type),
+      isActive: Value(isActive),
+    );
+  }
+
+  factory OutPlanningVariableData.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return OutPlanningVariableData(
+      id: serializer.fromJson<int>(json['id']),
+      memoryCountdownID: serializer.fromJson<int>(json['memoryCountdownID']),
+      startingTime: serializer.fromJson<DateTime?>(json['startingTime']),
+      finishTime: serializer.fromJson<DateTime?>(json['finishTime']),
+      duration: serializer.fromJson<int?>(json['duration']),
+      type: serializer.fromJson<String?>(json['type']),
+      isActive: serializer.fromJson<bool>(json['isActive']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'memoryCountdownID': serializer.toJson<int>(memoryCountdownID),
+      'startingTime': serializer.toJson<DateTime?>(startingTime),
+      'finishTime': serializer.toJson<DateTime?>(finishTime),
+      'duration': serializer.toJson<int?>(duration),
+      'type': serializer.toJson<String?>(type),
+      'isActive': serializer.toJson<bool>(isActive),
+    };
+  }
+
+  OutPlanningVariableData copyWith(
+          {int? id,
+          int? memoryCountdownID,
+          Value<DateTime?> startingTime = const Value.absent(),
+          Value<DateTime?> finishTime = const Value.absent(),
+          Value<int?> duration = const Value.absent(),
+          Value<String?> type = const Value.absent(),
+          bool? isActive}) =>
+      OutPlanningVariableData(
+        id: id ?? this.id,
+        memoryCountdownID: memoryCountdownID ?? this.memoryCountdownID,
+        startingTime:
+            startingTime.present ? startingTime.value : this.startingTime,
+        finishTime: finishTime.present ? finishTime.value : this.finishTime,
+        duration: duration.present ? duration.value : this.duration,
+        type: type.present ? type.value : this.type,
+        isActive: isActive ?? this.isActive,
+      );
+  OutPlanningVariableData copyWithCompanion(OutPlanningVariableCompanion data) {
+    return OutPlanningVariableData(
+      id: data.id.present ? data.id.value : this.id,
+      memoryCountdownID: data.memoryCountdownID.present
+          ? data.memoryCountdownID.value
+          : this.memoryCountdownID,
+      startingTime: data.startingTime.present
+          ? data.startingTime.value
+          : this.startingTime,
+      finishTime:
+          data.finishTime.present ? data.finishTime.value : this.finishTime,
+      duration: data.duration.present ? data.duration.value : this.duration,
+      type: data.type.present ? data.type.value : this.type,
+      isActive: data.isActive.present ? data.isActive.value : this.isActive,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('OutPlanningVariableData(')
+          ..write('id: $id, ')
+          ..write('memoryCountdownID: $memoryCountdownID, ')
+          ..write('startingTime: $startingTime, ')
+          ..write('finishTime: $finishTime, ')
+          ..write('duration: $duration, ')
+          ..write('type: $type, ')
+          ..write('isActive: $isActive')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, memoryCountdownID, startingTime,
+      finishTime, duration, type, isActive);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is OutPlanningVariableData &&
+          other.id == this.id &&
+          other.memoryCountdownID == this.memoryCountdownID &&
+          other.startingTime == this.startingTime &&
+          other.finishTime == this.finishTime &&
+          other.duration == this.duration &&
+          other.type == this.type &&
+          other.isActive == this.isActive);
+}
+
+class OutPlanningVariableCompanion
+    extends UpdateCompanion<OutPlanningVariableData> {
+  final Value<int> id;
+  final Value<int> memoryCountdownID;
+  final Value<DateTime?> startingTime;
+  final Value<DateTime?> finishTime;
+  final Value<int?> duration;
+  final Value<String?> type;
+  final Value<bool> isActive;
+  const OutPlanningVariableCompanion({
+    this.id = const Value.absent(),
+    this.memoryCountdownID = const Value.absent(),
+    this.startingTime = const Value.absent(),
+    this.finishTime = const Value.absent(),
+    this.duration = const Value.absent(),
+    this.type = const Value.absent(),
+    this.isActive = const Value.absent(),
+  });
+  OutPlanningVariableCompanion.insert({
+    this.id = const Value.absent(),
+    required int memoryCountdownID,
+    this.startingTime = const Value.absent(),
+    this.finishTime = const Value.absent(),
+    this.duration = const Value.absent(),
+    this.type = const Value.absent(),
+    this.isActive = const Value.absent(),
+  }) : memoryCountdownID = Value(memoryCountdownID);
+  static Insertable<OutPlanningVariableData> custom({
+    Expression<int>? id,
+    Expression<int>? memoryCountdownID,
+    Expression<DateTime>? startingTime,
+    Expression<DateTime>? finishTime,
+    Expression<int>? duration,
+    Expression<String>? type,
+    Expression<bool>? isActive,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (memoryCountdownID != null) 'memory_countdown_i_d': memoryCountdownID,
+      if (startingTime != null) 'starting_time': startingTime,
+      if (finishTime != null) 'finish_time': finishTime,
+      if (duration != null) 'duration': duration,
+      if (type != null) 'type': type,
+      if (isActive != null) 'is_active': isActive,
+    });
+  }
+
+  OutPlanningVariableCompanion copyWith(
+      {Value<int>? id,
+      Value<int>? memoryCountdownID,
+      Value<DateTime?>? startingTime,
+      Value<DateTime?>? finishTime,
+      Value<int?>? duration,
+      Value<String?>? type,
+      Value<bool>? isActive}) {
+    return OutPlanningVariableCompanion(
+      id: id ?? this.id,
+      memoryCountdownID: memoryCountdownID ?? this.memoryCountdownID,
+      startingTime: startingTime ?? this.startingTime,
+      finishTime: finishTime ?? this.finishTime,
+      duration: duration ?? this.duration,
+      type: type ?? this.type,
+      isActive: isActive ?? this.isActive,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (memoryCountdownID.present) {
+      map['memory_countdown_i_d'] = Variable<int>(memoryCountdownID.value);
+    }
+    if (startingTime.present) {
+      map['starting_time'] = Variable<DateTime>(startingTime.value);
+    }
+    if (finishTime.present) {
+      map['finish_time'] = Variable<DateTime>(finishTime.value);
+    }
+    if (duration.present) {
+      map['duration'] = Variable<int>(duration.value);
+    }
+    if (type.present) {
+      map['type'] = Variable<String>(type.value);
+    }
+    if (isActive.present) {
+      map['is_active'] = Variable<bool>(isActive.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('OutPlanningVariableCompanion(')
+          ..write('id: $id, ')
+          ..write('memoryCountdownID: $memoryCountdownID, ')
+          ..write('startingTime: $startingTime, ')
+          ..write('finishTime: $finishTime, ')
+          ..write('duration: $duration, ')
+          ..write('type: $type, ')
+          ..write('isActive: $isActive')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -2242,12 +2641,19 @@ abstract class _$AppDatabase extends GeneratedDatabase {
       $MemoryCountdownVariableTable(this);
   late final $RoundVariableTable roundVariable = $RoundVariableTable(this);
   late final $SubjectTable subject = $SubjectTable(this);
+  late final $OutPlanningVariableTable outPlanningVariable =
+      $OutPlanningVariableTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
   @override
-  List<DatabaseSchemaEntity> get allSchemaEntities =>
-      [settingsVariables, memoryCountdownVariable, roundVariable, subject];
+  List<DatabaseSchemaEntity> get allSchemaEntities => [
+        settingsVariables,
+        memoryCountdownVariable,
+        roundVariable,
+        subject,
+        outPlanningVariable
+      ];
 }
 
 typedef $$SettingsVariablesTableCreateCompanionBuilder
@@ -3464,6 +3870,211 @@ typedef $$SubjectTableProcessedTableManager = ProcessedTableManager<
     (SubjectData, $$SubjectTableReferences),
     SubjectData,
     PrefetchHooks Function({bool lastFocuzdOnSessionID})>;
+typedef $$OutPlanningVariableTableCreateCompanionBuilder
+    = OutPlanningVariableCompanion Function({
+  Value<int> id,
+  required int memoryCountdownID,
+  Value<DateTime?> startingTime,
+  Value<DateTime?> finishTime,
+  Value<int?> duration,
+  Value<String?> type,
+  Value<bool> isActive,
+});
+typedef $$OutPlanningVariableTableUpdateCompanionBuilder
+    = OutPlanningVariableCompanion Function({
+  Value<int> id,
+  Value<int> memoryCountdownID,
+  Value<DateTime?> startingTime,
+  Value<DateTime?> finishTime,
+  Value<int?> duration,
+  Value<String?> type,
+  Value<bool> isActive,
+});
+
+class $$OutPlanningVariableTableFilterComposer
+    extends Composer<_$AppDatabase, $OutPlanningVariableTable> {
+  $$OutPlanningVariableTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get memoryCountdownID => $composableBuilder(
+      column: $table.memoryCountdownID,
+      builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<DateTime> get startingTime => $composableBuilder(
+      column: $table.startingTime, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<DateTime> get finishTime => $composableBuilder(
+      column: $table.finishTime, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get duration => $composableBuilder(
+      column: $table.duration, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get type => $composableBuilder(
+      column: $table.type, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<bool> get isActive => $composableBuilder(
+      column: $table.isActive, builder: (column) => ColumnFilters(column));
+}
+
+class $$OutPlanningVariableTableOrderingComposer
+    extends Composer<_$AppDatabase, $OutPlanningVariableTable> {
+  $$OutPlanningVariableTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get memoryCountdownID => $composableBuilder(
+      column: $table.memoryCountdownID,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<DateTime> get startingTime => $composableBuilder(
+      column: $table.startingTime,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<DateTime> get finishTime => $composableBuilder(
+      column: $table.finishTime, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get duration => $composableBuilder(
+      column: $table.duration, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get type => $composableBuilder(
+      column: $table.type, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<bool> get isActive => $composableBuilder(
+      column: $table.isActive, builder: (column) => ColumnOrderings(column));
+}
+
+class $$OutPlanningVariableTableAnnotationComposer
+    extends Composer<_$AppDatabase, $OutPlanningVariableTable> {
+  $$OutPlanningVariableTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<int> get memoryCountdownID => $composableBuilder(
+      column: $table.memoryCountdownID, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get startingTime => $composableBuilder(
+      column: $table.startingTime, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get finishTime => $composableBuilder(
+      column: $table.finishTime, builder: (column) => column);
+
+  GeneratedColumn<int> get duration =>
+      $composableBuilder(column: $table.duration, builder: (column) => column);
+
+  GeneratedColumn<String> get type =>
+      $composableBuilder(column: $table.type, builder: (column) => column);
+
+  GeneratedColumn<bool> get isActive =>
+      $composableBuilder(column: $table.isActive, builder: (column) => column);
+}
+
+class $$OutPlanningVariableTableTableManager extends RootTableManager<
+    _$AppDatabase,
+    $OutPlanningVariableTable,
+    OutPlanningVariableData,
+    $$OutPlanningVariableTableFilterComposer,
+    $$OutPlanningVariableTableOrderingComposer,
+    $$OutPlanningVariableTableAnnotationComposer,
+    $$OutPlanningVariableTableCreateCompanionBuilder,
+    $$OutPlanningVariableTableUpdateCompanionBuilder,
+    (
+      OutPlanningVariableData,
+      BaseReferences<_$AppDatabase, $OutPlanningVariableTable,
+          OutPlanningVariableData>
+    ),
+    OutPlanningVariableData,
+    PrefetchHooks Function()> {
+  $$OutPlanningVariableTableTableManager(
+      _$AppDatabase db, $OutPlanningVariableTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$OutPlanningVariableTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$OutPlanningVariableTableOrderingComposer(
+                  $db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$OutPlanningVariableTableAnnotationComposer(
+                  $db: db, $table: table),
+          updateCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            Value<int> memoryCountdownID = const Value.absent(),
+            Value<DateTime?> startingTime = const Value.absent(),
+            Value<DateTime?> finishTime = const Value.absent(),
+            Value<int?> duration = const Value.absent(),
+            Value<String?> type = const Value.absent(),
+            Value<bool> isActive = const Value.absent(),
+          }) =>
+              OutPlanningVariableCompanion(
+            id: id,
+            memoryCountdownID: memoryCountdownID,
+            startingTime: startingTime,
+            finishTime: finishTime,
+            duration: duration,
+            type: type,
+            isActive: isActive,
+          ),
+          createCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            required int memoryCountdownID,
+            Value<DateTime?> startingTime = const Value.absent(),
+            Value<DateTime?> finishTime = const Value.absent(),
+            Value<int?> duration = const Value.absent(),
+            Value<String?> type = const Value.absent(),
+            Value<bool> isActive = const Value.absent(),
+          }) =>
+              OutPlanningVariableCompanion.insert(
+            id: id,
+            memoryCountdownID: memoryCountdownID,
+            startingTime: startingTime,
+            finishTime: finishTime,
+            duration: duration,
+            type: type,
+            isActive: isActive,
+          ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ));
+}
+
+typedef $$OutPlanningVariableTableProcessedTableManager = ProcessedTableManager<
+    _$AppDatabase,
+    $OutPlanningVariableTable,
+    OutPlanningVariableData,
+    $$OutPlanningVariableTableFilterComposer,
+    $$OutPlanningVariableTableOrderingComposer,
+    $$OutPlanningVariableTableAnnotationComposer,
+    $$OutPlanningVariableTableCreateCompanionBuilder,
+    $$OutPlanningVariableTableUpdateCompanionBuilder,
+    (
+      OutPlanningVariableData,
+      BaseReferences<_$AppDatabase, $OutPlanningVariableTable,
+          OutPlanningVariableData>
+    ),
+    OutPlanningVariableData,
+    PrefetchHooks Function()>;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -3477,4 +4088,6 @@ class $AppDatabaseManager {
       $$RoundVariableTableTableManager(_db, _db.roundVariable);
   $$SubjectTableTableManager get subject =>
       $$SubjectTableTableManager(_db, _db.subject);
+  $$OutPlanningVariableTableTableManager get outPlanningVariable =>
+      $$OutPlanningVariableTableTableManager(_db, _db.outPlanningVariable);
 }

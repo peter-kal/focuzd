@@ -6,7 +6,6 @@ import 'package:focuzd/extra_widgets/bottom_appBar_interface.dart';
 import 'package:focuzd/extra_widgets/countdown_interface.dart';
 import 'package:focuzd/extra_widgets/roundProgressBar.dart';
 
-
 import 'package:yaru/yaru.dart';
 import 'package:focuzd/l10n/app_localizations.dart';
 
@@ -21,7 +20,6 @@ class _MainPageState extends State<MainPage> with ExtraFunctions {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<PomodoroBloc, PomodoroTimerState>(
-     
       builder: (context, state) {
         return Scaffold(
           bottomNavigationBar: BottomAppBar(
@@ -86,9 +84,9 @@ class _MainPageState extends State<MainPage> with ExtraFunctions {
                   RoundPlanning() => Text("RoundPlanning"),
                   TimerInitial() => Text(
                       currentSessionStatus(
-                          'work',
+                          'focus',
                           AppLocalizations.of(context)!.longBreakTimeLabel,
-                          AppLocalizations.of(context)!.workTimeLabel,
+                          AppLocalizations.of(context)!.focusTimeLabel,
                           AppLocalizations.of(context)!.breakTimeLabel),
                       style: const TextStyle(
                           fontSize: 12, fontWeight: FontWeight.w300),
@@ -97,7 +95,7 @@ class _MainPageState extends State<MainPage> with ExtraFunctions {
                       currentSessionStatus(
                           state.type,
                           AppLocalizations.of(context)!.longBreakTimeLabel,
-                          AppLocalizations.of(context)!.workTimeLabel,
+                          AppLocalizations.of(context)!.focusTimeLabel,
                           AppLocalizations.of(context)!.breakTimeLabel),
                       style: const TextStyle(
                           fontSize: 12, fontWeight: FontWeight.w300),
@@ -106,7 +104,7 @@ class _MainPageState extends State<MainPage> with ExtraFunctions {
                       currentSessionStatus(
                           state.type,
                           AppLocalizations.of(context)!.longBreakTimeLabel,
-                          AppLocalizations.of(context)!.workTimeLabel,
+                          AppLocalizations.of(context)!.focusTimeLabel,
                           AppLocalizations.of(context)!.breakTimeLabel),
                       style: const TextStyle(
                           fontSize: 12, fontWeight: FontWeight.w300),
@@ -135,7 +133,17 @@ class _MainPageState extends State<MainPage> with ExtraFunctions {
                             selectedDuration: state.selectedDuration,
                             duration: state.duration,
                           )),
-                      SizedBox(width:240, child: RoundProgressBar(progress: (state.actualRoundDuration + ( state.selectedDuration - state.duration ))/state.roundDuration, sessionNumber: 2, subjectName: state.subject?.name,type: state.type,))
+                      SizedBox(
+                          width: 240,
+                          child: RoundProgressBar(
+                            endRound: state.endOfRound,
+                            progress: (state.actualRoundDuration +
+                                    (state.selectedDuration - state.duration)) /
+                                state.roundDuration,
+                            sessionNumber: 2,
+                            subjectName: state.subject?.name,
+                            type: state.type,
+                          ))
                     ])),
             TimerRunPause() => SizedBox(
                 width: double.infinity,
@@ -155,6 +163,16 @@ class _MainPageState extends State<MainPage> with ExtraFunctions {
                             hoursStr: hoursString(state.duration),
                             selectedDuration: state.selectedDuration,
                             duration: state.duration,
+                          )),SizedBox(
+                          width: 240,
+                          child: RoundProgressBar(
+                            endRound: state.endOfRound,
+                            progress: (state.actualRoundDuration +
+                                    (state.selectedDuration - state.duration)) /
+                                state.roundDuration,
+                            sessionNumber: 2,
+                            subjectName: state.subject?.name,
+                            type: state.type,
                           ))
                     ])),
             TimerInitial() => SizedBox(
@@ -168,7 +186,7 @@ class _MainPageState extends State<MainPage> with ExtraFunctions {
                           alignment: Alignment.center,
                           child: CountdownInterface(
                             state: state,
-                            type: 'work',
+                            type: 'focus',
                             runTimes: state.runTimes,
                             minutesStr: minutesString(state.selectedDuration),
                             secondsStr: secondsString(state.selectedDuration),
