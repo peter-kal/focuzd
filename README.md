@@ -119,8 +119,9 @@ A new pomodoro app, built with Flutter, the goal is to make a feature-equivalent
   - [ ] Add Subject/topic support
 
     - [x] Each Subject should have sub-subjects, and super-subjects, ex: School -> Sciences -> Mathematics -> Algrebra & Geometry etc.
-    - [ ] The working subject should be visible on the main page
-    - [ ] Subject should be optional, and the UI shouldn't be invasive
+    - [x] The working subject should be visible on the main page
+    - [x] Subject should be optional, and the UI shouldn't be invasive
+    - [ ] Make a subject page, for creating, linking, subjects.
 
     - [ ] Together with Subjects, Goals should be implemented.
       - [ ] Goals should be **quantity-only** as well as **quantity-quality**, so you have to be able to set a goal of _6 sessions / week_, and a goal of _6 sessions of Mathematics(/Algrebra) / week_. Another idea is having a **quality-relation** type of goal, example: 2 sessions of Mathematics/_Algebra_ / 1 session of Mathematics/_Geometry_, as well as a **quantity-quality-relation**, example 2 sessions of Mathematics/Algebra this.week / 1 session of Mathematics/Algebra last.week, and a **quantity-relation**, example: 2 session this week / 1 session last week.
