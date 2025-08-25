@@ -3,7 +3,6 @@ import 'package:focuzd/blocs/blocs.dart';
 import 'package:focuzd/extra_functions/extra_functions.dart';
 import 'package:focuzd/pages/pages.dart';
 import 'package:flutter/material.dart';
-import 'package:focuzd/pages/round_planning_page.dart';
 
 import 'package:yaru/yaru.dart';
 import 'package:window_manager/window_manager.dart';
@@ -36,7 +35,7 @@ Future<void> main() async {
             create: (context) =>
                 PomodoroBloc(ticker: const Ticker())..add(const TimerInit()))
       ],
-      child: Builder(builder: (context)  {
+      child: Builder(builder: (context) {
         windowManager.addListener(MyWindowListener(context: context));
         return const FocuzdApp();
       })));
@@ -58,19 +57,26 @@ class FocuzdApp extends StatelessWidget {
             darkTheme: yaru.darkTheme,
             home: BlocConsumer<PageNavigationBloc, PageNavigationState>(
                 listener: (context, state) {
-              if (state is HistoryPageState) {
+              if (state is DataPageState) {
                 BlocProvider.of<RepoBloc>(context).add(EmitStateWithDBVars());
               }
               if (state is SettingsPageState) {
+                BlocProvider.of<RepoBloc>(context).add(EmitStateWithDBVars());
+              }
+              if (state is SubjectsPageState) {
                 BlocProvider.of<RepoBloc>(context).add(EmitStateWithDBVars());
               }
             }, builder: (context, state) {
               return switch (state) {
                 MainPageState() => const MainPage(),
                 SettingsPageState() => const SettingsPage(),
-                HistoryPageState() => const HistoryPage(),
+                DataPageState() => const MainDataPage(),
+                HistoryDataPageState() => const MainDataPage(),
+                StatisticsDataPageState() => const MainDataPage(),
                 PageNavigationInitial() => const Scaffold(),
                 RoundPlanningPageState() => const RoundPlanningPage(),
+                SubjectsPageState() => const SubjectsPage(),
+                AddSubjectPageState() => const SubjectCreatePage(),
               };
             }));
       },

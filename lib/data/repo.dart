@@ -13,6 +13,10 @@ class SubjectRepository {
         .getSingleOrNull();
   }
 
+  Future<void> insertSubject(SubjectCompanion subject) async {
+    await _db.into(_db.subject).insert(subject);
+  }
+
   Future<void> editSubjectWrite(int id, SubjectCompanion updatedSubject) async {
     await (_db.update(_db.subject)..where((tbl) => tbl.id.equals(id)))
         .write(updatedSubject);
@@ -34,8 +38,12 @@ class OutPlanningVariableRepo {
         .get();
   }
 
-  Future<void> updateOutPlanning(
-      int outPlanningID, OutPlanningVariableCompanion updatedOutPlanning) async {
+  Future<List<OutPlanningVariableData>> fetchAllOutPlannings() async {
+    return await _db.select(_db.outPlanningVariable).get();
+  }
+
+  Future<void> updateOutPlanning(int outPlanningID,
+      OutPlanningVariableCompanion updatedOutPlanning) async {
     await (_db.update(_db.outPlanningVariable)
           ..where((tbl) => tbl.id.equals(outPlanningID)))
         .write(updatedOutPlanning);
@@ -46,8 +54,7 @@ class OutPlanningVariableRepo {
     await _db.into(_db.outPlanningVariable).insert(outplanning);
   }
 
-  Future<OutPlanningVariableData?> getActiveOutPlanning(int id)
-  async {
+  Future<OutPlanningVariableData?> getActiveOutPlanning(int id) async {
     return await (_db.select(_db.outPlanningVariable)
           ..where((tbl) => tbl.memoryCountdownID.equals(id))
           ..where((tbl) => tbl.isActive.equals(true)))
@@ -95,6 +102,13 @@ class MemorySessionRepository {
   // Fetch all memory sessions
   Future<List<MemoryCountdownVariableData>> fetchAllMemorySessions() async {
     return await _db.select(_db.memoryCountdownVariable).get();
+  }
+
+  Future<List> fetchMemoryCountdownByRoundID(int roundId) async {
+    return await (_db.select(_db.memoryCountdownVariable)
+          ..where((tbl) => tbl.roundId.equals(roundId))
+          ..orderBy([(tbl) => OrderingTerm.asc(tbl.finishTime)]))
+        .get();
   }
 
   Future<MemoryCountdownVariableData?> getTheNextClosest() async {
@@ -169,7 +183,7 @@ class RoundRepository {
 
   // Fetch all rounds
   Future<List<RoundVariableData>> fetchAllRounds() async {
-    return await _db.select(_db.roundVariable).get();
+    return await (_db.select(_db.roundVariable)..where((tbl) => tbl.finishTime.isNotNull())..orderBy([(tbl) => OrderingTerm.desc(tbl.finishTime)])).get();
   }
 
   // Fetch the newest uncompleted round (max id AND uncompleted)

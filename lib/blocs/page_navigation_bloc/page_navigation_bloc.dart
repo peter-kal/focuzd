@@ -14,11 +14,26 @@ class PageNavigationBloc
     on<SettingsPageEvent>((event, emit) {
       emit(SettingsPageState());
     });
-    on<HistoryPageEvent>((event, emit) {
-      emit(HistoryPageState());
+    on<DataPageEvent>((event, emit) {
+      // return the Data(History-Statistics) page
+      emit(DataPageState());
+      add(SelectDataPageEvent(index: 0));
     });
     on<RoundPlanningPageEvent>((event, emit) {
       emit(RoundPlanningPageState());
+    });
+    on<SubjectsPageEvent>((event, emit) {
+      emit(SubjectsPageState());
+    });
+    on<AddSubjectPageEvent>((event, emit) {
+      emit(AddSubjectPageState());
+    });
+    on<SelectDataPageEvent>((event, emit) {
+      if (event.index == 0) {
+        emit(HistoryDataPageState());
+      } else if (event.index == 1) {
+        emit(StatisticsDataPageState());
+      }
     });
   }
 }

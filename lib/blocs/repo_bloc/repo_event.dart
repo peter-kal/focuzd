@@ -22,3 +22,18 @@ final class EmitStateWithDBVars extends RepoEvent {
 }
 
 class ResetSettings extends RepoEvent {}
+
+class AddingSubject extends RepoEvent {
+  const AddingSubject();
+}
+
+class UpdateAddingSubject extends RepoEvent {
+  const UpdateAddingSubject(this.actionCode, this.subId, this.name);
+  final String name;
+  final int subId;
+  final int actionCode;
+}
+
+class AddSubjectToDB extends RepoEvent {
+  const AddSubjectToDB();
+}

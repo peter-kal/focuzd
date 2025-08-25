@@ -22,8 +22,29 @@ class SettingsPageEvent extends PageNavigationEvent {
   List<Object> get props => [];
 }
 
-class HistoryPageEvent extends PageNavigationEvent {
-  const HistoryPageEvent();
+class DataPageEvent extends PageNavigationEvent {
+  const DataPageEvent();
+
+  @override
+  List<Object> get props => [];
+}
+
+class SelectDataPageEvent extends PageNavigationEvent {
+  const SelectDataPageEvent({required this.index});
+  final int index;
+  @override
+  List<Object> get props => [index];
+}
+
+class SubjectsPageEvent extends PageNavigationEvent {
+  const SubjectsPageEvent();
+
+  @override
+  List<Object> get props => [];
+}
+
+class AddSubjectPageEvent extends PageNavigationEvent {
+  const AddSubjectPageEvent();
 
   @override
   List<Object> get props => [];

@@ -14,6 +14,14 @@ class MainPageState extends PageNavigationState {}
 
 class SettingsPageState extends PageNavigationState {}
 
-class HistoryPageState extends PageNavigationState {}
+class DataPageState extends PageNavigationState {}
+
+class HistoryDataPageState extends PageNavigationState {}
+
+class StatisticsDataPageState extends PageNavigationState {}
 
 class RoundPlanningPageState extends PageNavigationState {}
+
+class SubjectsPageState extends PageNavigationState {}
+
+class AddSubjectPageState extends PageNavigationState {}

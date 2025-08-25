@@ -55,10 +55,18 @@ class _MainPageState extends State<MainPage> with ExtraFunctions {
           appBar: YaruWindowTitleBar(
             actions: [
               YaruIconButton(
+                tooltip: AppLocalizations.of(context)!.settingsPage,
+                icon: const Icon(Icons.subject),
+                onPressed: () {
+                  BlocProvider.of<PageNavigationBloc>(context)
+                      .add(const SubjectsPageEvent());
+                },
+              ),
+              YaruIconButton(
                 icon: const Icon(Icons.analytics),
                 onPressed: () {
                   BlocProvider.of<PageNavigationBloc>(context)
-                      .add(const HistoryPageEvent());
+                      .add(const DataPageEvent());
                 },
               ),
             ],
@@ -163,7 +171,8 @@ class _MainPageState extends State<MainPage> with ExtraFunctions {
                             hoursStr: hoursString(state.duration),
                             selectedDuration: state.selectedDuration,
                             duration: state.duration,
-                          )),SizedBox(
+                          )),
+                      SizedBox(
                           width: 240,
                           child: RoundProgressBar(
                             endRound: state.endOfRound,
