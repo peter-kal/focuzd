@@ -52,10 +52,10 @@ class SettingsCardSpinBox extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.all(10.0),
       child: SizedBox(
-          width: MediaQuery.of(context).size.width * 0.80,
-          height: MediaQuery.of(context).size.height * 0.23,
+          width: MediaQuery.of(context).size.width * 0.8,
+          height: 101,
           child: YaruSection(
               child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -66,8 +66,16 @@ class SettingsCardSpinBox extends StatelessWidget {
                     color: Theme.of(context).primaryColor),
                 onPressed: () {
                   var newvalue = value - 1;
-                  BlocProvider.of<RepoBloc>(context).add(UpdateSettingVariables(
-                      selectedToChange: changeable, changedVar: newvalue));
+                  if (newvalue <= 0) {
+                    BlocProvider.of<RepoBloc>(context).add(
+                        UpdateSettingVariables(
+                            selectedToChange: changeable, changedVar: 1));
+                  } else {
+                    BlocProvider.of<RepoBloc>(context).add(
+                        UpdateSettingVariables(
+                            selectedToChange: changeable,
+                            changedVar: newvalue));
+                  }
                 },
               ),
               Column(children: [
