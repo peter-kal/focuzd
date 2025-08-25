@@ -97,7 +97,14 @@ class SessionTilePlanning extends StatelessWidget {
                             itemBuilder: (context) => subjects
                   .map((item) => PopupMenuItem<SubjectData>(
                         value: item,
-                        child: Text(item.name),
+                        child: Column(
+                          children: [
+                            Text(item.name),
+                            item.subjectid != null
+                                ? Text("with child", style: TextStyle(fontStyle: FontStyle.italic),)
+                                : SizedBox.shrink(),
+                          ],
+                        ),
                       ))
                   .toList(),
                           ),

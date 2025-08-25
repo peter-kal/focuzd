@@ -103,7 +103,6 @@ mixin class ExtraFunctions {
     return "error";
   }
 
-
   List<SessionVariablePlanning> getList(
       int defaultSessionsPerRound, // multiply by 60 so to display you have to divide by 60
       int defaultLongBreakTime,
@@ -144,4 +143,10 @@ class SessionVariablePlanning {
   int plannedDuration;
   DateTime? expFinishTime;
   SubjectData? subject;
+}
+
+class SubjectMaking {
+  SubjectMaking(this.name, [this.subid]);
+  int? subid;
+  String name;
 }

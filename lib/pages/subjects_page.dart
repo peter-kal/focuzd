@@ -1,19 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:focuzd/blocs/blocs.dart';
+import 'package:focuzd/data/app_db.dart';
 import 'package:focuzd/extra_widgets/session_card.dart';
+import 'package:focuzd/extra_widgets/subject_list_card.dart';
+import 'package:focuzd/l10n/app_localizations.dart';
 import 'package:yaru/yaru.dart';
 import 'package:focuzd/l10n/app_localizations.dart' as l10n;
 
-class HistoryPage extends StatefulWidget {
-  const HistoryPage({super.key});
+class SubjectsPage extends StatefulWidget {
+  const SubjectsPage({super.key});
 
   @override
-  State<HistoryPage> createState() => _SettingsPageState();
+  State<SubjectsPage> createState() => _SubjectsPageState();
 }
 
 // TASK: make settings
-class _SettingsPageState extends State<HistoryPage> {
+class _SubjectsPageState extends State<SubjectsPage> {
+  SubjectData? subject;
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<RepoBloc, RepoState>(
@@ -21,16 +25,30 @@ class _SettingsPageState extends State<HistoryPage> {
         if (state is RepoVariablesGivenState) {
           return Scaffold(
             body: ListView.builder(
-              itemCount: state.sessions?.length ?? 0, // Safe null handling
+              itemCount: state.subjects?.length ?? 0, // Safe null handling
               itemBuilder: (context, index) {
-                if (state.sessions == null) {
+                if (state.subjects == null) {
                   return SizedBox(); // Prevents errors
                 }
-                return SessionCard(state.sessions![index]);
+                return SubjectListCard(
+                  id: state.subjects![index].id,
+                  name: state.subjects![index].name,
+                  totalTimeSpent: state.subjects![index].totalTimeSpent,
+                  onTap: () {
+                    // Handle tap
+                  },
+                );
               },
             ),
+            floatingActionButton: FloatingActionButton(
+                child: Icon(Icons.add),
+                onPressed: () {
+                  BlocProvider.of<RepoBloc>(context).add(const AddingSubject());
+                  BlocProvider.of<PageNavigationBloc>(context)
+                      .add(const AddSubjectPageEvent());
+                }),
             appBar: YaruWindowTitleBar(
-              title: Text("History"),
+              title: Text("Subjects"),
               leading: YaruIconButton(
                 tooltip: l10n.AppLocalizations.of(context)!.backArrowTooltip,
                 icon: const Icon(Icons.arrow_back),
