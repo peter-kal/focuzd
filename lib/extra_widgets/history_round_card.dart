@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 // Replace with your actual model imports
 import 'package:focuzd/data/app_db.dart';
+import 'package:focuzd/data/repo.dart';
+import 'package:focuzd/extra_widgets/countdown_interface.dart';
 
 class SessionBlock {
   final MemoryCountdownVariableData first;
@@ -110,7 +112,7 @@ class HistoryRoundCard extends StatelessWidget {
                 children: [
                   Column(
                     children: [
-                      _buildCircle(index + 1, Theme.of(context).primaryColor),
+                      Circle(number: index + 1),
                       if (index < blocks.length - 1)
                         Container(
                             width: 0.5,
@@ -127,12 +129,10 @@ class HistoryRoundCard extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         ...block.before.map((o) => _buildOutplanningRow(o)),
-                        _buildCountdownRow(
-                            block.first, Theme.of(context).primaryColor),
+                        CountdownRow(c: block.first),
                         ...block.between.map((o) => _buildOutplanningRow(o)),
                         if (block.second != null)
-                          _buildCountdownRow(
-                              block.second!, Theme.of(context).primaryColor),
+                          CountdownRow(c: block.second!),
                         ...block.after.map((o) => _buildOutplanningRow(o)),
                       ],
                     ),
@@ -146,26 +146,10 @@ class HistoryRoundCard extends StatelessWidget {
     );
   }
 
-  Widget _buildCircle(int number, Color color) {
-    // not BuildContext so the primaryColor doesn't update autpmatically
-    return Container(
-      width: 40,
-      height: 40,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        color: color,
-      ),
-      child: Center(
-        child: Text(
-          "$number",
-          style: const TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-          ),
-        ),
-      ),
-    );
+  Future<String> _getSubjectName(int id) async {
+    var subjectRepo = SubjectRepository(AppDatabase.instance);
+    var subject = await subjectRepo.fetchSubjectByID(id);
+    return subject?.name ?? 'd';
   }
 
   double _getVerticalLineHeight(int olength) {
@@ -178,38 +162,6 @@ class HistoryRoundCard extends StatelessWidget {
     } else {
       return 190;
     }
-  }
-
-  Widget _buildCountdownRow(MemoryCountdownVariableData c, Color prim) {
-    final label = c.type == 'focus'
-        ? c.subject == null
-            ? 'Focus'
-            : "Focus: ${c.subject}"
-        : (c.type == 'break' ? 'Break' : 'Long Break');
-    final color = c.type == 'focus' ? prim : Colors.green;
-    // TASK: internationalise the strings
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Row(
-            children: [
-              Container(
-                  width: 8,
-                  height: 8,
-                  decoration:
-                      BoxDecoration(color: color, shape: BoxShape.circle)),
-              const SizedBox(width: 8),
-              Text(label, style: const TextStyle(fontWeight: FontWeight.w500)),
-            ],
-          ),
-          const SizedBox(width: 8),
-          Text("${_formatTime(c.startingTime)} - ${_formatTime(c.finishTime)}",
-              style: const TextStyle(fontSize: 12, color: Colors.grey)),
-        ],
-      ),
-    );
   }
 
   Widget _buildOutplanningRow(OutPlanningVariableData o) {
@@ -249,9 +201,97 @@ class HistoryRoundCard extends StatelessWidget {
       ),
     );
   }
+}
 
-  String _formatTime(DateTime? time) {
-    if (time == null) return '--:--';
-    return "${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}";
+class CountdownRow extends StatelessWidget {
+  CountdownRow({required this.c});
+
+  final MemoryCountdownVariableData c;
+
+  // TASK: internationalise the strings
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Row(
+            children: [
+              Container(
+                  width: 8,
+                  height: 8,
+                  decoration: BoxDecoration(
+                      color: c.type == 'focus'
+                          ? Theme.of(context).primaryColor
+                          : Colors.green,
+                      shape: BoxShape.circle)),
+              const SizedBox(width: 8),
+              c.type == 'focus'
+                  ? c.subject == null
+                      ? Text("Focus")
+                      : FutureBuilder(
+                          future: _getSubjectName(c.subject!),
+                          builder: (context, asyncSnapshot) {
+                            if (asyncSnapshot.connectionState ==
+                                ConnectionState.done) {
+                              if (asyncSnapshot.data == null) {
+                                return Text("");
+                              }
+                              return Text("Focus: ${asyncSnapshot.data!}",
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.w500));
+                            } else {
+                              return Text("...");
+                            }
+                          })
+                  : Text("Break")
+            ],
+          ),
+          const SizedBox(width: 8),
+          Text(
+              "${_formatTime(c.startingTime)} - ${_formatTime(c.finishTime)} (${(c.actuallyDoneDuration! / 60).round()} min)",
+              style: const TextStyle(fontSize: 12, color: Colors.grey)),
+        ],
+      ),
+    );
   }
+}
+
+class Circle extends StatelessWidget {
+  Circle({required this.number});
+  final int number;
+  @override
+  Widget build(BuildContext context) {
+    // not BuildContext so the primaryColor doesn't update autpmatically
+    return Container(
+      width: 40,
+      height: 40,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: Theme.of(context).primaryColor,
+      ),
+      child: Center(
+        child: Text(
+          "$number",
+          style: const TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+String _formatTime(DateTime? time) {
+  if (time == null) return '--:--';
+  return "${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}";
+}
+
+Future<String> _getSubjectName(int id) async {
+  var subjectRepo = SubjectRepository(AppDatabase.instance);
+  var subject = await subjectRepo.fetchSubjectByID(id);
+  return subject?.name ?? 'd';
 }
