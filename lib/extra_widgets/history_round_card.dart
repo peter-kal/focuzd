@@ -114,7 +114,9 @@ class HistoryRoundCard extends StatelessWidget {
                       if (index < blocks.length - 1)
                         Container(
                             width: 0.5,
-                            height: 190,
+                            height: _getVerticalLineHeight(block.after.length +
+                                block.before.length +
+                                block.between.length),
                             color: Theme.of(context).shadowColor),
                     ],
                   ),
@@ -164,6 +166,18 @@ class HistoryRoundCard extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  double _getVerticalLineHeight(int olength) {
+    if (olength == 0) {
+      return 100;
+    } else if (olength > 0 && olength <= 2) {
+      return 150;
+    } else if (olength >= 3) {
+      return 210;
+    } else {
+      return 190;
+    }
   }
 
   Widget _buildCountdownRow(MemoryCountdownVariableData c, Color prim) {
