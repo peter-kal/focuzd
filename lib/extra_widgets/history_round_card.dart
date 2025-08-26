@@ -86,46 +86,60 @@ class HistoryRoundCard extends StatelessWidget {
       margin: const EdgeInsets.all(14),
       child: Padding(
         padding: const EdgeInsets.all(16),
-        child: ListView.builder(
-          shrinkWrap: true,
-          physics: NeverScrollableScrollPhysics(),
-          itemCount: blocks.length,
-          itemBuilder: (context, index) {
-            final block = blocks[index];
-            return Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Column(
-                  children: [
-                    _buildCircle(index + 1, Theme.of(context).primaryColor),
-                    if (index < blocks.length - 1)
-                      Container(
-                          width: 0.5,
-                          height: 190,
-                          color: Theme.of(context).shadowColor),
-                  ],
-                ),
-                const SizedBox(width: 12),
-                // Countdown + Outplannings
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+        child: Wrap(children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                "#${givenList[1].id}",
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+              ),
+              SizedBox(width: 10),
+              Text(
+                  "${givenList[1].finishTime.day}/${givenList[1].finishTime.month}/${givenList[1].finishTime.year}")
+            ],
+          ),
+          ListView.builder(
+            shrinkWrap: true,
+            physics: NeverScrollableScrollPhysics(),
+            itemCount: blocks.length,
+            itemBuilder: (context, index) {
+              final block = blocks[index];
+              return Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Column(
                     children: [
-                      ...block.before.map((o) => _buildOutplanningRow(o)),
-                      _buildCountdownRow(
-                          block.first, Theme.of(context).primaryColor),
-                      ...block.between.map((o) => _buildOutplanningRow(o)),
-                      if (block.second != null)
-                        _buildCountdownRow(
-                            block.second!, Theme.of(context).primaryColor),
-                      ...block.after.map((o) => _buildOutplanningRow(o)),
+                      _buildCircle(index + 1, Theme.of(context).primaryColor),
+                      if (index < blocks.length - 1)
+                        Container(
+                            width: 0.5,
+                            height: 190,
+                            color: Theme.of(context).shadowColor),
                     ],
                   ),
-                ),
-              ],
-            );
-          },
-        ),
+                  const SizedBox(width: 12),
+                  // Countdown + Outplannings
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        ...block.before.map((o) => _buildOutplanningRow(o)),
+                        _buildCountdownRow(
+                            block.first, Theme.of(context).primaryColor),
+                        ...block.between.map((o) => _buildOutplanningRow(o)),
+                        if (block.second != null)
+                          _buildCountdownRow(
+                              block.second!, Theme.of(context).primaryColor),
+                        ...block.after.map((o) => _buildOutplanningRow(o)),
+                      ],
+                    ),
+                  ),
+                ],
+              );
+            },
+          ),
+        ]),
       ),
     );
   }
