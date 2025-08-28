@@ -23,7 +23,6 @@ class RoundVariable extends Table {
   DateTimeColumn get expFinishTime => dateTime()
       .nullable()(); // in the round-centric approach that can also be called plannedFinishTime
   DateTimeColumn get finishTime => dateTime().nullable()();
-  TextColumn get notes => text().nullable()();
 }
 
 class MemoryCountdownVariable extends Table {
@@ -50,8 +49,6 @@ class MemoryCountdownVariable extends Table {
       false))(); //opposites with completed in some form, in completed true active must be false
   TextColumn get type => text()(); //'focus' 'break' 'longbreak'
   IntColumn get subject => integer().nullable()();
-  TextColumn get notes =>
-      text().nullable()(); // for noting progress done on a session
 }
 
 class OutPlanningVariable extends Table {
@@ -73,8 +70,6 @@ class Subject extends Table {
   DateTimeColumn get updatedAt => dateTime()();
   IntColumn get lastFocuzdOnSessionID =>
       integer().nullable().references(MemoryCountdownVariable, #id)();
-  TextColumn get notes =>
-      text().nullable()(); // can also be the sum of session's notes
   IntColumn get totalTimeSpent => integer()
       .withDefault(const Constant(0))(); // total time spent on the subject
 }
