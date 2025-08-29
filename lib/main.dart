@@ -3,6 +3,7 @@ import 'package:focuzd/blocs/blocs.dart';
 import 'package:focuzd/extra_functions/extra_functions.dart';
 import 'package:focuzd/pages/pages.dart';
 import 'package:flutter/material.dart';
+import 'package:focuzd/pages/subject_page.dart';
 
 import 'package:yaru/yaru.dart';
 import 'package:window_manager/window_manager.dart';
@@ -15,8 +16,8 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await windowManager.ensureInitialized();
   WindowOptions options = const WindowOptions(
-    size: Size(360, 473),
-    minimumSize: Size(360, 463),
+    size: Size(370, 473),
+    minimumSize: Size(370, 463),
     fullScreen: false,
   );
   await windowManager.waitUntilReadyToShow(options, () async {
@@ -36,7 +37,7 @@ Future<void> main() async {
                 PomodoroBloc(ticker: const Ticker())..add(const TimerInit()))
       ],
       child: Builder(builder: (context) {
-        windowManager.addListener(MyWindowListener(context: context));
+        windowManager.addListener(MyWindowListener());
         return const FocuzdApp();
       })));
 }
@@ -77,6 +78,8 @@ class FocuzdApp extends StatelessWidget {
                 RoundPlanningPageState() => const RoundPlanningPage(),
                 SubjectsPageState() => const SubjectsPage(),
                 AddSubjectPageState() => const SubjectCreatePage(),
+                SubjectPageState() =>
+                  IndividualSubjectPage(subject: state.subject)
               };
             }));
       },
