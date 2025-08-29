@@ -25,3 +25,11 @@ class RoundPlanningPageState extends PageNavigationState {}
 class SubjectsPageState extends PageNavigationState {}
 
 class AddSubjectPageState extends PageNavigationState {}
+
+class SubjectPageState extends PageNavigationState {
+  const SubjectPageState({required this.subject});
+  final SubjectData subject;
+
+  @override
+  List<Object> get props => [subject];
+}

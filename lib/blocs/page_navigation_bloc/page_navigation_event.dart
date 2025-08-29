@@ -43,6 +43,13 @@ class SubjectsPageEvent extends PageNavigationEvent {
   List<Object> get props => [];
 }
 
+class SubjectPageEvent extends PageNavigationEvent {
+  const SubjectPageEvent({required this.subject});
+  final SubjectData subject;
+  @override
+  List<Object> get props => [subject];
+}
+
 class AddSubjectPageEvent extends PageNavigationEvent {
   const AddSubjectPageEvent();
 

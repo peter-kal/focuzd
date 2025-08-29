@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 import 'package:equatable/equatable.dart';
+import 'package:focuzd/data/app_db.dart';
 
 part 'page_navigation_event.dart';
 part 'page_navigation_state.dart';
@@ -24,6 +25,9 @@ class PageNavigationBloc
     });
     on<SubjectsPageEvent>((event, emit) {
       emit(SubjectsPageState());
+    });
+    on<SubjectPageEvent>((event, emit) {
+      emit(SubjectPageState(subject: event.subject));
     });
     on<AddSubjectPageEvent>((event, emit) {
       emit(AddSubjectPageState());
