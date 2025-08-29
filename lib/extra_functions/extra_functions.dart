@@ -124,23 +124,6 @@ mixin class ExtraFunctions {
 }
 
 class MyWindowListener extends WindowListener {
-  MyWindowListe Future<void> updateAllSubjectsSubSubjectCount() async {
-     // Step 1: Fetch all subjects
-     final allSubjects = await fetchAllSubjects();
- 
-     // Step 2: Loop through each subject and update its subSubjects count
-     for (var subject in allSubjects) {
-       var count = await countSubSubjects(subject.id);
-       var updatedSubject = SubjectCompanion(
-         subSubjects: Value(count),
-         updatedAt: Value(DateTime.now()),
-       );
- 
-       await editSubjectWrite(subject.id, updatedSubject);
-     }
-   }
-ner();
-
   @override
   void onWindowClose() async {
     windowManager.setPreventClose(true);
