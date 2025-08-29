@@ -13,7 +13,8 @@ import 'package:intl/intl.dart';
 
 class SessionTilePlanning extends StatelessWidget {
   const SessionTilePlanning(
-      this.prototype, this.position, this.planlist, this.subjects, {super.key});
+      this.prototype, this.position, this.planlist, this.subjects,
+      {super.key});
   final SessionVariablePlanning prototype;
   final List<SessionVariablePlanning> planlist;
   final int position;
@@ -25,7 +26,6 @@ class SessionTilePlanning extends StatelessWidget {
       header: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-
           Row(
             children: [
               SizedBox(
@@ -34,8 +34,9 @@ class SessionTilePlanning extends StatelessWidget {
                     style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
-                        color:
-                            prototype.type == "focus" ? Theme.of(context).primaryColor : Colors.green)),
+                        color: prototype.type == "focus"
+                            ? Theme.of(context).primaryColor
+                            : Colors.green)),
               ),
               SizedBox(
                 width: 10,
@@ -54,7 +55,8 @@ class SessionTilePlanning extends StatelessWidget {
                 prototype.type == "focus"
                     ? YaruIconButton(
                         icon: Icon(YaruIcons.trash),
-                        tooltip: AppLocalizations.of(context)!.deleteSessionTooltip,
+                        tooltip:
+                            AppLocalizations.of(context)!.deleteSessionTooltip,
                         onPressed: () {
                           BlocProvider.of<PomodoroBloc>(context)
                               .add(ChangePlan(3, position));
@@ -64,7 +66,6 @@ class SessionTilePlanning extends StatelessWidget {
               ],
             ),
           ),
-          
         ],
       ),
       child: Column(
@@ -72,48 +73,54 @@ class SessionTilePlanning extends StatelessWidget {
           Text("${AppLocalizations.of(context)!.changeDurationLabel}:"),
           Padding(
             padding: const EdgeInsets.all(10.0),
-            child: DurationSpinbox(value: Duration(seconds: prototype.plannedDuration),onChanged: (value) {
-              BlocProvider.of<PomodoroBloc>(context)
-                  .add(ChangePlan(5, position, null, value.inSeconds)); 
-            }, ),
+            child: DurationSpinbox(
+              value: Duration(seconds: prototype.plannedDuration),
+              onChanged: (value) {
+                BlocProvider.of<PomodoroBloc>(context)
+                    .add(ChangePlan(5, position, null, value.inSeconds));
+              },
+            ),
           ),
           prototype.type == 'focus'
-          ? Column(
-            children: [
-              Text("${AppLocalizations.of(context)!.selectSubjectLabel}:"),
-              Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: YaruPopupMenuButton<SubjectData>(
-                            initialValue: prototype.subject,
-                            onSelected: (selectedItem) {
-                planlist[position].subject = selectedItem;
-                BlocProvider.of<PomodoroBloc>(context)
-                    .add(ChangePlan(2, position, selectedItem));
-                            },
-                            child: Text(
-                prototype.subject?.name ?? 'Select Subject',
-                style: const TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                            itemBuilder: (context) => subjects
-                  .map((item) => PopupMenuItem<SubjectData>(
-                        value: item,
-                        child: Column(
-                          children: [
-                            Text(item.name),
-                            item.subjectid != null
-                                ? Text("with child", style: TextStyle(fontStyle: FontStyle.italic),)
-                                : SizedBox.shrink(),
-                          ],
+              ? Column(
+                  children: [
+                    Text(
+                        "${AppLocalizations.of(context)!.selectSubjectLabel}:"),
+                    Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: YaruPopupMenuButton<SubjectData>(
+                        initialValue: prototype.subject,
+                        onSelected: (selectedItem) {
+                          planlist[position].subject = selectedItem;
+                          BlocProvider.of<PomodoroBloc>(context)
+                              .add(ChangePlan(2, position, selectedItem));
+                        },
+                        child: Text(
+                          prototype.subject?.name ?? 'Select Subject',
+                          style: const TextStyle(fontWeight: FontWeight.bold),
                         ),
-                      ))
-                  .toList(),
-                          ),
-              ),
-            ],
-          )
-          
-          : SizedBox.shrink(),
-
+                        itemBuilder: (context) => subjects
+                            .map((item) => PopupMenuItem<SubjectData>(
+                                  value: item,
+                                  child: Column(
+                                    children: [
+                                      Text(item.name),
+                                      item.subSubjects > 0
+                                          ? Text(
+                                              "with child",
+                                              style: TextStyle(
+                                                  fontStyle: FontStyle.italic),
+                                            )
+                                          : SizedBox.shrink(),
+                                    ],
+                                  ),
+                                ))
+                            .toList(),
+                      ),
+                    ),
+                  ],
+                )
+              : SizedBox.shrink(),
         ],
       ),
     );

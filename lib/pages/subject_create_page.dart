@@ -26,7 +26,7 @@ class _SubjectCreatePageState extends State<SubjectCreatePage> {
       if (state is CreateSubjectState) {
         return Scaffold(
           appBar: YaruWindowTitleBar(
-            title: Text("Create a Subject"),
+            title: Text("Add a Subject"),
             leading: YaruIconButton(
               icon: const Icon(Icons.arrow_back),
               onPressed: () {
@@ -42,54 +42,74 @@ class _SubjectCreatePageState extends State<SubjectCreatePage> {
                   child: Text("Save"),
                   onPressed: () {
                     BlocProvider.of<RepoBloc>(context).add(AddSubjectToDB());
+                    BlocProvider.of<PageNavigationBloc>(context)
+                        .add(SubjectsPageEvent());
                   },
                 )
               ],
             ),
           ),
-          body: ListView(
-            children: [
-              Text("Subject Name:"),
-              TextField(
-                decoration: InputDecoration(
-                  hintText: "Enter subject name",
+          body: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: ListView(
+              children: [
+                Text("Subject Name:"),
+                SizedBox(height: 10),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: TextField(
+                    maxLines: 3,
+                    maxLength: 99,
+                    decoration: InputDecoration(
+                      hintText: "Enter subject name:",
+                    ),
+                    onChanged: (value) {
+                      BlocProvider.of<RepoBloc>(context)
+                          .add(UpdateAddingSubject(1, 0, value));
+                    },
+                  ),
                 ),
-                onChanged: (value) {
-                  BlocProvider.of<RepoBloc>(context)
-                      .add(UpdateAddingSubject(1, 0, value));
-                },
-              ),
-              YaruPopupMenuButton<SubjectData>(
-                initialValue: null,
-                onSelected: (selectedItem) {
-                  BlocProvider.of<RepoBloc>(context)
-                      .add(UpdateAddingSubject(2, selectedItem.id, ""));
-                },
-                child: Text(
-                  state.makeable.name != "Add Name"
-                      ? state.makeable.subid.toString()
-                      : 'Select Subject',
-                  style: const TextStyle(fontWeight: FontWeight.bold),
+                SizedBox(height: 10),
+                Text("Select super-subject:"),
+                SizedBox(height: 10),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: YaruPopupMenuButton<SubjectData>(
+                    initialValue: null,
+                    onSelected: (selectedItem) {
+                      BlocProvider.of<RepoBloc>(context)
+                          .add(UpdateAddingSubject(2, selectedItem.id, ""));
+                    },
+                    child: state.makeable.subid != null
+                        ? FutureBuilder(
+                            future: _getSubjectNamebyID(state.makeable.subid!),
+                            builder: (context, asyncSnapshot) {
+                              if (asyncSnapshot.connectionState ==
+                                  ConnectionState.done) {
+                                return Text(asyncSnapshot.data!);
+                              } else {
+                                return Text("...");
+                              }
+                            })
+                        : Text('Select Subject'),
+                    itemBuilder: (context) => state.subjects
+                        .map((item) => PopupMenuItem<SubjectData>(
+                              value: item,
+                              child: Column(
+                                children: [
+                                  Text(item!.name),
+                                ],
+                              ),
+                            ))
+                        .toList(),
+                  ),
                 ),
-                itemBuilder: (context) => state.subjects
-                    .map((item) => PopupMenuItem<SubjectData>(
-                          value: item,
-                          child: Column(
-                            children: [
-                              Text(item!.name),
-                              item.subjectid != null
-                                  ? Text(
-                                      "with child",
-                                      style: TextStyle(
-                                          fontStyle: FontStyle.italic),
-                                    )
-                                  : SizedBox.shrink(),
-                            ],
-                          ),
-                        ))
-                    .toList(),
-              )
-            ],
+                Text("Subject's Adress:"),
+                Padding(
+                    padding: EdgeInsetsGeometry.all(8.0),
+                    child: YaruSection(child: Text(state.makeable.address!)))
+              ],
+            ),
           ),
         );
       }
@@ -97,4 +117,10 @@ class _SubjectCreatePageState extends State<SubjectCreatePage> {
       return const SizedBox.shrink();
     });
   }
+}
+
+Future<String> _getSubjectNamebyID(int id) async {
+  var subjectRepo = SubjectRepository(AppDatabase.instance);
+  var subject = await subjectRepo.fetchSubjectByID(id);
+  return subject?.name ?? '';
 }

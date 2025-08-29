@@ -37,3 +37,8 @@ class UpdateAddingSubject extends RepoEvent {
 class AddSubjectToDB extends RepoEvent {
   const AddSubjectToDB();
 }
+
+class DeleteSubjectDB extends RepoEvent {
+  const DeleteSubjectDB({required this.id});
+  final int id;
+}

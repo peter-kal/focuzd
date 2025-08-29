@@ -64,10 +64,12 @@ class OutPlanningVariable extends Table {
 class Subject extends Table {
   IntColumn get id => integer().autoIncrement()();
   TextColumn get name => text().unique().withLength(max: 99)();
-  IntColumn get subjectid =>
+  TextColumn get address => text().unique()();
+  IntColumn get superSubjectID =>
       integer().nullable().customConstraint('REFERENCES subject(id)')();
   DateTimeColumn get createdAt => dateTime()();
   DateTimeColumn get updatedAt => dateTime()();
+  IntColumn get subSubjects => integer().withDefault(const Constant(0))();
   IntColumn get lastFocuzdOnSessionID =>
       integer().nullable().references(MemoryCountdownVariable, #id)();
   IntColumn get totalTimeSpent => integer()

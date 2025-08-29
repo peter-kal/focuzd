@@ -13,8 +13,96 @@ class SubjectRepository {
         .getSingleOrNull();
   }
 
+  Future<void> deleteSubjectByID(int id) async {
+    _db.delete(_db.subject)
+      ..where((tbl) => tbl.id.equals(id))
+      ..go();
+  }
+
   Future<void> insertSubject(SubjectCompanion subject) async {
     await _db.into(_db.subject).insert(subject);
+  }
+
+  Future<int> countSubSubjects(int subjectId) async {
+    // Get direct sub-subjects
+    var subSubjects = await (_db.select(_db.subject)
+          ..where((tbl) => tbl.superSubjectID.equals(subjectId)))
+        .get();
+
+    int count = subSubjects.length;
+
+    // Recursively count sub-subjects of each sub-subject
+    for (var sub in subSubjects) {
+      count += await countSubSubjects(sub.id);
+    }
+
+    return count;
+  }
+
+  Future<void> updateAllSubjectsSubSubjectCount() async {
+    // Step 1: Fetch all subjects
+    final allSubjects = await fetchAllSubjects();
+
+    // Step 2: Loop through each subject and update its subSubjects count
+    for (var subject in allSubjects) {
+      var count = await countSubSubjects(subject.id);
+      var updatedSubject = SubjectCompanion(
+        subSubjects: Value(count),
+        updatedAt: Value(DateTime.now()),
+      );
+
+      await editSubjectWrite(subject.id, updatedSubject);
+    }
+  }
+
+  Future<void> increaseSubjectTime(int addedTime, int id, int sessionId) async {
+    var subject = await fetchSubjectByID(id);
+    print("start");
+    await editSubjectWrite(
+        id,
+        SubjectCompanion(
+            lastFocuzdOnSessionID: Value(sessionId),
+            totalTimeSpent: Value((subject?.totalTimeSpent ?? 0) + addedTime),
+            updatedAt: Value(DateTime.now())));
+
+    if (subject!.superSubjectID != null) {
+      print("will repeat");
+      increaseSubjectTime(addedTime, subject.superSubjectID!, sessionId);
+    }
+  }
+
+  Future<String> getSubjectAddress(int subjectId) async {
+    List<String> path = [];
+
+    var current = await fetchSubjectByID(subjectId);
+
+    while (current != null) {
+      path.insert(0, current.name); // safely unwrap
+
+      final parentId = current.superSubjectID;
+      if (parentId == null) break;
+
+      current = await (_db.select(_db.subject)
+            ..where((tbl) => tbl.id.equals(parentId)))
+          .getSingleOrNull();
+    }
+
+    return path.join(' > ');
+  }
+
+  Future<void> updateAllSubjectAddresses() async {
+    var allSubjects = await fetchAllSubjects();
+
+    for (var subject in allSubjects) {
+      var address = await getSubjectAddress(subject.id);
+
+      var updatedSubject = SubjectCompanion(
+        address: Value(address),
+        updatedAt: Value(DateTime.now()),
+      );
+
+      await editSubjectWrite(subject.id, updatedSubject);
+    }
   }
 
   Future<void> editSubjectWrite(int id, SubjectCompanion updatedSubject) async {
@@ -183,7 +271,10 @@ class RoundRepository {
 
   // Fetch all rounds
   Future<List<RoundVariableData>> fetchAllRounds() async {
-    return await (_db.select(_db.roundVariable)..where((tbl) => tbl.finishTime.isNotNull())..orderBy([(tbl) => OrderingTerm.desc(tbl.finishTime)])).get();
+    return await (_db.select(_db.roundVariable)
+          ..where((tbl) => tbl.finishTime.isNotNull())
+          ..orderBy([(tbl) => OrderingTerm.desc(tbl.finishTime)]))
+        .get();
   }
 
   // Fetch the newest uncompleted round (max id AND uncompleted)

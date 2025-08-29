@@ -463,11 +463,12 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
             SubjectCompanion(
               updatedAt: Value(now),
               lastFocuzdOnSessionID: Value(state.currentMemorySessionID),
-              totalTimeSpent: Value(totalTimeSpent != null
-                  ? totalTimeSpent + (state.selectedDuration - state.duration)
-                  : (state.selectedDuration - state.duration)),
             ),
           );
+          await subjectRepo.increaseSubjectTime(
+              (state.selectedDuration - state.duration),
+              state.subject!.id,
+              state.currentMemorySessionID);
         }
         add(TimerInit());
       } else if ((state.runTimes + 1) < state.sessions.length) {
@@ -482,11 +483,12 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
             SubjectCompanion(
               updatedAt: Value(now),
               lastFocuzdOnSessionID: Value(state.currentMemorySessionID),
-              totalTimeSpent: Value(totalTimeSpent != null
-                  ? totalTimeSpent + actuallyDoneSession
-                  : actuallyDoneSession),
             ),
           );
+          await subjectRepo.increaseSubjectTime(
+              (state.selectedDuration - state.duration),
+              state.subject!.id,
+              state.currentMemorySessionID);
         }
         await memorySessionRepo.updateMemorySessionWrite(
             state.currentMemorySessionID,
@@ -511,6 +513,7 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
             MemoryCountdownVariableCompanion(
               startingTime: Value(now),
             ));
+
         emit(TimerRunInProgress(
             state.sessions[state.runTimes + 1].plannedDuration,
             state.runTimes + 1,

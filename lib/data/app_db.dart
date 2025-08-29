@@ -27,14 +27,17 @@ class AppDatabase extends _$AppDatabase {
         await m.createAll();
         await into(subject).insert(SubjectCompanion(
             name: Value("Mathematics"),
+            address: Value("> Mathematics"),
             createdAt: Value(DateTime.now()),
             updatedAt: Value(DateTime.now())));
         await into(subject).insert(SubjectCompanion(
             name: Value("Microbiology"),
+            address: Value("> Microbiology"),
             createdAt: Value(DateTime.now()),
             updatedAt: Value(DateTime.now())));
         await into(subject).insert(SubjectCompanion(
             name: Value("Ergotherapy"),
+            address: Value("> Ergotherapy"),
             createdAt: Value(DateTime.now()),
             updatedAt: Value(DateTime.now())));
         await into(settingsVariables).insert(SettingsVariablesCompanion(
@@ -56,7 +59,7 @@ class AppDatabase extends _$AppDatabase {
 
 LazyDatabase _openConnection() {
   return LazyDatabase(() async {
-    final directory = await getApplicationSupportDirectory();
+    final directory = await getApplicationDocumentsDirectory();
     return driftDatabase(
       name: 'focuzd_app_db',
       native: DriftNativeOptions(databaseDirectory: () async => directory),

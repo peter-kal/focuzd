@@ -124,13 +124,27 @@ mixin class ExtraFunctions {
 }
 
 class MyWindowListener extends WindowListener {
-  MyWindowListener({required this.context});
-  final BuildContext context;
+  MyWindowListe Future<void> updateAllSubjectsSubSubjectCount() async {
+     // Step 1: Fetch all subjects
+     final allSubjects = await fetchAllSubjects();
+ 
+     // Step 2: Loop through each subject and update its subSubjects count
+     for (var subject in allSubjects) {
+       var count = await countSubSubjects(subject.id);
+       var updatedSubject = SubjectCompanion(
+         subSubjects: Value(count),
+         updatedAt: Value(DateTime.now()),
+       );
+ 
+       await editSubjectWrite(subject.id, updatedSubject);
+     }
+   }
+ner();
+
   @override
   void onWindowClose() async {
-    print("window is closing");
     windowManager.setPreventClose(true);
-    BlocProvider.of<PomodoroBloc>(context).add(WindowIsClosing());
+    print("window is closing");
     await windowManager.setPreventClose(false);
     await windowManager.destroy();
   }
@@ -146,7 +160,8 @@ class SessionVariablePlanning {
 }
 
 class SubjectMaking {
-  SubjectMaking(this.name, [this.subid]);
+  SubjectMaking(this.name, [this.subid, this.address]);
   int? subid;
+  String? address;
   String name;
 }

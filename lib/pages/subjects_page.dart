@@ -34,9 +34,7 @@ class _SubjectsPageState extends State<SubjectsPage> {
                   id: state.subjects![index].id,
                   name: state.subjects![index].name,
                   totalTimeSpent: state.subjects![index].totalTimeSpent,
-                  onTap: () {
-                    // Handle tap
-                  },
+                  subject: state.subjects![index],
                 );
               },
             ),

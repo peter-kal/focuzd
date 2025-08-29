@@ -4,6 +4,7 @@ import 'package:bloc/bloc.dart';
 import 'package:drift/drift.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:focuzd/blocs/blocs.dart';
 import 'package:focuzd/data/app_db.dart';
 import 'package:focuzd/data/repo.dart';
 import 'package:focuzd/extra_functions/extra_functions.dart';
@@ -20,6 +21,7 @@ class RepoBloc extends Bloc<RepoEvent, RepoState> {
     on<AddingSubject>(_onAddingSubject);
     on<UpdateAddingSubject>(_onUpdateAddingSubject);
     on<AddSubjectToDB>(_onAddingSubjectToID);
+    on<DeleteSubjectDB>(_onDeleteSubjectDB);
   }
   final settingsRepo = SettingsRepository(AppDatabase.instance);
   final memoryRepo = MemorySessionRepository(AppDatabase.instance);
@@ -67,6 +69,8 @@ class RepoBloc extends Bloc<RepoEvent, RepoState> {
   Future<void> _onEmitStateWithDBVars(
       EmitStateWithDBVars event, Emitter<RepoState> emit) async {
     final has = await settingsRepo.fetchSettingsById(1);
+    await subjectRepo.updateAllSubjectsSubSubjectCount();
+    await subjectRepo.updateAllSubjectAddresses();
     final subjectList = await subjectRepo.fetchAllSubjects();
     final roundList = await roundRepo.fetchAllRounds();
     List<List<dynamic>> forEverything = [];
@@ -79,13 +83,15 @@ class RepoBloc extends Bloc<RepoEvent, RepoState> {
       first.add(round);
 
       // Add memory countdowns
-      first.addAll(await memoryRepo.fetchMemoryCountdownByRoundID(roundList[i].id));
+      first.addAll(
+          await memoryRepo.fetchMemoryCountdownByRoundID(roundList[i].id));
 
       // Collect out planning variables for each item in first
       List<dynamic> expandedFirst = [];
       for (var item in first) {
         expandedFirst.add(item);
-        var second = await outPlanningRepo.fetchOutPlanningsByCountdownID(item.id);
+        var second =
+            await outPlanningRepo.fetchOutPlanningsByCountdownID(item.id);
         if (second.isNotEmpty) {
           expandedFirst.addAll(second);
         }
@@ -130,7 +136,7 @@ class RepoBloc extends Bloc<RepoEvent, RepoState> {
   Future<void> _onAddingSubject(
       AddingSubject event, Emitter<RepoState> emit) async {
     // Implement your logic to add a subject
-    var sub = SubjectMaking("Add Name");
+    var sub = SubjectMaking("Add Name", null, "> ");
     emit(CreateSubjectState(
         subjects: await subjectRepo.fetchAllSubjects(), makeable: sub));
   }
@@ -142,7 +148,8 @@ class RepoBloc extends Bloc<RepoEvent, RepoState> {
     if (state is CreateSubjectState) {
       await subjectRepo.insertSubject(SubjectCompanion(
         name: Value(state.makeable.name),
-        subjectid: Value(state.makeable.subid),
+        superSubjectID: Value(state.makeable.subid),
+        address: Value(state.makeable.address!),
         createdAt: Value(DateTime.now()),
         updatedAt: Value(DateTime.now()),
       ));
@@ -156,12 +163,24 @@ class RepoBloc extends Bloc<RepoEvent, RepoState> {
       if (event.actionCode == 1) {
         emit(CreateSubjectState(
             subjects: state.subjects,
-            makeable: SubjectMaking(event.name, state.makeable.subid)));
+            makeable: SubjectMaking(
+                event.name, state.makeable.subid, "> ${event.name}")));
       } else if (event.actionCode == 2) {
+        var addr = await subjectRepo.getSubjectAddress(event.subId);
         emit(CreateSubjectState(
             subjects: state.subjects,
-            makeable: SubjectMaking(state.makeable.name, event.subId)));
+            makeable: SubjectMaking(state.makeable.name, event.subId,
+                "$addr > ${state.makeable.name}")));
       }
+    }
+  }
+
+  Future<void> _onDeleteSubjectDB(
+      DeleteSubjectDB event, Emitter<RepoState> emit) async {
+    final state = this.state;
+    if (state is RepoVariablesGivenState) {
+      subjectRepo.deleteSubjectByID(event.id);
+      add(EmitStateWithDBVars());
     }
   }
 }

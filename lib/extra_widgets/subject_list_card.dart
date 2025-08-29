@@ -1,18 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:focuzd/blocs/blocs.dart';
+import 'package:focuzd/data/app_db.dart';
 
 class SubjectListCard extends StatelessWidget {
+  final SubjectData subject;
   final int id;
   final String name;
   final int totalTimeSpent; // in seconds
-  final VoidCallback? onTap;
 
   const SubjectListCard({
-    Key? key,
+    super.key,
     required this.id,
     required this.name,
     required this.totalTimeSpent,
-    this.onTap,
-  }) : super(key: key);
+    required this.subject,
+  });
 
   String _formatTime(int seconds) {
     final hours = seconds ~/ 3600;
@@ -32,8 +35,12 @@ class SubjectListCard extends StatelessWidget {
           name,
           style: const TextStyle(fontWeight: FontWeight.bold),
         ),
-        subtitle: Text('ID: $id\nTime Spent: ${_formatTime(totalTimeSpent)}'),
-        onTap: onTap,
+        subtitle: Text(
+            'ID: $id\nSuper-Subject ${subject.superSubjectID} \nAddress: ${subject.address}  \nSub-Subjects: ${subject.subSubjects}\nLast Focuzd: ${subject.lastFocuzdOnSessionID} \nTime Spent: ${_formatTime(totalTimeSpent)}'),
+        onTap: () {
+          BlocProvider.of<PageNavigationBloc>(context)
+              .add(SubjectPageEvent(subject: subject));
+        },
         trailing: const Icon(Icons.arrow_forward_ios, size: 16),
       ),
     );

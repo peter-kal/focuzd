@@ -60,7 +60,7 @@ class _SettingsPageState extends State<SettingsPage> {
                     changeable: 2,
                     value: state.requestedNumberOfSessions),
                 Padding(
-                  padding: const EdgeInsets.all(8),
+                  padding: const EdgeInsets.all(10),
                   child: OutlinedButton.icon(
                       icon: const Icon(Icons.restart_alt),
                       iconAlignment: IconAlignment.start,
