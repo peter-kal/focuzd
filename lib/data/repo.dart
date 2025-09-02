@@ -23,6 +23,13 @@ class SubjectRepository {
     await _db.into(_db.subject).insert(subject);
   }
 
+  Future<List<SubjectData>> fetchSubSubjects(int id) async {
+    return await (_db.select(_db.subject)
+          ..where((tbl) => tbl.superSubjectID.equals(id))
+          ..orderBy([(tbl) => OrderingTerm.desc(tbl.createdAt)]))
+        .get();
+  }
+
   Future<int> countSubSubjects(int subjectId) async {
     // Get direct sub-subjects
     var subSubjects = await (_db.select(_db.subject)
@@ -111,7 +118,11 @@ class SubjectRepository {
   }
 
   Future<List<SubjectData>> fetchAllSubjects() async {
-    return await _db.select(_db.subject).get();
+    return await (_db.select(_db.subject)
+          ..orderBy([(s) => OrderingTerm.desc(s.totalTimeSpent)])
+          ..orderBy([(s) => OrderingTerm.desc(s.subSubjects)])
+          ..orderBy([(s) => OrderingTerm.desc(s.lastFocuzdOnSessionID)]))
+        .get();
   }
 }
 
@@ -190,6 +201,14 @@ class MemorySessionRepository {
   // Fetch all memory sessions
   Future<List<MemoryCountdownVariableData>> fetchAllMemorySessions() async {
     return await _db.select(_db.memoryCountdownVariable).get();
+  }
+
+  Future<List<MemoryCountdownVariableData>> fetchMemoryCountdownsBySubject(
+      int id) async {
+    return await (_db.select(_db.memoryCountdownVariable)
+          ..where((tbl) => tbl.subject.equals(id))
+          ..orderBy([(tbl) => OrderingTerm.desc(tbl.finishTime)]))
+        .get();
   }
 
   Future<List> fetchMemoryCountdownByRoundID(int roundId) async {
