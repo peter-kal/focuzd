@@ -86,7 +86,10 @@ class _SubjectCreatePageState extends State<SubjectCreatePage> {
                             builder: (context, asyncSnapshot) {
                               if (asyncSnapshot.connectionState ==
                                   ConnectionState.done) {
-                                return Text(asyncSnapshot.data!);
+                                return Text(
+                                  asyncSnapshot.data!,
+                                  overflow: TextOverflow.visible,
+                                );
                               } else {
                                 return Text("...");
                               }
@@ -97,7 +100,10 @@ class _SubjectCreatePageState extends State<SubjectCreatePage> {
                               value: item,
                               child: Column(
                                 children: [
-                                  Text(item!.name),
+                                  Text(
+                                    item!.name,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
                                 ],
                               ),
                             ))
