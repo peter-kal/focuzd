@@ -1,9 +1,11 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:focuzd/blocs/blocs.dart';
 import 'package:focuzd/extra_functions/extra_functions.dart';
+import 'package:focuzd/pages/goals_page.dart';
 import 'package:focuzd/pages/pages.dart';
 import 'package:flutter/material.dart';
 import 'package:focuzd/pages/subject_page.dart';
+import 'package:focuzd/pages/subjects_goals_page.dart';
 
 import 'package:yaru/yaru.dart';
 import 'package:window_manager/window_manager.dart';
@@ -76,7 +78,9 @@ class FocuzdApp extends StatelessWidget {
                 StatisticsDataPageState() => const MainDataPage(),
                 PageNavigationInitial() => const Scaffold(),
                 RoundPlanningPageState() => const RoundPlanningPage(),
-                SubjectsPageState() => const SubjectsPage(),
+                SubjectsAndGoalsPageState() => const SubjectsGoalsPage(),
+                SubjectsPageState() => const SubjectsGoalsPage(),
+                GoalsPageState() => SubjectsGoalsPage(),
                 AddSubjectPageState() => const SubjectCreatePage(),
                 SubjectPageState() =>
                   IndividualSubjectPage(subject: state.subject)

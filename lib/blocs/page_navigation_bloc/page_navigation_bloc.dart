@@ -23,14 +23,27 @@ class PageNavigationBloc
     on<RoundPlanningPageEvent>((event, emit) {
       emit(RoundPlanningPageState());
     });
+    on<SubjectsAndGoalsPageEvent>((event, emit) {
+      emit(SubjectsAndGoalsPageState());
+    });
     on<SubjectsPageEvent>((event, emit) {
       emit(SubjectsPageState());
+    });
+    on<GoalsPageEvent>((event, emit) {
+      emit(GoalsPageState());
     });
     on<SubjectPageEvent>((event, emit) {
       emit(SubjectPageState(subject: event.subject));
     });
     on<AddSubjectPageEvent>((event, emit) {
       emit(AddSubjectPageState());
+    });
+    on<SelectSubGoalPageEvent>((event, emit) {
+      if (event.index == 0) {
+        emit(SubjectsPageState());
+      } else if (event.index == 1) {
+        emit(GoalsPageState());
+      }
     });
     on<SelectDataPageEvent>((event, emit) {
       if (event.index == 0) {

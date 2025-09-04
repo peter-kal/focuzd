@@ -32,6 +32,8 @@ class UpdateAddingSubject extends RepoEvent {
   final String name;
   final int subId;
   final int actionCode;
+  @override
+  List<Object> get props => [name, subId, actionCode];
 }
 
 class AddSubjectToDB extends RepoEvent {
@@ -41,4 +43,6 @@ class AddSubjectToDB extends RepoEvent {
 class DeleteSubjectDB extends RepoEvent {
   const DeleteSubjectDB({required this.id});
   final int id;
+  @override
+  List<Object> get props => [id];
 }

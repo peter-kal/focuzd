@@ -75,3 +75,36 @@ class Subject extends Table {
   IntColumn get totalTimeSpent => integer()
       .withDefault(const Constant(0))(); // total time spent on the subject
 }
+
+class Goal extends Table {
+  IntColumn get id => integer().autoIncrement()();
+  TextColumn get codeName => text()();
+  IntColumn get type => integer()(); //1,2,3,4,5
+  DateTimeColumn get createdAt => dateTime()();
+  DateTimeColumn get updatedAt => dateTime()();
+  // two periods of time(days, weeks, months, years)
+  // four datetime variables
+  // Type 1, 3, 4, will only need period1
+  // Type 2, 5 will need both
+  DateTimeColumn get startPeriod1 => dateTime().nullable()();
+  DateTimeColumn get endPeriod1 => dateTime().nullable()();
+
+  //any period of time ahead of the planning
+  DateTimeColumn get startPeriod2 => dateTime()();
+  DateTimeColumn get endPeriod2 => dateTime()();
+
+  IntColumn get xSessionsGoal => integer().nullable()();
+
+  // Type 2, 4, 5 only
+  RealColumn get plannedRatio =>
+      real().nullable()(); // ratio always in comparison to 1(ex. 1.1 to )
+  RealColumn get realRatio => real().nullable()();
+  IntColumn get xSessionsR => integer().nullable()();
+  // sybject types
+  // Only one subject for type 3, 5
+  IntColumn get subjectIdZ => integer().nullable()();
+  // For type 4 we need two
+  IntColumn get subjectIdF => integer().nullable()();
+  // determined after the deadline of a goal
+  RealColumn get successPercentage => real().nullable()();
+}

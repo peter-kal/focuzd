@@ -10,7 +10,8 @@ part 'app_db.g.dart';
   MemoryCountdownVariable,
   RoundVariable,
   Subject,
-  OutPlanningVariable
+  OutPlanningVariable,
+  Goal
 ])
 class AppDatabase extends _$AppDatabase {
   static final AppDatabase instance = AppDatabase._internal();
@@ -25,19 +26,18 @@ class AppDatabase extends _$AppDatabase {
     return MigrationStrategy(
       onCreate: (Migrator m) async {
         await m.createAll();
+        await into(goal).insert(GoalCompanion(
+          codeName: Value("writing1800"),
+          type: Value(1),
+          createdAt: Value(DateTime.now()),
+          updatedAt: Value(DateTime.now()),
+          xSessionsGoal: Value(180),
+          startPeriod2: Value(DateTime(2025, 9, 4, 15)),
+          endPeriod2: Value(DateTime(2026, 5, 30, 15)),
+        ));
         await into(subject).insert(SubjectCompanion(
             name: Value("Mathematics"),
             address: Value("> Mathematics"),
-            createdAt: Value(DateTime.now()),
-            updatedAt: Value(DateTime.now())));
-        await into(subject).insert(SubjectCompanion(
-            name: Value("Microbiology"),
-            address: Value("> Microbiology"),
-            createdAt: Value(DateTime.now()),
-            updatedAt: Value(DateTime.now())));
-        await into(subject).insert(SubjectCompanion(
-            name: Value("Ergotherapy"),
-            address: Value("> Ergotherapy"),
             createdAt: Value(DateTime.now()),
             updatedAt: Value(DateTime.now())));
         await into(settingsVariables).insert(SettingsVariablesCompanion(
@@ -59,7 +59,7 @@ class AppDatabase extends _$AppDatabase {
 
 LazyDatabase _openConnection() {
   return LazyDatabase(() async {
-    final directory = await getApplicationSupportDirectory();
+    final directory = await getApplicationDocumentsDirectory();
     return driftDatabase(
       name: 'focuzd_app_db',
       native: DriftNativeOptions(databaseDirectory: () async => directory),

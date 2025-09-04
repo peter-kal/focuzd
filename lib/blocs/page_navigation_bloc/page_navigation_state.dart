@@ -22,6 +22,10 @@ class StatisticsDataPageState extends PageNavigationState {}
 
 class RoundPlanningPageState extends PageNavigationState {}
 
+class SubjectsAndGoalsPageState extends PageNavigationState {}
+
+class GoalsPageState extends PageNavigationState {}
+
 class SubjectsPageState extends PageNavigationState {}
 
 class AddSubjectPageState extends PageNavigationState {}

@@ -24,15 +24,19 @@ class RepoVariablesGivenState extends RepoState {
       required this.selectedBreakDurationStored,
       required this.selectedFocusDurationStored,
       required this.selectedLongBreakDuration,
+      this.subjectTree,
       this.subjects,
-      this.roundsandsessions});
+      this.roundsandsessions,
+      this.goals});
   final bool windowOnTop;
   final int requestedNumberOfSessions;
   final int selectedBreakDurationStored;
   final int selectedFocusDurationStored;
   final int selectedLongBreakDuration;
   final List<SubjectData>? subjects;
+  final List<SubjectTreeNode>? subjectTree;
   final List<List<dynamic>>? roundsandsessions;
+  final List<GoalData>? goals;
   @override
   List<Object> get props => [
         windowOnTop,
@@ -40,7 +44,9 @@ class RepoVariablesGivenState extends RepoState {
         selectedBreakDurationStored,
         selectedFocusDurationStored,
         selectedLongBreakDuration,
+        subjectTree!,
         subjects!,
-        roundsandsessions!
+        roundsandsessions!,
+        goals!
       ];
 }

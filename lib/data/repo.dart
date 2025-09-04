@@ -1,12 +1,62 @@
 import 'package:drift/drift.dart';
-import 'package:focuzd/l10n/app_localizations.dart';
+import 'package:focuzd/extra_widgets/subject_tree_node.dart';
 
 import 'app_db.dart';
+
+class GoalRepository {
+  final AppDatabase _db;
+  GoalRepository(this._db);
+  Future<List<GoalData>> fetchAllGoals() async {
+    return await (_db.select(_db.goal)
+          ..orderBy([(s) => OrderingTerm.asc(s.endPeriod2)])
+          ..orderBy([(s) => OrderingTerm.desc(s.createdAt)]))
+        .get();
+  }
+}
 
 class SubjectRepository {
   final AppDatabase _db;
   SubjectRepository(this._db);
-  // TASK: Write a function that will insert sub-subjects time into the super-subjects, after updating in the Bloc
+
+  List<SubjectTreeNode> buildSubjectTree(List<SubjectData> subjects) {
+    // Step 1: Create a map from id to node for fast lookup
+    final Map<int, SubjectTreeNode> nodeMap = {};
+
+    // Step 2: Create all nodes and store them in the map
+    for (final subject in subjects) {
+      nodeMap[subject.id] = SubjectTreeNode(
+        title: subject.name,
+        id: subject.id,
+        subSubjects: subject.subSubjects,
+        subject: subject,
+        superId:
+            subject.superSubjectID, // Add this to your SubjectTreeNode class
+        totalTimeSpent: subject.totalTimeSpent,
+        updatedAt: subject.updatedAt,
+        children: [],
+      );
+    }
+
+    // Step 3: Link children to their parents
+    final List<SubjectTreeNode> roots = [];
+
+    for (final node in nodeMap.values) {
+      if (node.superId != null && nodeMap.containsKey(node.superId)) {
+        final parentNode = nodeMap[node.superId]!;
+        parentNode.children.add(node);
+      } else {
+        roots.add(node); // No parent means it's a root node
+      }
+    }
+
+    return roots;
+  }
+
+  String? _getParentAddress(String address) {
+    final parts = address.split('>');
+    if (parts.length <= 1) return null;
+    return parts.sublist(0, parts.length - 1).join('>');
+  }
 
   Future<SubjectData?> fetchSubjectByID(int id) async {
     return await (_db.select(_db.subject)..where((tbl) => tbl.id.equals(id)))

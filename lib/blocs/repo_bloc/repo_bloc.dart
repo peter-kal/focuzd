@@ -5,6 +5,7 @@ import 'package:drift/drift.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:focuzd/blocs/blocs.dart';
+import 'package:focuzd/extra_widgets/subject_tree_node.dart';
 import 'package:focuzd/data/app_db.dart';
 import 'package:focuzd/data/repo.dart';
 import 'package:focuzd/extra_functions/extra_functions.dart';
@@ -28,6 +29,7 @@ class RepoBloc extends Bloc<RepoEvent, RepoState> {
   final subjectRepo = SubjectRepository(AppDatabase.instance);
   final roundRepo = RoundRepository(AppDatabase.instance);
   final outPlanningRepo = OutPlanningVariableRepo(AppDatabase.instance);
+  final goalRepo = GoalRepository(AppDatabase.instance);
   void _onUpdateSettingsVariables(
       UpdateSettingVariables event, Emitter<RepoState> emit) async {
     switch (event.selectedToChange) {
@@ -73,6 +75,9 @@ class RepoBloc extends Bloc<RepoEvent, RepoState> {
     await subjectRepo.updateAllSubjectAddresses();
     final subjectList = await subjectRepo.fetchAllSubjects();
     final roundList = await roundRepo.fetchAllRounds();
+    final tree =
+        subjectRepo.buildSubjectTree(await subjectRepo.fetchAllSubjects());
+    final goals = await goalRepo.fetchAllGoals();
     List<List<dynamic>> forEverything = [];
 
     for (int i = 0; i < roundList.length; i++) {
@@ -114,8 +119,10 @@ class RepoBloc extends Bloc<RepoEvent, RepoState> {
       selectedLongBreakDuration: has.selectedLongBreakDurationStored,
       selectedFocusDurationStored: has.selectedFocusDurationStored,
       windowOnTop: has.windowOnTop,
+      subjectTree: tree,
       subjects: subjectList,
       roundsandsessions: forEverything,
+      goals: goals,
     ));
   }
 

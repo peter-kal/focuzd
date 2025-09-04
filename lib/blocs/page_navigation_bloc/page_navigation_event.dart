@@ -36,8 +36,29 @@ class SelectDataPageEvent extends PageNavigationEvent {
   List<Object> get props => [index];
 }
 
+class SelectSubGoalPageEvent extends PageNavigationEvent {
+  const SelectSubGoalPageEvent({required this.index});
+  final int index;
+  @override
+  List<Object> get props => [index];
+}
+
+class SubjectsAndGoalsPageEvent extends PageNavigationEvent {
+  const SubjectsAndGoalsPageEvent();
+
+  @override
+  List<Object> get props => [];
+}
+
 class SubjectsPageEvent extends PageNavigationEvent {
   const SubjectsPageEvent();
+
+  @override
+  List<Object> get props => [];
+}
+
+class GoalsPageEvent extends PageNavigationEvent {
+  const GoalsPageEvent();
 
   @override
   List<Object> get props => [];

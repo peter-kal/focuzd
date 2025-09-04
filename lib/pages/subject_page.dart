@@ -12,7 +12,50 @@ class IndividualSubjectPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Text(subject.address),
+      body: BlocBuilder<RepoBloc, RepoState>(builder: (context, state) {
+        if (state is RepoVariablesGivenState) {
+          return Center(
+            child: Column(children: <Widget>[
+              SizedBox(
+                width: MediaQuery.of(context).size.width * 0.9,
+                height: 60,
+                child: Card(
+                  child: Center(
+                    child: Column(
+                      children: [
+                        Text(subject.name, style: TextStyle(fontSize: 20)),
+                        Text(
+                            "${subject.updatedAt.day}/${subject.updatedAt.month}/${subject.updatedAt.year}")
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              subject.subSubjects != 0
+                  ? SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.9,
+                      height: 300,
+                      child: Card(
+                        child: Center(
+                          child: ListView.builder(
+                              itemCount: state.subjects!.length,
+                              itemBuilder: (context, index) {
+                                if (state.subjects![index].superSubjectID ==
+                                    subject.id) {
+                                  return YaruTile(
+                                      title: Text(state.subjects![index].name));
+                                }
+                              }),
+                        ),
+                      ),
+                    )
+                  : Text("hello")
+            ]),
+          );
+        } else {
+          return Text("he");
+        }
+      }),
       floatingActionButton:
           BlocBuilder<PageNavigationBloc, PageNavigationState>(
               builder: (context, state) {
