@@ -94,17 +94,21 @@ class Goal extends Table {
   DateTimeColumn get endPeriod2 => dateTime()();
 
   IntColumn get xSessionsGoal => integer().nullable()();
-
+  IntColumn get ySessionsDone => integer().nullable()(); // in the period2
   // Type 2, 4, 5 only
   RealColumn get plannedRatio =>
       real().nullable()(); // ratio always in comparison to 1(ex. 1.1 to )
   RealColumn get realRatio => real().nullable()();
-  IntColumn get xSessionsR => integer().nullable()();
+  IntColumn get xSessionsR =>
+      integer().nullable()(); // r period of time +- y type 2,5
   // sybject types
   // Only one subject for type 3, 5
   IntColumn get subjectIdZ => integer().nullable()();
+  IntColumn get xSessionsZ =>
+      integer().nullable()(); // when 5 will become a duplicate
   // For type 4 we need two
   IntColumn get subjectIdF => integer().nullable()();
-  // determined after the deadline of a goal
-  RealColumn get successPercentage => real().nullable()();
+  IntColumn get xSessionsF => integer().nullable()();
+  // determined after the deadline of a goal and continiuously updated during the entire life of the goal
+  RealColumn get successPercentage => real().withDefault(const Constant(00))();
 }

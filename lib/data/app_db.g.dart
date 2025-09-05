@@ -2672,6 +2672,12 @@ class $GoalTable extends Goal with TableInfo<$GoalTable, GoalData> {
   late final GeneratedColumn<int> xSessionsGoal = GeneratedColumn<int>(
       'x_sessions_goal', aliasedName, true,
       type: DriftSqlType.int, requiredDuringInsert: false);
+  static const VerificationMeta _ySessionsDoneMeta =
+      const VerificationMeta('ySessionsDone');
+  @override
+  late final GeneratedColumn<int> ySessionsDone = GeneratedColumn<int>(
+      'y_sessions_done', aliasedName, true,
+      type: DriftSqlType.int, requiredDuringInsert: false);
   static const VerificationMeta _plannedRatioMeta =
       const VerificationMeta('plannedRatio');
   @override
@@ -2696,18 +2702,32 @@ class $GoalTable extends Goal with TableInfo<$GoalTable, GoalData> {
   late final GeneratedColumn<int> subjectIdZ = GeneratedColumn<int>(
       'subject_id_z', aliasedName, true,
       type: DriftSqlType.int, requiredDuringInsert: false);
+  static const VerificationMeta _xSessionsZMeta =
+      const VerificationMeta('xSessionsZ');
+  @override
+  late final GeneratedColumn<int> xSessionsZ = GeneratedColumn<int>(
+      'x_sessions_z', aliasedName, true,
+      type: DriftSqlType.int, requiredDuringInsert: false);
   static const VerificationMeta _subjectIdFMeta =
       const VerificationMeta('subjectIdF');
   @override
   late final GeneratedColumn<int> subjectIdF = GeneratedColumn<int>(
       'subject_id_f', aliasedName, true,
       type: DriftSqlType.int, requiredDuringInsert: false);
+  static const VerificationMeta _xSessionsFMeta =
+      const VerificationMeta('xSessionsF');
+  @override
+  late final GeneratedColumn<int> xSessionsF = GeneratedColumn<int>(
+      'x_sessions_f', aliasedName, true,
+      type: DriftSqlType.int, requiredDuringInsert: false);
   static const VerificationMeta _successPercentageMeta =
       const VerificationMeta('successPercentage');
   @override
   late final GeneratedColumn<double> successPercentage =
-      GeneratedColumn<double>('success_percentage', aliasedName, true,
-          type: DriftSqlType.double, requiredDuringInsert: false);
+      GeneratedColumn<double>('success_percentage', aliasedName, false,
+          type: DriftSqlType.double,
+          requiredDuringInsert: false,
+          defaultValue: const Constant(00));
   @override
   List<GeneratedColumn> get $columns => [
         id,
@@ -2720,11 +2740,14 @@ class $GoalTable extends Goal with TableInfo<$GoalTable, GoalData> {
         startPeriod2,
         endPeriod2,
         xSessionsGoal,
+        ySessionsDone,
         plannedRatio,
         realRatio,
         xSessionsR,
         subjectIdZ,
+        xSessionsZ,
         subjectIdF,
+        xSessionsF,
         successPercentage
       ];
   @override
@@ -2798,6 +2821,12 @@ class $GoalTable extends Goal with TableInfo<$GoalTable, GoalData> {
           xSessionsGoal.isAcceptableOrUnknown(
               data['x_sessions_goal']!, _xSessionsGoalMeta));
     }
+    if (data.containsKey('y_sessions_done')) {
+      context.handle(
+          _ySessionsDoneMeta,
+          ySessionsDone.isAcceptableOrUnknown(
+              data['y_sessions_done']!, _ySessionsDoneMeta));
+    }
     if (data.containsKey('planned_ratio')) {
       context.handle(
           _plannedRatioMeta,
@@ -2820,11 +2849,23 @@ class $GoalTable extends Goal with TableInfo<$GoalTable, GoalData> {
           subjectIdZ.isAcceptableOrUnknown(
               data['subject_id_z']!, _subjectIdZMeta));
     }
+    if (data.containsKey('x_sessions_z')) {
+      context.handle(
+          _xSessionsZMeta,
+          xSessionsZ.isAcceptableOrUnknown(
+              data['x_sessions_z']!, _xSessionsZMeta));
+    }
     if (data.containsKey('subject_id_f')) {
       context.handle(
           _subjectIdFMeta,
           subjectIdF.isAcceptableOrUnknown(
               data['subject_id_f']!, _subjectIdFMeta));
+    }
+    if (data.containsKey('x_sessions_f')) {
+      context.handle(
+          _xSessionsFMeta,
+          xSessionsF.isAcceptableOrUnknown(
+              data['x_sessions_f']!, _xSessionsFMeta));
     }
     if (data.containsKey('success_percentage')) {
       context.handle(
@@ -2861,6 +2902,8 @@ class $GoalTable extends Goal with TableInfo<$GoalTable, GoalData> {
           .read(DriftSqlType.dateTime, data['${effectivePrefix}end_period2'])!,
       xSessionsGoal: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}x_sessions_goal']),
+      ySessionsDone: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}y_sessions_done']),
       plannedRatio: attachedDatabase.typeMapping
           .read(DriftSqlType.double, data['${effectivePrefix}planned_ratio']),
       realRatio: attachedDatabase.typeMapping
@@ -2869,10 +2912,14 @@ class $GoalTable extends Goal with TableInfo<$GoalTable, GoalData> {
           .read(DriftSqlType.int, data['${effectivePrefix}x_sessions_r']),
       subjectIdZ: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}subject_id_z']),
+      xSessionsZ: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}x_sessions_z']),
       subjectIdF: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}subject_id_f']),
+      xSessionsF: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}x_sessions_f']),
       successPercentage: attachedDatabase.typeMapping.read(
-          DriftSqlType.double, data['${effectivePrefix}success_percentage']),
+          DriftSqlType.double, data['${effectivePrefix}success_percentage'])!,
     );
   }
 
@@ -2893,12 +2940,15 @@ class GoalData extends DataClass implements Insertable<GoalData> {
   final DateTime startPeriod2;
   final DateTime endPeriod2;
   final int? xSessionsGoal;
+  final int? ySessionsDone;
   final double? plannedRatio;
   final double? realRatio;
   final int? xSessionsR;
   final int? subjectIdZ;
+  final int? xSessionsZ;
   final int? subjectIdF;
-  final double? successPercentage;
+  final int? xSessionsF;
+  final double successPercentage;
   const GoalData(
       {required this.id,
       required this.codeName,
@@ -2910,12 +2960,15 @@ class GoalData extends DataClass implements Insertable<GoalData> {
       required this.startPeriod2,
       required this.endPeriod2,
       this.xSessionsGoal,
+      this.ySessionsDone,
       this.plannedRatio,
       this.realRatio,
       this.xSessionsR,
       this.subjectIdZ,
+      this.xSessionsZ,
       this.subjectIdF,
-      this.successPercentage});
+      this.xSessionsF,
+      required this.successPercentage});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -2935,6 +2988,9 @@ class GoalData extends DataClass implements Insertable<GoalData> {
     if (!nullToAbsent || xSessionsGoal != null) {
       map['x_sessions_goal'] = Variable<int>(xSessionsGoal);
     }
+    if (!nullToAbsent || ySessionsDone != null) {
+      map['y_sessions_done'] = Variable<int>(ySessionsDone);
+    }
     if (!nullToAbsent || plannedRatio != null) {
       map['planned_ratio'] = Variable<double>(plannedRatio);
     }
@@ -2947,12 +3003,16 @@ class GoalData extends DataClass implements Insertable<GoalData> {
     if (!nullToAbsent || subjectIdZ != null) {
       map['subject_id_z'] = Variable<int>(subjectIdZ);
     }
+    if (!nullToAbsent || xSessionsZ != null) {
+      map['x_sessions_z'] = Variable<int>(xSessionsZ);
+    }
     if (!nullToAbsent || subjectIdF != null) {
       map['subject_id_f'] = Variable<int>(subjectIdF);
     }
-    if (!nullToAbsent || successPercentage != null) {
-      map['success_percentage'] = Variable<double>(successPercentage);
+    if (!nullToAbsent || xSessionsF != null) {
+      map['x_sessions_f'] = Variable<int>(xSessionsF);
     }
+    map['success_percentage'] = Variable<double>(successPercentage);
     return map;
   }
 
@@ -2974,6 +3034,9 @@ class GoalData extends DataClass implements Insertable<GoalData> {
       xSessionsGoal: xSessionsGoal == null && nullToAbsent
           ? const Value.absent()
           : Value(xSessionsGoal),
+      ySessionsDone: ySessionsDone == null && nullToAbsent
+          ? const Value.absent()
+          : Value(ySessionsDone),
       plannedRatio: plannedRatio == null && nullToAbsent
           ? const Value.absent()
           : Value(plannedRatio),
@@ -2986,12 +3049,16 @@ class GoalData extends DataClass implements Insertable<GoalData> {
       subjectIdZ: subjectIdZ == null && nullToAbsent
           ? const Value.absent()
           : Value(subjectIdZ),
+      xSessionsZ: xSessionsZ == null && nullToAbsent
+          ? const Value.absent()
+          : Value(xSessionsZ),
       subjectIdF: subjectIdF == null && nullToAbsent
           ? const Value.absent()
           : Value(subjectIdF),
-      successPercentage: successPercentage == null && nullToAbsent
+      xSessionsF: xSessionsF == null && nullToAbsent
           ? const Value.absent()
-          : Value(successPercentage),
+          : Value(xSessionsF),
+      successPercentage: Value(successPercentage),
     );
   }
 
@@ -3009,13 +3076,15 @@ class GoalData extends DataClass implements Insertable<GoalData> {
       startPeriod2: serializer.fromJson<DateTime>(json['startPeriod2']),
       endPeriod2: serializer.fromJson<DateTime>(json['endPeriod2']),
       xSessionsGoal: serializer.fromJson<int?>(json['xSessionsGoal']),
+      ySessionsDone: serializer.fromJson<int?>(json['ySessionsDone']),
       plannedRatio: serializer.fromJson<double?>(json['plannedRatio']),
       realRatio: serializer.fromJson<double?>(json['realRatio']),
       xSessionsR: serializer.fromJson<int?>(json['xSessionsR']),
       subjectIdZ: serializer.fromJson<int?>(json['subjectIdZ']),
+      xSessionsZ: serializer.fromJson<int?>(json['xSessionsZ']),
       subjectIdF: serializer.fromJson<int?>(json['subjectIdF']),
-      successPercentage:
-          serializer.fromJson<double?>(json['successPercentage']),
+      xSessionsF: serializer.fromJson<int?>(json['xSessionsF']),
+      successPercentage: serializer.fromJson<double>(json['successPercentage']),
     );
   }
   @override
@@ -3032,12 +3101,15 @@ class GoalData extends DataClass implements Insertable<GoalData> {
       'startPeriod2': serializer.toJson<DateTime>(startPeriod2),
       'endPeriod2': serializer.toJson<DateTime>(endPeriod2),
       'xSessionsGoal': serializer.toJson<int?>(xSessionsGoal),
+      'ySessionsDone': serializer.toJson<int?>(ySessionsDone),
       'plannedRatio': serializer.toJson<double?>(plannedRatio),
       'realRatio': serializer.toJson<double?>(realRatio),
       'xSessionsR': serializer.toJson<int?>(xSessionsR),
       'subjectIdZ': serializer.toJson<int?>(subjectIdZ),
+      'xSessionsZ': serializer.toJson<int?>(xSessionsZ),
       'subjectIdF': serializer.toJson<int?>(subjectIdF),
-      'successPercentage': serializer.toJson<double?>(successPercentage),
+      'xSessionsF': serializer.toJson<int?>(xSessionsF),
+      'successPercentage': serializer.toJson<double>(successPercentage),
     };
   }
 
@@ -3052,12 +3124,15 @@ class GoalData extends DataClass implements Insertable<GoalData> {
           DateTime? startPeriod2,
           DateTime? endPeriod2,
           Value<int?> xSessionsGoal = const Value.absent(),
+          Value<int?> ySessionsDone = const Value.absent(),
           Value<double?> plannedRatio = const Value.absent(),
           Value<double?> realRatio = const Value.absent(),
           Value<int?> xSessionsR = const Value.absent(),
           Value<int?> subjectIdZ = const Value.absent(),
+          Value<int?> xSessionsZ = const Value.absent(),
           Value<int?> subjectIdF = const Value.absent(),
-          Value<double?> successPercentage = const Value.absent()}) =>
+          Value<int?> xSessionsF = const Value.absent(),
+          double? successPercentage}) =>
       GoalData(
         id: id ?? this.id,
         codeName: codeName ?? this.codeName,
@@ -3071,15 +3146,17 @@ class GoalData extends DataClass implements Insertable<GoalData> {
         endPeriod2: endPeriod2 ?? this.endPeriod2,
         xSessionsGoal:
             xSessionsGoal.present ? xSessionsGoal.value : this.xSessionsGoal,
+        ySessionsDone:
+            ySessionsDone.present ? ySessionsDone.value : this.ySessionsDone,
         plannedRatio:
             plannedRatio.present ? plannedRatio.value : this.plannedRatio,
         realRatio: realRatio.present ? realRatio.value : this.realRatio,
         xSessionsR: xSessionsR.present ? xSessionsR.value : this.xSessionsR,
         subjectIdZ: subjectIdZ.present ? subjectIdZ.value : this.subjectIdZ,
+        xSessionsZ: xSessionsZ.present ? xSessionsZ.value : this.xSessionsZ,
         subjectIdF: subjectIdF.present ? subjectIdF.value : this.subjectIdF,
-        successPercentage: successPercentage.present
-            ? successPercentage.value
-            : this.successPercentage,
+        xSessionsF: xSessionsF.present ? xSessionsF.value : this.xSessionsF,
+        successPercentage: successPercentage ?? this.successPercentage,
       );
   GoalData copyWithCompanion(GoalCompanion data) {
     return GoalData(
@@ -3101,6 +3178,9 @@ class GoalData extends DataClass implements Insertable<GoalData> {
       xSessionsGoal: data.xSessionsGoal.present
           ? data.xSessionsGoal.value
           : this.xSessionsGoal,
+      ySessionsDone: data.ySessionsDone.present
+          ? data.ySessionsDone.value
+          : this.ySessionsDone,
       plannedRatio: data.plannedRatio.present
           ? data.plannedRatio.value
           : this.plannedRatio,
@@ -3109,8 +3189,12 @@ class GoalData extends DataClass implements Insertable<GoalData> {
           data.xSessionsR.present ? data.xSessionsR.value : this.xSessionsR,
       subjectIdZ:
           data.subjectIdZ.present ? data.subjectIdZ.value : this.subjectIdZ,
+      xSessionsZ:
+          data.xSessionsZ.present ? data.xSessionsZ.value : this.xSessionsZ,
       subjectIdF:
           data.subjectIdF.present ? data.subjectIdF.value : this.subjectIdF,
+      xSessionsF:
+          data.xSessionsF.present ? data.xSessionsF.value : this.xSessionsF,
       successPercentage: data.successPercentage.present
           ? data.successPercentage.value
           : this.successPercentage,
@@ -3130,11 +3214,14 @@ class GoalData extends DataClass implements Insertable<GoalData> {
           ..write('startPeriod2: $startPeriod2, ')
           ..write('endPeriod2: $endPeriod2, ')
           ..write('xSessionsGoal: $xSessionsGoal, ')
+          ..write('ySessionsDone: $ySessionsDone, ')
           ..write('plannedRatio: $plannedRatio, ')
           ..write('realRatio: $realRatio, ')
           ..write('xSessionsR: $xSessionsR, ')
           ..write('subjectIdZ: $subjectIdZ, ')
+          ..write('xSessionsZ: $xSessionsZ, ')
           ..write('subjectIdF: $subjectIdF, ')
+          ..write('xSessionsF: $xSessionsF, ')
           ..write('successPercentage: $successPercentage')
           ..write(')'))
         .toString();
@@ -3152,11 +3239,14 @@ class GoalData extends DataClass implements Insertable<GoalData> {
       startPeriod2,
       endPeriod2,
       xSessionsGoal,
+      ySessionsDone,
       plannedRatio,
       realRatio,
       xSessionsR,
       subjectIdZ,
+      xSessionsZ,
       subjectIdF,
+      xSessionsF,
       successPercentage);
   @override
   bool operator ==(Object other) =>
@@ -3172,11 +3262,14 @@ class GoalData extends DataClass implements Insertable<GoalData> {
           other.startPeriod2 == this.startPeriod2 &&
           other.endPeriod2 == this.endPeriod2 &&
           other.xSessionsGoal == this.xSessionsGoal &&
+          other.ySessionsDone == this.ySessionsDone &&
           other.plannedRatio == this.plannedRatio &&
           other.realRatio == this.realRatio &&
           other.xSessionsR == this.xSessionsR &&
           other.subjectIdZ == this.subjectIdZ &&
+          other.xSessionsZ == this.xSessionsZ &&
           other.subjectIdF == this.subjectIdF &&
+          other.xSessionsF == this.xSessionsF &&
           other.successPercentage == this.successPercentage);
 }
 
@@ -3191,12 +3284,15 @@ class GoalCompanion extends UpdateCompanion<GoalData> {
   final Value<DateTime> startPeriod2;
   final Value<DateTime> endPeriod2;
   final Value<int?> xSessionsGoal;
+  final Value<int?> ySessionsDone;
   final Value<double?> plannedRatio;
   final Value<double?> realRatio;
   final Value<int?> xSessionsR;
   final Value<int?> subjectIdZ;
+  final Value<int?> xSessionsZ;
   final Value<int?> subjectIdF;
-  final Value<double?> successPercentage;
+  final Value<int?> xSessionsF;
+  final Value<double> successPercentage;
   const GoalCompanion({
     this.id = const Value.absent(),
     this.codeName = const Value.absent(),
@@ -3208,11 +3304,14 @@ class GoalCompanion extends UpdateCompanion<GoalData> {
     this.startPeriod2 = const Value.absent(),
     this.endPeriod2 = const Value.absent(),
     this.xSessionsGoal = const Value.absent(),
+    this.ySessionsDone = const Value.absent(),
     this.plannedRatio = const Value.absent(),
     this.realRatio = const Value.absent(),
     this.xSessionsR = const Value.absent(),
     this.subjectIdZ = const Value.absent(),
+    this.xSessionsZ = const Value.absent(),
     this.subjectIdF = const Value.absent(),
+    this.xSessionsF = const Value.absent(),
     this.successPercentage = const Value.absent(),
   });
   GoalCompanion.insert({
@@ -3226,11 +3325,14 @@ class GoalCompanion extends UpdateCompanion<GoalData> {
     required DateTime startPeriod2,
     required DateTime endPeriod2,
     this.xSessionsGoal = const Value.absent(),
+    this.ySessionsDone = const Value.absent(),
     this.plannedRatio = const Value.absent(),
     this.realRatio = const Value.absent(),
     this.xSessionsR = const Value.absent(),
     this.subjectIdZ = const Value.absent(),
+    this.xSessionsZ = const Value.absent(),
     this.subjectIdF = const Value.absent(),
+    this.xSessionsF = const Value.absent(),
     this.successPercentage = const Value.absent(),
   })  : codeName = Value(codeName),
         type = Value(type),
@@ -3249,11 +3351,14 @@ class GoalCompanion extends UpdateCompanion<GoalData> {
     Expression<DateTime>? startPeriod2,
     Expression<DateTime>? endPeriod2,
     Expression<int>? xSessionsGoal,
+    Expression<int>? ySessionsDone,
     Expression<double>? plannedRatio,
     Expression<double>? realRatio,
     Expression<int>? xSessionsR,
     Expression<int>? subjectIdZ,
+    Expression<int>? xSessionsZ,
     Expression<int>? subjectIdF,
+    Expression<int>? xSessionsF,
     Expression<double>? successPercentage,
   }) {
     return RawValuesInsertable({
@@ -3267,11 +3372,14 @@ class GoalCompanion extends UpdateCompanion<GoalData> {
       if (startPeriod2 != null) 'start_period2': startPeriod2,
       if (endPeriod2 != null) 'end_period2': endPeriod2,
       if (xSessionsGoal != null) 'x_sessions_goal': xSessionsGoal,
+      if (ySessionsDone != null) 'y_sessions_done': ySessionsDone,
       if (plannedRatio != null) 'planned_ratio': plannedRatio,
       if (realRatio != null) 'real_ratio': realRatio,
       if (xSessionsR != null) 'x_sessions_r': xSessionsR,
       if (subjectIdZ != null) 'subject_id_z': subjectIdZ,
+      if (xSessionsZ != null) 'x_sessions_z': xSessionsZ,
       if (subjectIdF != null) 'subject_id_f': subjectIdF,
+      if (xSessionsF != null) 'x_sessions_f': xSessionsF,
       if (successPercentage != null) 'success_percentage': successPercentage,
     });
   }
@@ -3287,12 +3395,15 @@ class GoalCompanion extends UpdateCompanion<GoalData> {
       Value<DateTime>? startPeriod2,
       Value<DateTime>? endPeriod2,
       Value<int?>? xSessionsGoal,
+      Value<int?>? ySessionsDone,
       Value<double?>? plannedRatio,
       Value<double?>? realRatio,
       Value<int?>? xSessionsR,
       Value<int?>? subjectIdZ,
+      Value<int?>? xSessionsZ,
       Value<int?>? subjectIdF,
-      Value<double?>? successPercentage}) {
+      Value<int?>? xSessionsF,
+      Value<double>? successPercentage}) {
     return GoalCompanion(
       id: id ?? this.id,
       codeName: codeName ?? this.codeName,
@@ -3304,11 +3415,14 @@ class GoalCompanion extends UpdateCompanion<GoalData> {
       startPeriod2: startPeriod2 ?? this.startPeriod2,
       endPeriod2: endPeriod2 ?? this.endPeriod2,
       xSessionsGoal: xSessionsGoal ?? this.xSessionsGoal,
+      ySessionsDone: ySessionsDone ?? this.ySessionsDone,
       plannedRatio: plannedRatio ?? this.plannedRatio,
       realRatio: realRatio ?? this.realRatio,
       xSessionsR: xSessionsR ?? this.xSessionsR,
       subjectIdZ: subjectIdZ ?? this.subjectIdZ,
+      xSessionsZ: xSessionsZ ?? this.xSessionsZ,
       subjectIdF: subjectIdF ?? this.subjectIdF,
+      xSessionsF: xSessionsF ?? this.xSessionsF,
       successPercentage: successPercentage ?? this.successPercentage,
     );
   }
@@ -3346,6 +3460,9 @@ class GoalCompanion extends UpdateCompanion<GoalData> {
     if (xSessionsGoal.present) {
       map['x_sessions_goal'] = Variable<int>(xSessionsGoal.value);
     }
+    if (ySessionsDone.present) {
+      map['y_sessions_done'] = Variable<int>(ySessionsDone.value);
+    }
     if (plannedRatio.present) {
       map['planned_ratio'] = Variable<double>(plannedRatio.value);
     }
@@ -3358,8 +3475,14 @@ class GoalCompanion extends UpdateCompanion<GoalData> {
     if (subjectIdZ.present) {
       map['subject_id_z'] = Variable<int>(subjectIdZ.value);
     }
+    if (xSessionsZ.present) {
+      map['x_sessions_z'] = Variable<int>(xSessionsZ.value);
+    }
     if (subjectIdF.present) {
       map['subject_id_f'] = Variable<int>(subjectIdF.value);
+    }
+    if (xSessionsF.present) {
+      map['x_sessions_f'] = Variable<int>(xSessionsF.value);
     }
     if (successPercentage.present) {
       map['success_percentage'] = Variable<double>(successPercentage.value);
@@ -3380,11 +3503,14 @@ class GoalCompanion extends UpdateCompanion<GoalData> {
           ..write('startPeriod2: $startPeriod2, ')
           ..write('endPeriod2: $endPeriod2, ')
           ..write('xSessionsGoal: $xSessionsGoal, ')
+          ..write('ySessionsDone: $ySessionsDone, ')
           ..write('plannedRatio: $plannedRatio, ')
           ..write('realRatio: $realRatio, ')
           ..write('xSessionsR: $xSessionsR, ')
           ..write('subjectIdZ: $subjectIdZ, ')
+          ..write('xSessionsZ: $xSessionsZ, ')
           ..write('subjectIdF: $subjectIdF, ')
+          ..write('xSessionsF: $xSessionsF, ')
           ..write('successPercentage: $successPercentage')
           ..write(')'))
         .toString();
@@ -4834,12 +4960,15 @@ typedef $$GoalTableCreateCompanionBuilder = GoalCompanion Function({
   required DateTime startPeriod2,
   required DateTime endPeriod2,
   Value<int?> xSessionsGoal,
+  Value<int?> ySessionsDone,
   Value<double?> plannedRatio,
   Value<double?> realRatio,
   Value<int?> xSessionsR,
   Value<int?> subjectIdZ,
+  Value<int?> xSessionsZ,
   Value<int?> subjectIdF,
-  Value<double?> successPercentage,
+  Value<int?> xSessionsF,
+  Value<double> successPercentage,
 });
 typedef $$GoalTableUpdateCompanionBuilder = GoalCompanion Function({
   Value<int> id,
@@ -4852,12 +4981,15 @@ typedef $$GoalTableUpdateCompanionBuilder = GoalCompanion Function({
   Value<DateTime> startPeriod2,
   Value<DateTime> endPeriod2,
   Value<int?> xSessionsGoal,
+  Value<int?> ySessionsDone,
   Value<double?> plannedRatio,
   Value<double?> realRatio,
   Value<int?> xSessionsR,
   Value<int?> subjectIdZ,
+  Value<int?> xSessionsZ,
   Value<int?> subjectIdF,
-  Value<double?> successPercentage,
+  Value<int?> xSessionsF,
+  Value<double> successPercentage,
 });
 
 class $$GoalTableFilterComposer extends Composer<_$AppDatabase, $GoalTable> {
@@ -4898,6 +5030,9 @@ class $$GoalTableFilterComposer extends Composer<_$AppDatabase, $GoalTable> {
   ColumnFilters<int> get xSessionsGoal => $composableBuilder(
       column: $table.xSessionsGoal, builder: (column) => ColumnFilters(column));
 
+  ColumnFilters<int> get ySessionsDone => $composableBuilder(
+      column: $table.ySessionsDone, builder: (column) => ColumnFilters(column));
+
   ColumnFilters<double> get plannedRatio => $composableBuilder(
       column: $table.plannedRatio, builder: (column) => ColumnFilters(column));
 
@@ -4910,8 +5045,14 @@ class $$GoalTableFilterComposer extends Composer<_$AppDatabase, $GoalTable> {
   ColumnFilters<int> get subjectIdZ => $composableBuilder(
       column: $table.subjectIdZ, builder: (column) => ColumnFilters(column));
 
+  ColumnFilters<int> get xSessionsZ => $composableBuilder(
+      column: $table.xSessionsZ, builder: (column) => ColumnFilters(column));
+
   ColumnFilters<int> get subjectIdF => $composableBuilder(
       column: $table.subjectIdF, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get xSessionsF => $composableBuilder(
+      column: $table.xSessionsF, builder: (column) => ColumnFilters(column));
 
   ColumnFilters<double> get successPercentage => $composableBuilder(
       column: $table.successPercentage,
@@ -4959,6 +5100,10 @@ class $$GoalTableOrderingComposer extends Composer<_$AppDatabase, $GoalTable> {
       column: $table.xSessionsGoal,
       builder: (column) => ColumnOrderings(column));
 
+  ColumnOrderings<int> get ySessionsDone => $composableBuilder(
+      column: $table.ySessionsDone,
+      builder: (column) => ColumnOrderings(column));
+
   ColumnOrderings<double> get plannedRatio => $composableBuilder(
       column: $table.plannedRatio,
       builder: (column) => ColumnOrderings(column));
@@ -4972,8 +5117,14 @@ class $$GoalTableOrderingComposer extends Composer<_$AppDatabase, $GoalTable> {
   ColumnOrderings<int> get subjectIdZ => $composableBuilder(
       column: $table.subjectIdZ, builder: (column) => ColumnOrderings(column));
 
+  ColumnOrderings<int> get xSessionsZ => $composableBuilder(
+      column: $table.xSessionsZ, builder: (column) => ColumnOrderings(column));
+
   ColumnOrderings<int> get subjectIdF => $composableBuilder(
       column: $table.subjectIdF, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get xSessionsF => $composableBuilder(
+      column: $table.xSessionsF, builder: (column) => ColumnOrderings(column));
 
   ColumnOrderings<double> get successPercentage => $composableBuilder(
       column: $table.successPercentage,
@@ -5019,6 +5170,9 @@ class $$GoalTableAnnotationComposer
   GeneratedColumn<int> get xSessionsGoal => $composableBuilder(
       column: $table.xSessionsGoal, builder: (column) => column);
 
+  GeneratedColumn<int> get ySessionsDone => $composableBuilder(
+      column: $table.ySessionsDone, builder: (column) => column);
+
   GeneratedColumn<double> get plannedRatio => $composableBuilder(
       column: $table.plannedRatio, builder: (column) => column);
 
@@ -5031,8 +5185,14 @@ class $$GoalTableAnnotationComposer
   GeneratedColumn<int> get subjectIdZ => $composableBuilder(
       column: $table.subjectIdZ, builder: (column) => column);
 
+  GeneratedColumn<int> get xSessionsZ => $composableBuilder(
+      column: $table.xSessionsZ, builder: (column) => column);
+
   GeneratedColumn<int> get subjectIdF => $composableBuilder(
       column: $table.subjectIdF, builder: (column) => column);
+
+  GeneratedColumn<int> get xSessionsF => $composableBuilder(
+      column: $table.xSessionsF, builder: (column) => column);
 
   GeneratedColumn<double> get successPercentage => $composableBuilder(
       column: $table.successPercentage, builder: (column) => column);
@@ -5071,12 +5231,15 @@ class $$GoalTableTableManager extends RootTableManager<
             Value<DateTime> startPeriod2 = const Value.absent(),
             Value<DateTime> endPeriod2 = const Value.absent(),
             Value<int?> xSessionsGoal = const Value.absent(),
+            Value<int?> ySessionsDone = const Value.absent(),
             Value<double?> plannedRatio = const Value.absent(),
             Value<double?> realRatio = const Value.absent(),
             Value<int?> xSessionsR = const Value.absent(),
             Value<int?> subjectIdZ = const Value.absent(),
+            Value<int?> xSessionsZ = const Value.absent(),
             Value<int?> subjectIdF = const Value.absent(),
-            Value<double?> successPercentage = const Value.absent(),
+            Value<int?> xSessionsF = const Value.absent(),
+            Value<double> successPercentage = const Value.absent(),
           }) =>
               GoalCompanion(
             id: id,
@@ -5089,11 +5252,14 @@ class $$GoalTableTableManager extends RootTableManager<
             startPeriod2: startPeriod2,
             endPeriod2: endPeriod2,
             xSessionsGoal: xSessionsGoal,
+            ySessionsDone: ySessionsDone,
             plannedRatio: plannedRatio,
             realRatio: realRatio,
             xSessionsR: xSessionsR,
             subjectIdZ: subjectIdZ,
+            xSessionsZ: xSessionsZ,
             subjectIdF: subjectIdF,
+            xSessionsF: xSessionsF,
             successPercentage: successPercentage,
           ),
           createCompanionCallback: ({
@@ -5107,12 +5273,15 @@ class $$GoalTableTableManager extends RootTableManager<
             required DateTime startPeriod2,
             required DateTime endPeriod2,
             Value<int?> xSessionsGoal = const Value.absent(),
+            Value<int?> ySessionsDone = const Value.absent(),
             Value<double?> plannedRatio = const Value.absent(),
             Value<double?> realRatio = const Value.absent(),
             Value<int?> xSessionsR = const Value.absent(),
             Value<int?> subjectIdZ = const Value.absent(),
+            Value<int?> xSessionsZ = const Value.absent(),
             Value<int?> subjectIdF = const Value.absent(),
-            Value<double?> successPercentage = const Value.absent(),
+            Value<int?> xSessionsF = const Value.absent(),
+            Value<double> successPercentage = const Value.absent(),
           }) =>
               GoalCompanion.insert(
             id: id,
@@ -5125,11 +5294,14 @@ class $$GoalTableTableManager extends RootTableManager<
             startPeriod2: startPeriod2,
             endPeriod2: endPeriod2,
             xSessionsGoal: xSessionsGoal,
+            ySessionsDone: ySessionsDone,
             plannedRatio: plannedRatio,
             realRatio: realRatio,
             xSessionsR: xSessionsR,
             subjectIdZ: subjectIdZ,
+            xSessionsZ: xSessionsZ,
             subjectIdF: subjectIdF,
+            xSessionsF: xSessionsF,
             successPercentage: successPercentage,
           ),
           withReferenceMapper: (p0) => p0

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:focuzd/blocs/blocs.dart';
+import 'package:focuzd/extra_widgets/goal_card.dart';
 import 'package:focuzd/extra_widgets/history_round_card.dart';
 import 'package:yaru/widgets.dart';
 
@@ -17,7 +18,8 @@ class GoalsPage extends StatelessWidget {
           return ListView.builder(
               itemCount: state.goals!.length,
               itemBuilder: (context, index) {
-                return Card(child: Text(state.goals![index].codeName));
+                return SizedBox(
+                    height: 125, child: GoalCard(state.goals![index]));
               });
         }
       } else {
