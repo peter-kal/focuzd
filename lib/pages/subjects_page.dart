@@ -18,7 +18,17 @@ class SubjectsPage extends StatefulWidget {
 
 // TASK: make settings
 class _SubjectsPageState extends State<SubjectsPage> {
-  SubjectData? subject;
+  int pixelSize = 0;
+  double getTheSize(int size) {
+    if (size < 30) {
+      return 90;
+    } else if (size < 60 && size > 30) {
+      return 100;
+    } else if (size > 60 && size < 100) {
+      return 110;
+    } else
+      return 0;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +47,7 @@ class _SubjectsPageState extends State<SubjectsPage> {
                   treeController: treeController,
                   nodeBuilder: (context, entry) {
                     return SizedBox(
-                      height: 90,
+                      height: getTheSize(entry.node.title.length),
                       child: Card(
                         child: TreeIndentation(
                           guide: IndentGuide.connectingLines(

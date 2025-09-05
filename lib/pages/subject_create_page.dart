@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:focuzd/blocs/blocs.dart';
@@ -74,40 +75,51 @@ class _SubjectCreatePageState extends State<SubjectCreatePage> {
                 SizedBox(height: 10),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: YaruPopupMenuButton<SubjectData>(
-                    initialValue: null,
-                    onSelected: (selectedItem) {
-                      BlocProvider.of<RepoBloc>(context)
-                          .add(UpdateAddingSubject(2, selectedItem.id, ""));
-                    },
-                    child: state.makeable.subid != null
-                        ? FutureBuilder(
-                            future: _getSubjectNamebyID(state.makeable.subid!),
-                            builder: (context, asyncSnapshot) {
-                              if (asyncSnapshot.connectionState ==
-                                  ConnectionState.done) {
-                                return Text(
-                                  asyncSnapshot.data!,
-                                  overflow: TextOverflow.visible,
-                                );
-                              } else {
-                                return Text("...");
-                              }
-                            })
-                        : Text('Select Subject'),
-                    itemBuilder: (context) => state.subjects
-                        .map((item) => PopupMenuItem<SubjectData>(
-                              value: item,
-                              child: Column(
-                                children: [
-                                  Text(
-                                    item!.name,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ],
-                              ),
-                            ))
-                        .toList(),
+                  child: SizedBox(
+                    height: 60,
+                    child: YaruPopupMenuButton<SubjectData>(
+                      mouseCursor: MouseCursor.uncontrolled,
+                      position: PopupMenuPosition.over,
+                      initialValue: null,
+                      onSelected: (selectedItem) {
+                        BlocProvider.of<RepoBloc>(context)
+                            .add(UpdateAddingSubject(2, selectedItem.id, ""));
+                      },
+                      child: state.makeable.subid != null
+                          ? SizedBox(
+                              width: 250,
+                              child: FutureBuilder(
+                                  future: _getSubjectNamebyID(
+                                      state.makeable.subid!),
+                                  builder: (context, asyncSnapshot) {
+                                    if (asyncSnapshot.connectionState ==
+                                        ConnectionState.done) {
+                                      return Text(
+                                        asyncSnapshot.data!,
+                                        maxLines: 4,
+                                        overflow: TextOverflow.ellipsis,
+                                      );
+                                    } else {
+                                      return Text("...");
+                                    }
+                                  }),
+                            )
+                          : Text('Select Subject'),
+                      itemBuilder: (context) => state.subjects
+                          .map((item) => PopupMenuItem<SubjectData>(
+                                mouseCursor: MouseCursor.uncontrolled,
+                                value: item,
+                                child: Column(
+                                  children: [
+                                    Text(
+                                      item!.name,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ],
+                                ),
+                              ))
+                          .toList(),
+                    ),
                   ),
                 ),
                 Text("Subject's Adress:"),

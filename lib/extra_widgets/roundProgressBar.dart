@@ -4,7 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:yaru/yaru.dart';
 
 class RoundProgressBar extends StatelessWidget {
-  final double progress; // 0.0 - 1.0
+  final double progress;
   final String? subjectName;
   final int sessionNumber;
   final String type;
@@ -40,45 +40,26 @@ class RoundProgressBar extends StatelessWidget {
               mainAxisSize: MainAxisSize.min, // Add this line
               children: [
                 if (type == "focus")
-                  Tooltip(
-                    message: AppLocalizations.of(context)!.tooltipTakeNotes,
-                    child: InkWell(
-                      autofocus: true,
-                      borderRadius: BorderRadius.circular(25),
-                      onTap: () {
-                        print("tapped");
-                      },
-                      child: CircleAvatar(
-                        radius: 25,
-                        backgroundColor: colorScheme.surfaceContainerHighest,
-                        child: Transform.rotate(
-                          angle: -0.20, // adjust for arrow direction
-                          child: Icon(Icons.edit,
-                              size: 28, color: colorScheme.onSurface),
-                        ),
-                      ),
-                    ),
-                  ),
-                // Subject text in the progress area, expands and ellipsizes if needed
-                if (subjectName != null)
-                  Expanded(
-                    child: Center(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                        child: Text(
-                          subjectName ?? "Not a subject",
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w200,
-                            color: colorScheme.onPrimaryContainer,
+                  // Subject text in the progress area, expands and ellipsizes if needed
+                  if (subjectName != null)
+                    Expanded(
+                      child: Center(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                          child: Text(
+                            subjectName ?? "",
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w200,
+                              color: colorScheme.onPrimaryContainer,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 2,
+                            softWrap: false,
                           ),
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 2,
-                          softWrap: false,
                         ),
                       ),
                     ),
-                  ),
                 if (subjectName == null && type == "focus") SizedBox(width: 10),
                 Tooltip(
                   message:
