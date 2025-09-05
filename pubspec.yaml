@@ -11,7 +11,7 @@ dependencies:
   flutter:
     sdk: flutter
 
-  yaru: 8.1.0
+  yaru: ^8.1.0
   flutter_bloc: ^9.1.0
   bloc: ^9.0.0
   intl: any
@@ -29,6 +29,7 @@ dependencies:
   path_to_regexp: ^0.4.0
   windows_notification: ^1.3.0
   duration_spinbox: ^0.1.1
+  flutter_fancy_tree_view2: ^1.6.2
 
 dev_dependencies:
   flutter_test:
