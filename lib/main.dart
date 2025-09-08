@@ -4,8 +4,6 @@ import 'package:focuzd/extra_functions/extra_functions.dart';
 import 'package:focuzd/pages/goals_page.dart';
 import 'package:focuzd/pages/pages.dart';
 import 'package:flutter/material.dart';
-import 'package:focuzd/pages/subject_page.dart';
-import 'package:focuzd/pages/subjects_goals_page.dart';
 
 import 'package:yaru/yaru.dart';
 import 'package:window_manager/window_manager.dart';
@@ -81,6 +79,7 @@ class FocuzdApp extends StatelessWidget {
                 SubjectsAndGoalsPageState() => const SubjectsGoalsPage(),
                 SubjectsPageState() => const SubjectsGoalsPage(),
                 GoalsPageState() => SubjectsGoalsPage(),
+                AddGoalPageState() => GoalCreatePage(),
                 AddSubjectPageState() => const SubjectCreatePage(),
                 SubjectPageState() =>
                   IndividualSubjectPage(subject: state.subject)
