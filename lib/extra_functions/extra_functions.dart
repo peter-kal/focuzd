@@ -144,7 +144,37 @@ class SessionVariablePlanning {
 
 class SubjectMaking {
   SubjectMaking(this.name, [this.subid, this.address]);
-  int? subid;
+  int? subid; //TASK: Rename this
   String? address;
   String name;
+}
+
+class GoalMaking {
+  GoalMaking(
+      {this.codeName,
+      this.type,
+      this.startPeriod1,
+      this.endPeriod1,
+      this.startPeriod2,
+      this.endPeriod2,
+      this.plannedRatio,
+      this.subjectIdF,
+      this.subjectIdZ,
+      this.xSessionsF,
+      this.xSessionsGoal,
+      this.xSessionsR,
+      this.xSessionsZ});
+  String? codeName;
+  int? type;
+  DateTime? startPeriod1;
+  DateTime? endPeriod1;
+  DateTime? startPeriod2;
+  DateTime? endPeriod2;
+  int? xSessionsGoal;
+  int? xSessionsR;
+  double? plannedRatio;
+  int? subjectIdZ;
+  int? xSessionsZ;
+  int? subjectIdF;
+  int? xSessionsF;
 }

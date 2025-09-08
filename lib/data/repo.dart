@@ -6,6 +6,10 @@ import 'app_db.dart';
 class GoalRepository {
   final AppDatabase _db;
   GoalRepository(this._db);
+  Future<void> insertGoal(GoalCompanion goal) async {
+    await _db.into(_db.goal).insert(goal);
+  }
+
   Future<List<GoalData>> fetchAllGoals() async {
     return await (_db.select(_db.goal)
           ..orderBy([(s) => OrderingTerm.asc(s.endPeriod2)])

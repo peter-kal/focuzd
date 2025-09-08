@@ -23,8 +23,12 @@ final class EmitStateWithDBVars extends RepoEvent {
 
 class ResetSettings extends RepoEvent {}
 
-class AddingSubject extends RepoEvent {
-  const AddingSubject();
+class CreatingSubject extends RepoEvent {
+  const CreatingSubject();
+}
+
+class CreatingGoal extends RepoEvent {
+  const CreatingGoal();
 }
 
 class UpdateAddingSubject extends RepoEvent {
@@ -36,8 +40,23 @@ class UpdateAddingSubject extends RepoEvent {
   List<Object> get props => [name, subId, actionCode];
 }
 
+class UpdateCreatingGoal extends RepoEvent {
+  const UpdateCreatingGoal({required this.newMakeable});
+  final GoalMaking newMakeable;
+  @override
+  List<Object> get props => [newMakeable];
+  @override
+  String toString() =>
+      "type: ${newMakeable.type}, codename: ${newMakeable.codeName}";
+}
+
 class AddSubjectToDB extends RepoEvent {
   const AddSubjectToDB();
+}
+
+class SaveGoalToDB extends RepoEvent {
+  const SaveGoalToDB({required this.goal});
+  final GoalMaking goal;
 }
 
 class DeleteSubjectDB extends RepoEvent {

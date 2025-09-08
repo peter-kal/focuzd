@@ -1,10 +1,7 @@
 part of 'repo_bloc.dart';
 
-sealed class RepoState extends Equatable {
+sealed class RepoState {
   const RepoState();
-
-  @override
-  List<Object> get props => [];
 }
 
 final class RepoInitial extends RepoState {}
@@ -13,8 +10,18 @@ class CreateSubjectState extends RepoState {
   const CreateSubjectState({required this.subjects, required this.makeable});
   final List<SubjectData?> subjects;
   final SubjectMaking makeable;
-  @override
-  List<Object> get props => [subjects, makeable];
+}
+
+class CreateGoalState extends RepoState {
+  const CreateGoalState(
+      {required this.goals,
+      required this.makeable,
+      required this.subjects,
+      required this.nonContradictory});
+  final List<GoalData?> goals;
+  final GoalMaking makeable;
+  final List<SubjectData?> subjects;
+  final bool nonContradictory;
 }
 
 class RepoVariablesGivenState extends RepoState {
@@ -37,16 +44,4 @@ class RepoVariablesGivenState extends RepoState {
   final List<SubjectTreeNode>? subjectTree;
   final List<List<dynamic>>? roundsandsessions;
   final List<GoalData>? goals;
-  @override
-  List<Object> get props => [
-        windowOnTop,
-        requestedNumberOfSessions,
-        selectedBreakDurationStored,
-        selectedFocusDurationStored,
-        selectedLongBreakDuration,
-        subjectTree!,
-        subjects!,
-        roundsandsessions!,
-        goals!
-      ];
 }

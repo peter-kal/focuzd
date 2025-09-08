@@ -38,6 +38,9 @@ class PageNavigationBloc
     on<AddSubjectPageEvent>((event, emit) {
       emit(AddSubjectPageState());
     });
+    on<AddGoalPageEvent>((event, emit) {
+      emit(AddGoalPageState());
+    });
     on<SelectSubGoalPageEvent>((event, emit) {
       if (event.index == 0) {
         emit(SubjectsPageState());

@@ -4,7 +4,6 @@ import 'package:bloc/bloc.dart';
 import 'package:drift/drift.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:focuzd/blocs/blocs.dart';
 import 'package:focuzd/extra_widgets/subject_tree_node.dart';
 import 'package:focuzd/data/app_db.dart';
 import 'package:focuzd/data/repo.dart';
@@ -19,9 +18,12 @@ class RepoBloc extends Bloc<RepoEvent, RepoState> {
     on<EmitStateWithDBVars>(_onEmitStateWithDBVars);
     on<UpdateSettingVariables>(_onUpdateSettingsVariables);
     on<ResetSettings>(_onResetSettingsEvent);
-    on<AddingSubject>(_onAddingSubject);
+    on<CreatingSubject>(_onAddingSubject);
+    on<CreatingGoal>(_onCreatingGoal);
+    on<UpdateCreatingGoal>(_onUpdateCreatingGoal);
     on<UpdateAddingSubject>(_onUpdateAddingSubject);
-    on<AddSubjectToDB>(_onAddingSubjectToID);
+    on<AddSubjectToDB>(_onAddingSubjectToDB);
+    on<SaveGoalToDB>(_onSaveGoalToDB);
     on<DeleteSubjectDB>(_onDeleteSubjectDB);
   }
   final settingsRepo = SettingsRepository(AppDatabase.instance);
@@ -141,14 +143,38 @@ class RepoBloc extends Bloc<RepoEvent, RepoState> {
   }
 
   Future<void> _onAddingSubject(
-      AddingSubject event, Emitter<RepoState> emit) async {
+      CreatingSubject event, Emitter<RepoState> emit) async {
     // Implement your logic to add a subject
     var sub = SubjectMaking("Add Name", null, "> ");
     emit(CreateSubjectState(
         subjects: await subjectRepo.fetchAllSubjects(), makeable: sub));
   }
 
-  Future<void> _onAddingSubjectToID(
+  Future<void> _onCreatingGoal(
+      CreatingGoal event, Emitter<RepoState> emit) async {
+    // Implement your logic to add a subject
+
+    var sub = GoalMaking();
+    emit(CreateGoalState(
+        goals: await goalRepo.fetchAllGoals(),
+        subjects: await subjectRepo.fetchAllSubjects(),
+        nonContradictory: true,
+        makeable: sub));
+  }
+
+  void _onUpdateCreatingGoal(
+      UpdateCreatingGoal event, Emitter<RepoState> emit) {
+    final state = this.state;
+    if (state is CreateGoalState) {
+      emit(CreateGoalState(
+          makeable: event.newMakeable,
+          nonContradictory: true,
+          goals: state.goals,
+          subjects: state.subjects));
+    }
+  }
+
+  Future<void> _onAddingSubjectToDB(
       AddSubjectToDB event, Emitter<RepoState> emit) async {
     // Implement your logic to add a subject
     final state = this.state;
@@ -160,6 +186,24 @@ class RepoBloc extends Bloc<RepoEvent, RepoState> {
         createdAt: Value(DateTime.now()),
         updatedAt: Value(DateTime.now()),
       ));
+    }
+  }
+
+  Future<void> _onSaveGoalToDB(
+      SaveGoalToDB event, Emitter<RepoState> emit) async {
+    final state = this.state;
+    if (state is CreateGoalState) {
+      if (event.goal.type == 1) {
+        await goalRepo.insertGoal(GoalCompanion(
+            createdAt: Value(DateTime.now()),
+            updatedAt: Value(DateTime.now()),
+            codeName: Value(event.goal.codeName!),
+            type: Value(event.goal.type!),
+            startPeriod2: Value(DateTime.now()),
+            endPeriod2: Value(event.goal.endPeriod2!),
+            xSessionsGoal: Value(event.goal.xSessionsGoal),
+            ySessionsDone: Value(0)));
+      }
     }
   }
 

@@ -30,6 +30,8 @@ class SubjectsPageState extends PageNavigationState {}
 
 class AddSubjectPageState extends PageNavigationState {}
 
+class AddGoalPageState extends PageNavigationState {}
+
 class SubjectPageState extends PageNavigationState {
   const SubjectPageState({required this.subject});
   final SubjectData subject;

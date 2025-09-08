@@ -78,6 +78,13 @@ class AddSubjectPageEvent extends PageNavigationEvent {
   List<Object> get props => [];
 }
 
+class AddGoalPageEvent extends PageNavigationEvent {
+  const AddGoalPageEvent();
+
+  @override
+  List<Object> get props => [];
+}
+
 class RoundPlanningPageEvent extends PageNavigationEvent {
   const RoundPlanningPageEvent();
 

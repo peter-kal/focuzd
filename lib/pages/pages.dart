@@ -4,3 +4,6 @@ export 'package:focuzd/pages/main_page.dart';
 export 'package:focuzd/pages/round_planning_page.dart';
 export 'package:focuzd/pages/subjects_page.dart';
 export 'package:focuzd/pages/subject_create_page.dart';
+export 'package:focuzd/pages/subject_page.dart';
+export 'package:focuzd/pages/subjects_goals_page.dart';
+export 'package:focuzd/pages/goal_create_page.dart';
