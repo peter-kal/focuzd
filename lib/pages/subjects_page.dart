@@ -119,7 +119,8 @@ class _SubjectsPageState extends State<SubjectsPage> {
             floatingActionButton: FloatingActionButton(
                 child: Icon(Icons.add),
                 onPressed: () {
-                  BlocProvider.of<RepoBloc>(context).add(const AddingSubject());
+                  BlocProvider.of<RepoBloc>(context)
+                      .add(const CreatingSubject());
                   BlocProvider.of<PageNavigationBloc>(context)
                       .add(const AddSubjectPageEvent());
                 }),
