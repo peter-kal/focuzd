@@ -143,10 +143,19 @@ class SessionVariablePlanning {
 }
 
 class SubjectMaking {
-  SubjectMaking(this.name, [this.subid, this.address]);
+  SubjectMaking(
+      {required this.name,
+      this.subid,
+      this.address,
+      this.optionalTimes,
+      this.optionalBreakTime,
+      this.optionalFocusTime});
   int? subid; //TASK: Rename this
   String? address;
   String name;
+  bool? optionalTimes;
+  int? optionalBreakTime;
+  int? optionalFocusTime;
 }
 
 class GoalMaking {

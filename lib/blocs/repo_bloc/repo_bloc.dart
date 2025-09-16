@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:drift/drift.dart';
-import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:focuzd/extra_widgets/subject_tree_node.dart';
 import 'package:focuzd/data/app_db.dart';
@@ -145,7 +144,8 @@ class RepoBloc extends Bloc<RepoEvent, RepoState> {
   Future<void> _onAddingSubject(
       CreatingSubject event, Emitter<RepoState> emit) async {
     // Implement your logic to add a subject
-    var sub = SubjectMaking("Add Name", null, "> ");
+    var sub = SubjectMaking(
+        name: "Add Name", subid: null, address: "> ", optionalTimes: false);
     emit(CreateSubjectState(
         subjects: await subjectRepo.fetchAllSubjects(), makeable: sub));
   }
@@ -207,22 +207,27 @@ class RepoBloc extends Bloc<RepoEvent, RepoState> {
     }
   }
 
-  Future<void> _onUpdateAddingSubject(
+  void _onUpdateAddingSubject(
       UpdateAddingSubject event, Emitter<RepoState> emit) async {
     final state = this.state;
     if (state is CreateSubjectState) {
-      if (event.actionCode == 1) {
-        emit(CreateSubjectState(
-            subjects: state.subjects,
-            makeable: SubjectMaking(
-                event.name, state.makeable.subid, "> ${event.name}")));
-      } else if (event.actionCode == 2) {
-        var addr = await subjectRepo.getSubjectAddress(event.subId);
-        emit(CreateSubjectState(
-            subjects: state.subjects,
-            makeable: SubjectMaking(state.makeable.name, event.subId,
-                "$addr > ${state.makeable.name}")));
+      if (event.newMakeable.subid != null) {
+        var addr =
+            await subjectRepo.getSubjectAddress(event.newMakeable.subid!);
+        event.newMakeable.address = "$addr > ${state.makeable.name}";
+      } else {
+        event.newMakeable.address = " > ${event.newMakeable.name}";
       }
+      if (event.newMakeable.optionalTimes != state.makeable.optionalTimes &&
+          event.newMakeable.optionalTimes == true) {
+        var settings = await settingsRepo.fetchSettingsById(1);
+        int focus = settings?.selectedFocusDurationStored ?? 25;
+        int breakT = settings?.selectedBreakDurationStored ?? 5;
+        event.newMakeable.optionalBreakTime = breakT * 60;
+        event.newMakeable.optionalFocusTime = focus * 60;
+      }
+      emit(CreateSubjectState(
+          makeable: event.newMakeable, subjects: state.subjects));
     }
   }
 

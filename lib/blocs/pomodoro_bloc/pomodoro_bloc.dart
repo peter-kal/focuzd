@@ -151,6 +151,16 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
                 expFinishTime: null));
       } else if (event.actionCode == 2) {
         newlist[event.position!].subject = event.subject;
+        if (event.subject?.optinalFocusTime != null) {
+          newlist[event.position!].plannedDuration =
+              event.subject?.optinalFocusTime ??
+                  newlist[event.position!].plannedDuration;
+        }
+        if (newlist[event.position! + 1].type == 'break') {
+          newlist[event.position! + 1].plannedDuration =
+              event.subject?.optinalBreakTime ??
+                  newlist[event.position! + 1].plannedDuration;
+        }
         // change subject
       } else if (event.actionCode == 3) {
         int pos = event.position!;

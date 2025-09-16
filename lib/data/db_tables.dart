@@ -72,8 +72,12 @@ class Subject extends Table {
   IntColumn get subSubjects => integer().withDefault(const Constant(0))();
   IntColumn get lastFocuzdOnSessionID =>
       integer().nullable().references(MemoryCountdownVariable, #id)();
+  IntColumn get linkSub =>
+      integer().nullable().customConstraint('REFERENCES subject(id)')();
   IntColumn get totalTimeSpent => integer()
       .withDefault(const Constant(0))(); // total time spent on the subject
+  IntColumn get optinalFocusTime => integer().nullable()();
+  IntColumn get optinalBreakTime => integer().nullable()();
 }
 
 class Goal extends Table {

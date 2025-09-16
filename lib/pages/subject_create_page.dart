@@ -1,3 +1,4 @@
+import 'package:duration_spinbox/duration_spinbox.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
@@ -65,12 +66,14 @@ class _SubjectCreatePageState extends State<SubjectCreatePage> {
                       hintText: "Enter subject name:",
                     ),
                     onChanged: (value) {
+                      var makeable = state.makeable;
+                      makeable.name = value;
+
                       BlocProvider.of<RepoBloc>(context)
-                          .add(UpdateAddingSubject(1, 0, value));
+                          .add(UpdateAddingSubject(newMakeable: makeable));
                     },
                   ),
                 ),
-                SizedBox(height: 10),
                 Text("Select super-subject:"),
                 SizedBox(height: 10),
                 Padding(
@@ -82,8 +85,11 @@ class _SubjectCreatePageState extends State<SubjectCreatePage> {
                       position: PopupMenuPosition.over,
                       initialValue: null,
                       onSelected: (selectedItem) {
+                        var makeable = state.makeable;
+                        makeable.subid = selectedItem.id;
+
                         BlocProvider.of<RepoBloc>(context)
-                            .add(UpdateAddingSubject(2, selectedItem.id, ""));
+                            .add(UpdateAddingSubject(newMakeable: makeable));
                       },
                       child: state.makeable.subid != null
                           ? SizedBox(
@@ -125,7 +131,49 @@ class _SubjectCreatePageState extends State<SubjectCreatePage> {
                 Text("Subject's Adress:"),
                 Padding(
                     padding: EdgeInsetsGeometry.all(8.0),
-                    child: YaruSection(child: Text(state.makeable.address!)))
+                    child: YaruSection(child: Text(state.makeable.address!))),
+                SizedBox(height: 15),
+                Padding(
+                    padding: EdgeInsetsGeometry.all(8),
+                    child: Column(children: <Widget>[
+                      YaruSwitchListTile(
+                        title: Text("Optional Subject Duration"),
+                        subtitle: Text("Optional Subject Duration"),
+                        value: state.makeable.optionalTimes!,
+                        onChanged: (value) {
+                          var makeable = state.makeable;
+                          makeable.optionalTimes = true;
+                          BlocProvider.of<RepoBloc>(context)
+                              .add(UpdateAddingSubject(newMakeable: makeable));
+                        },
+                      ),
+                      Visibility(
+                          visible: state.makeable.optionalTimes ?? false,
+                          child: Column(children: [
+                            DurationSpinbox(
+                                onChanged: (value) {
+                                  var makeable = state.makeable;
+                                  makeable.optionalFocusTime = value.inSeconds;
+                                  BlocProvider.of<RepoBloc>(context).add(
+                                      UpdateAddingSubject(
+                                          newMakeable: makeable));
+                                },
+                                value: Duration(
+                                    seconds: state.makeable.optionalFocusTime ??
+                                        25 * 60)),
+                            DurationSpinbox(
+                                onChanged: (value) {
+                                  var makeable = state.makeable;
+                                  makeable.optionalBreakTime = value.inSeconds;
+                                  BlocProvider.of<RepoBloc>(context).add(
+                                      UpdateAddingSubject(
+                                          newMakeable: makeable));
+                                },
+                                value: Duration(
+                                    seconds: state.makeable.optionalBreakTime ??
+                                        (5 * 60))),
+                          ]))
+                    ]))
               ],
             ),
           ),

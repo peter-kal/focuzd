@@ -1786,6 +1786,14 @@ class $SubjectTable extends Subject with TableInfo<$SubjectTable, SubjectData> {
       requiredDuringInsert: false,
       defaultConstraints: GeneratedColumn.constraintIsAlways(
           'REFERENCES memory_countdown_variable (id)'));
+  static const VerificationMeta _linkSubMeta =
+      const VerificationMeta('linkSub');
+  @override
+  late final GeneratedColumn<int> linkSub = GeneratedColumn<int>(
+      'link_sub', aliasedName, true,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      $customConstraints: 'REFERENCES subject(id)');
   static const VerificationMeta _totalTimeSpentMeta =
       const VerificationMeta('totalTimeSpent');
   @override
@@ -1794,6 +1802,18 @@ class $SubjectTable extends Subject with TableInfo<$SubjectTable, SubjectData> {
       type: DriftSqlType.int,
       requiredDuringInsert: false,
       defaultValue: const Constant(0));
+  static const VerificationMeta _optinalFocusTimeMeta =
+      const VerificationMeta('optinalFocusTime');
+  @override
+  late final GeneratedColumn<int> optinalFocusTime = GeneratedColumn<int>(
+      'optinal_focus_time', aliasedName, true,
+      type: DriftSqlType.int, requiredDuringInsert: false);
+  static const VerificationMeta _optinalBreakTimeMeta =
+      const VerificationMeta('optinalBreakTime');
+  @override
+  late final GeneratedColumn<int> optinalBreakTime = GeneratedColumn<int>(
+      'optinal_break_time', aliasedName, true,
+      type: DriftSqlType.int, requiredDuringInsert: false);
   @override
   List<GeneratedColumn> get $columns => [
         id,
@@ -1804,7 +1824,10 @@ class $SubjectTable extends Subject with TableInfo<$SubjectTable, SubjectData> {
         updatedAt,
         subSubjects,
         lastFocuzdOnSessionID,
-        totalTimeSpent
+        linkSub,
+        totalTimeSpent,
+        optinalFocusTime,
+        optinalBreakTime
       ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -1861,11 +1884,27 @@ class $SubjectTable extends Subject with TableInfo<$SubjectTable, SubjectData> {
           lastFocuzdOnSessionID.isAcceptableOrUnknown(
               data['last_focuzd_on_session_i_d']!, _lastFocuzdOnSessionIDMeta));
     }
+    if (data.containsKey('link_sub')) {
+      context.handle(_linkSubMeta,
+          linkSub.isAcceptableOrUnknown(data['link_sub']!, _linkSubMeta));
+    }
     if (data.containsKey('total_time_spent')) {
       context.handle(
           _totalTimeSpentMeta,
           totalTimeSpent.isAcceptableOrUnknown(
               data['total_time_spent']!, _totalTimeSpentMeta));
+    }
+    if (data.containsKey('optinal_focus_time')) {
+      context.handle(
+          _optinalFocusTimeMeta,
+          optinalFocusTime.isAcceptableOrUnknown(
+              data['optinal_focus_time']!, _optinalFocusTimeMeta));
+    }
+    if (data.containsKey('optinal_break_time')) {
+      context.handle(
+          _optinalBreakTimeMeta,
+          optinalBreakTime.isAcceptableOrUnknown(
+              data['optinal_break_time']!, _optinalBreakTimeMeta));
     }
     return context;
   }
@@ -1892,8 +1931,14 @@ class $SubjectTable extends Subject with TableInfo<$SubjectTable, SubjectData> {
           .read(DriftSqlType.int, data['${effectivePrefix}sub_subjects'])!,
       lastFocuzdOnSessionID: attachedDatabase.typeMapping.read(DriftSqlType.int,
           data['${effectivePrefix}last_focuzd_on_session_i_d']),
+      linkSub: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}link_sub']),
       totalTimeSpent: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}total_time_spent'])!,
+      optinalFocusTime: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}optinal_focus_time']),
+      optinalBreakTime: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}optinal_break_time']),
     );
   }
 
@@ -1912,7 +1957,10 @@ class SubjectData extends DataClass implements Insertable<SubjectData> {
   final DateTime updatedAt;
   final int subSubjects;
   final int? lastFocuzdOnSessionID;
+  final int? linkSub;
   final int totalTimeSpent;
+  final int? optinalFocusTime;
+  final int? optinalBreakTime;
   const SubjectData(
       {required this.id,
       required this.name,
@@ -1922,7 +1970,10 @@ class SubjectData extends DataClass implements Insertable<SubjectData> {
       required this.updatedAt,
       required this.subSubjects,
       this.lastFocuzdOnSessionID,
-      required this.totalTimeSpent});
+      this.linkSub,
+      required this.totalTimeSpent,
+      this.optinalFocusTime,
+      this.optinalBreakTime});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -1938,7 +1989,16 @@ class SubjectData extends DataClass implements Insertable<SubjectData> {
     if (!nullToAbsent || lastFocuzdOnSessionID != null) {
       map['last_focuzd_on_session_i_d'] = Variable<int>(lastFocuzdOnSessionID);
     }
+    if (!nullToAbsent || linkSub != null) {
+      map['link_sub'] = Variable<int>(linkSub);
+    }
     map['total_time_spent'] = Variable<int>(totalTimeSpent);
+    if (!nullToAbsent || optinalFocusTime != null) {
+      map['optinal_focus_time'] = Variable<int>(optinalFocusTime);
+    }
+    if (!nullToAbsent || optinalBreakTime != null) {
+      map['optinal_break_time'] = Variable<int>(optinalBreakTime);
+    }
     return map;
   }
 
@@ -1956,7 +2016,16 @@ class SubjectData extends DataClass implements Insertable<SubjectData> {
       lastFocuzdOnSessionID: lastFocuzdOnSessionID == null && nullToAbsent
           ? const Value.absent()
           : Value(lastFocuzdOnSessionID),
+      linkSub: linkSub == null && nullToAbsent
+          ? const Value.absent()
+          : Value(linkSub),
       totalTimeSpent: Value(totalTimeSpent),
+      optinalFocusTime: optinalFocusTime == null && nullToAbsent
+          ? const Value.absent()
+          : Value(optinalFocusTime),
+      optinalBreakTime: optinalBreakTime == null && nullToAbsent
+          ? const Value.absent()
+          : Value(optinalBreakTime),
     );
   }
 
@@ -1973,7 +2042,10 @@ class SubjectData extends DataClass implements Insertable<SubjectData> {
       subSubjects: serializer.fromJson<int>(json['subSubjects']),
       lastFocuzdOnSessionID:
           serializer.fromJson<int?>(json['lastFocuzdOnSessionID']),
+      linkSub: serializer.fromJson<int?>(json['linkSub']),
       totalTimeSpent: serializer.fromJson<int>(json['totalTimeSpent']),
+      optinalFocusTime: serializer.fromJson<int?>(json['optinalFocusTime']),
+      optinalBreakTime: serializer.fromJson<int?>(json['optinalBreakTime']),
     );
   }
   @override
@@ -1988,7 +2060,10 @@ class SubjectData extends DataClass implements Insertable<SubjectData> {
       'updatedAt': serializer.toJson<DateTime>(updatedAt),
       'subSubjects': serializer.toJson<int>(subSubjects),
       'lastFocuzdOnSessionID': serializer.toJson<int?>(lastFocuzdOnSessionID),
+      'linkSub': serializer.toJson<int?>(linkSub),
       'totalTimeSpent': serializer.toJson<int>(totalTimeSpent),
+      'optinalFocusTime': serializer.toJson<int?>(optinalFocusTime),
+      'optinalBreakTime': serializer.toJson<int?>(optinalBreakTime),
     };
   }
 
@@ -2001,7 +2076,10 @@ class SubjectData extends DataClass implements Insertable<SubjectData> {
           DateTime? updatedAt,
           int? subSubjects,
           Value<int?> lastFocuzdOnSessionID = const Value.absent(),
-          int? totalTimeSpent}) =>
+          Value<int?> linkSub = const Value.absent(),
+          int? totalTimeSpent,
+          Value<int?> optinalFocusTime = const Value.absent(),
+          Value<int?> optinalBreakTime = const Value.absent()}) =>
       SubjectData(
         id: id ?? this.id,
         name: name ?? this.name,
@@ -2014,7 +2092,14 @@ class SubjectData extends DataClass implements Insertable<SubjectData> {
         lastFocuzdOnSessionID: lastFocuzdOnSessionID.present
             ? lastFocuzdOnSessionID.value
             : this.lastFocuzdOnSessionID,
+        linkSub: linkSub.present ? linkSub.value : this.linkSub,
         totalTimeSpent: totalTimeSpent ?? this.totalTimeSpent,
+        optinalFocusTime: optinalFocusTime.present
+            ? optinalFocusTime.value
+            : this.optinalFocusTime,
+        optinalBreakTime: optinalBreakTime.present
+            ? optinalBreakTime.value
+            : this.optinalBreakTime,
       );
   SubjectData copyWithCompanion(SubjectCompanion data) {
     return SubjectData(
@@ -2031,9 +2116,16 @@ class SubjectData extends DataClass implements Insertable<SubjectData> {
       lastFocuzdOnSessionID: data.lastFocuzdOnSessionID.present
           ? data.lastFocuzdOnSessionID.value
           : this.lastFocuzdOnSessionID,
+      linkSub: data.linkSub.present ? data.linkSub.value : this.linkSub,
       totalTimeSpent: data.totalTimeSpent.present
           ? data.totalTimeSpent.value
           : this.totalTimeSpent,
+      optinalFocusTime: data.optinalFocusTime.present
+          ? data.optinalFocusTime.value
+          : this.optinalFocusTime,
+      optinalBreakTime: data.optinalBreakTime.present
+          ? data.optinalBreakTime.value
+          : this.optinalBreakTime,
     );
   }
 
@@ -2048,14 +2140,28 @@ class SubjectData extends DataClass implements Insertable<SubjectData> {
           ..write('updatedAt: $updatedAt, ')
           ..write('subSubjects: $subSubjects, ')
           ..write('lastFocuzdOnSessionID: $lastFocuzdOnSessionID, ')
-          ..write('totalTimeSpent: $totalTimeSpent')
+          ..write('linkSub: $linkSub, ')
+          ..write('totalTimeSpent: $totalTimeSpent, ')
+          ..write('optinalFocusTime: $optinalFocusTime, ')
+          ..write('optinalBreakTime: $optinalBreakTime')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(id, name, address, superSubjectID, createdAt,
-      updatedAt, subSubjects, lastFocuzdOnSessionID, totalTimeSpent);
+  int get hashCode => Object.hash(
+      id,
+      name,
+      address,
+      superSubjectID,
+      createdAt,
+      updatedAt,
+      subSubjects,
+      lastFocuzdOnSessionID,
+      linkSub,
+      totalTimeSpent,
+      optinalFocusTime,
+      optinalBreakTime);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -2068,7 +2174,10 @@ class SubjectData extends DataClass implements Insertable<SubjectData> {
           other.updatedAt == this.updatedAt &&
           other.subSubjects == this.subSubjects &&
           other.lastFocuzdOnSessionID == this.lastFocuzdOnSessionID &&
-          other.totalTimeSpent == this.totalTimeSpent);
+          other.linkSub == this.linkSub &&
+          other.totalTimeSpent == this.totalTimeSpent &&
+          other.optinalFocusTime == this.optinalFocusTime &&
+          other.optinalBreakTime == this.optinalBreakTime);
 }
 
 class SubjectCompanion extends UpdateCompanion<SubjectData> {
@@ -2080,7 +2189,10 @@ class SubjectCompanion extends UpdateCompanion<SubjectData> {
   final Value<DateTime> updatedAt;
   final Value<int> subSubjects;
   final Value<int?> lastFocuzdOnSessionID;
+  final Value<int?> linkSub;
   final Value<int> totalTimeSpent;
+  final Value<int?> optinalFocusTime;
+  final Value<int?> optinalBreakTime;
   const SubjectCompanion({
     this.id = const Value.absent(),
     this.name = const Value.absent(),
@@ -2090,7 +2202,10 @@ class SubjectCompanion extends UpdateCompanion<SubjectData> {
     this.updatedAt = const Value.absent(),
     this.subSubjects = const Value.absent(),
     this.lastFocuzdOnSessionID = const Value.absent(),
+    this.linkSub = const Value.absent(),
     this.totalTimeSpent = const Value.absent(),
+    this.optinalFocusTime = const Value.absent(),
+    this.optinalBreakTime = const Value.absent(),
   });
   SubjectCompanion.insert({
     this.id = const Value.absent(),
@@ -2101,7 +2216,10 @@ class SubjectCompanion extends UpdateCompanion<SubjectData> {
     required DateTime updatedAt,
     this.subSubjects = const Value.absent(),
     this.lastFocuzdOnSessionID = const Value.absent(),
+    this.linkSub = const Value.absent(),
     this.totalTimeSpent = const Value.absent(),
+    this.optinalFocusTime = const Value.absent(),
+    this.optinalBreakTime = const Value.absent(),
   })  : name = Value(name),
         address = Value(address),
         createdAt = Value(createdAt),
@@ -2115,7 +2233,10 @@ class SubjectCompanion extends UpdateCompanion<SubjectData> {
     Expression<DateTime>? updatedAt,
     Expression<int>? subSubjects,
     Expression<int>? lastFocuzdOnSessionID,
+    Expression<int>? linkSub,
     Expression<int>? totalTimeSpent,
+    Expression<int>? optinalFocusTime,
+    Expression<int>? optinalBreakTime,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -2127,7 +2248,10 @@ class SubjectCompanion extends UpdateCompanion<SubjectData> {
       if (subSubjects != null) 'sub_subjects': subSubjects,
       if (lastFocuzdOnSessionID != null)
         'last_focuzd_on_session_i_d': lastFocuzdOnSessionID,
+      if (linkSub != null) 'link_sub': linkSub,
       if (totalTimeSpent != null) 'total_time_spent': totalTimeSpent,
+      if (optinalFocusTime != null) 'optinal_focus_time': optinalFocusTime,
+      if (optinalBreakTime != null) 'optinal_break_time': optinalBreakTime,
     });
   }
 
@@ -2140,7 +2264,10 @@ class SubjectCompanion extends UpdateCompanion<SubjectData> {
       Value<DateTime>? updatedAt,
       Value<int>? subSubjects,
       Value<int?>? lastFocuzdOnSessionID,
-      Value<int>? totalTimeSpent}) {
+      Value<int?>? linkSub,
+      Value<int>? totalTimeSpent,
+      Value<int?>? optinalFocusTime,
+      Value<int?>? optinalBreakTime}) {
     return SubjectCompanion(
       id: id ?? this.id,
       name: name ?? this.name,
@@ -2151,7 +2278,10 @@ class SubjectCompanion extends UpdateCompanion<SubjectData> {
       subSubjects: subSubjects ?? this.subSubjects,
       lastFocuzdOnSessionID:
           lastFocuzdOnSessionID ?? this.lastFocuzdOnSessionID,
+      linkSub: linkSub ?? this.linkSub,
       totalTimeSpent: totalTimeSpent ?? this.totalTimeSpent,
+      optinalFocusTime: optinalFocusTime ?? this.optinalFocusTime,
+      optinalBreakTime: optinalBreakTime ?? this.optinalBreakTime,
     );
   }
 
@@ -2183,8 +2313,17 @@ class SubjectCompanion extends UpdateCompanion<SubjectData> {
       map['last_focuzd_on_session_i_d'] =
           Variable<int>(lastFocuzdOnSessionID.value);
     }
+    if (linkSub.present) {
+      map['link_sub'] = Variable<int>(linkSub.value);
+    }
     if (totalTimeSpent.present) {
       map['total_time_spent'] = Variable<int>(totalTimeSpent.value);
+    }
+    if (optinalFocusTime.present) {
+      map['optinal_focus_time'] = Variable<int>(optinalFocusTime.value);
+    }
+    if (optinalBreakTime.present) {
+      map['optinal_break_time'] = Variable<int>(optinalBreakTime.value);
     }
     return map;
   }
@@ -2200,7 +2339,10 @@ class SubjectCompanion extends UpdateCompanion<SubjectData> {
           ..write('updatedAt: $updatedAt, ')
           ..write('subSubjects: $subSubjects, ')
           ..write('lastFocuzdOnSessionID: $lastFocuzdOnSessionID, ')
-          ..write('totalTimeSpent: $totalTimeSpent')
+          ..write('linkSub: $linkSub, ')
+          ..write('totalTimeSpent: $totalTimeSpent, ')
+          ..write('optinalFocusTime: $optinalFocusTime, ')
+          ..write('optinalBreakTime: $optinalBreakTime')
           ..write(')'))
         .toString();
   }
@@ -4416,7 +4558,10 @@ typedef $$SubjectTableCreateCompanionBuilder = SubjectCompanion Function({
   required DateTime updatedAt,
   Value<int> subSubjects,
   Value<int?> lastFocuzdOnSessionID,
+  Value<int?> linkSub,
   Value<int> totalTimeSpent,
+  Value<int?> optinalFocusTime,
+  Value<int?> optinalBreakTime,
 });
 typedef $$SubjectTableUpdateCompanionBuilder = SubjectCompanion Function({
   Value<int> id,
@@ -4427,7 +4572,10 @@ typedef $$SubjectTableUpdateCompanionBuilder = SubjectCompanion Function({
   Value<DateTime> updatedAt,
   Value<int> subSubjects,
   Value<int?> lastFocuzdOnSessionID,
+  Value<int?> linkSub,
   Value<int> totalTimeSpent,
+  Value<int?> optinalFocusTime,
+  Value<int?> optinalBreakTime,
 });
 
 final class $$SubjectTableReferences
@@ -4485,8 +4633,19 @@ class $$SubjectTableFilterComposer
   ColumnFilters<int> get subSubjects => $composableBuilder(
       column: $table.subSubjects, builder: (column) => ColumnFilters(column));
 
+  ColumnFilters<int> get linkSub => $composableBuilder(
+      column: $table.linkSub, builder: (column) => ColumnFilters(column));
+
   ColumnFilters<int> get totalTimeSpent => $composableBuilder(
       column: $table.totalTimeSpent,
+      builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get optinalFocusTime => $composableBuilder(
+      column: $table.optinalFocusTime,
+      builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get optinalBreakTime => $composableBuilder(
+      column: $table.optinalBreakTime,
       builder: (column) => ColumnFilters(column));
 
   $$MemoryCountdownVariableTableFilterComposer get lastFocuzdOnSessionID {
@@ -4542,8 +4701,19 @@ class $$SubjectTableOrderingComposer
   ColumnOrderings<int> get subSubjects => $composableBuilder(
       column: $table.subSubjects, builder: (column) => ColumnOrderings(column));
 
+  ColumnOrderings<int> get linkSub => $composableBuilder(
+      column: $table.linkSub, builder: (column) => ColumnOrderings(column));
+
   ColumnOrderings<int> get totalTimeSpent => $composableBuilder(
       column: $table.totalTimeSpent,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get optinalFocusTime => $composableBuilder(
+      column: $table.optinalFocusTime,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get optinalBreakTime => $composableBuilder(
+      column: $table.optinalBreakTime,
       builder: (column) => ColumnOrderings(column));
 
   $$MemoryCountdownVariableTableOrderingComposer get lastFocuzdOnSessionID {
@@ -4598,8 +4768,17 @@ class $$SubjectTableAnnotationComposer
   GeneratedColumn<int> get subSubjects => $composableBuilder(
       column: $table.subSubjects, builder: (column) => column);
 
+  GeneratedColumn<int> get linkSub =>
+      $composableBuilder(column: $table.linkSub, builder: (column) => column);
+
   GeneratedColumn<int> get totalTimeSpent => $composableBuilder(
       column: $table.totalTimeSpent, builder: (column) => column);
+
+  GeneratedColumn<int> get optinalFocusTime => $composableBuilder(
+      column: $table.optinalFocusTime, builder: (column) => column);
+
+  GeneratedColumn<int> get optinalBreakTime => $composableBuilder(
+      column: $table.optinalBreakTime, builder: (column) => column);
 
   $$MemoryCountdownVariableTableAnnotationComposer get lastFocuzdOnSessionID {
     final $$MemoryCountdownVariableTableAnnotationComposer composer =
@@ -4654,7 +4833,10 @@ class $$SubjectTableTableManager extends RootTableManager<
             Value<DateTime> updatedAt = const Value.absent(),
             Value<int> subSubjects = const Value.absent(),
             Value<int?> lastFocuzdOnSessionID = const Value.absent(),
+            Value<int?> linkSub = const Value.absent(),
             Value<int> totalTimeSpent = const Value.absent(),
+            Value<int?> optinalFocusTime = const Value.absent(),
+            Value<int?> optinalBreakTime = const Value.absent(),
           }) =>
               SubjectCompanion(
             id: id,
@@ -4665,7 +4847,10 @@ class $$SubjectTableTableManager extends RootTableManager<
             updatedAt: updatedAt,
             subSubjects: subSubjects,
             lastFocuzdOnSessionID: lastFocuzdOnSessionID,
+            linkSub: linkSub,
             totalTimeSpent: totalTimeSpent,
+            optinalFocusTime: optinalFocusTime,
+            optinalBreakTime: optinalBreakTime,
           ),
           createCompanionCallback: ({
             Value<int> id = const Value.absent(),
@@ -4676,7 +4861,10 @@ class $$SubjectTableTableManager extends RootTableManager<
             required DateTime updatedAt,
             Value<int> subSubjects = const Value.absent(),
             Value<int?> lastFocuzdOnSessionID = const Value.absent(),
+            Value<int?> linkSub = const Value.absent(),
             Value<int> totalTimeSpent = const Value.absent(),
+            Value<int?> optinalFocusTime = const Value.absent(),
+            Value<int?> optinalBreakTime = const Value.absent(),
           }) =>
               SubjectCompanion.insert(
             id: id,
@@ -4687,7 +4875,10 @@ class $$SubjectTableTableManager extends RootTableManager<
             updatedAt: updatedAt,
             subSubjects: subSubjects,
             lastFocuzdOnSessionID: lastFocuzdOnSessionID,
+            linkSub: linkSub,
             totalTimeSpent: totalTimeSpent,
+            optinalFocusTime: optinalFocusTime,
+            optinalBreakTime: optinalBreakTime,
           ),
           withReferenceMapper: (p0) => p0
               .map((e) =>

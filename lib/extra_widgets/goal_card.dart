@@ -1,11 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:focuzd/blocs/repo_bloc/repo_bloc.dart';
 import 'package:focuzd/data/app_db.dart';
-import 'package:focuzd/data/repo.dart';
-import 'package:focuzd/extra_widgets/history_round_card.dart';
-import 'package:yaru/theme.dart';
-import 'package:yaru/widgets.dart';
+import 'package:yaru/yaru.dart';
 
 class GoalCard extends StatelessWidget {
   const GoalCard(this.id, {super.key});
@@ -54,7 +49,9 @@ class GoalCard extends StatelessWidget {
                 child: Center(
                   child: Card(
                       child: Row(children: [
-                    Text(id.ySessionsDone.toString(),
+                    Text(
+                        id.ySessionsDone
+                            .toString(), // in the goals creating phase this will be defaulted to 0
                         style: TextStyle(fontSize: 20)),
                     Text(" / ", style: TextStyle(fontSize: 20)),
                     Text(id.xSessionsGoal.toString(),

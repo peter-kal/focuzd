@@ -1,10 +1,7 @@
 part of 'repo_bloc.dart';
 
-sealed class RepoEvent extends Equatable {
+sealed class RepoEvent {
   const RepoEvent();
-
-  @override
-  List<Object> get props => [];
 }
 
 class UpdateSettingVariables extends RepoEvent {
@@ -12,9 +9,6 @@ class UpdateSettingVariables extends RepoEvent {
       {required this.selectedToChange, required this.changedVar});
   final int selectedToChange;
   final dynamic changedVar;
-
-  @override
-  List<Object> get props => [selectedToChange, changedVar];
 }
 
 final class EmitStateWithDBVars extends RepoEvent {
@@ -32,22 +26,21 @@ class CreatingGoal extends RepoEvent {
 }
 
 class UpdateAddingSubject extends RepoEvent {
-  const UpdateAddingSubject(this.actionCode, this.subId, this.name);
-  final String name;
-  final int subId;
-  final int actionCode;
+  const UpdateAddingSubject({required this.newMakeable});
+  final SubjectMaking newMakeable;
+
   @override
-  List<Object> get props => [name, subId, actionCode];
+  String toString() =>
+      "name: ${newMakeable.name}, optionalTimes: ${newMakeable.optionalTimes} super: ${newMakeable.subid}";
 }
 
 class UpdateCreatingGoal extends RepoEvent {
   const UpdateCreatingGoal({required this.newMakeable});
   final GoalMaking newMakeable;
-  @override
-  List<Object> get props => [newMakeable];
+
   @override
   String toString() =>
-      "type: ${newMakeable.type}, codename: ${newMakeable.codeName}";
+      "type: ${newMakeable.type}, codename: ${newMakeable.codeName} ";
 }
 
 class AddSubjectToDB extends RepoEvent {
@@ -62,6 +55,4 @@ class SaveGoalToDB extends RepoEvent {
 class DeleteSubjectDB extends RepoEvent {
   const DeleteSubjectDB({required this.id});
   final int id;
-  @override
-  List<Object> get props => [id];
 }
