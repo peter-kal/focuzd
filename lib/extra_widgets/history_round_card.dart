@@ -92,10 +92,6 @@ class HistoryRoundCard extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text(
-                "#${givenList[1].id}",
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-              ),
               SizedBox(width: 10),
               Text(
                   "${givenList[1].finishTime.day}/${givenList[1].finishTime.month}/${givenList[1].finishTime.year}")
@@ -146,7 +142,7 @@ class HistoryRoundCard extends StatelessWidget {
     );
   }
 
-  Future<String> _getSubjectName(int id) async {
+  Future<String> _getSubjectName(String id) async {
     var subjectRepo = SubjectRepository(AppDatabase.instance);
     var subject = await subjectRepo.fetchSubjectByID(id);
     return subject?.name ?? 'd';
@@ -289,7 +285,7 @@ String _formatTime(DateTime? time) {
   return "${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}";
 }
 
-Future<String> _getSubjectName(int id) async {
+Future<String> _getSubjectName(String id) async {
   var subjectRepo = SubjectRepository(AppDatabase.instance);
   var subject = await subjectRepo.fetchSubjectByID(id);
   return subject?.name ?? 'd';

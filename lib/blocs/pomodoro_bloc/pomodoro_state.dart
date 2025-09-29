@@ -75,8 +75,8 @@ final class TimerRunPause extends PomodoroTimerState {
   final int showTime;
   final int duration;
   final int selectedDuration;
-  final int currentMemorySessionID;
-  final int currentRoundID;
+  final String currentMemorySessionID;
+  final String currentRoundID;
   final List<SessionVariablePlanning> sessions;
   final String type;
   final SubjectData? subject;
@@ -107,8 +107,8 @@ final class TimerRunInProgress extends PomodoroTimerState {
   final int runTimes;
   final int showTime;
   final int selectedDuration;
-  final int currentMemorySessionID;
-  final int currentRoundID;
+  final String currentMemorySessionID;
+  final String currentRoundID;
   final List<SessionVariablePlanning> sessions;
   final SubjectData? subject;
   final String type;

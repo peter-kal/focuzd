@@ -37,7 +37,7 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
       // This event is not used in the current implementation
       // but can be used to set initial time if needed.
       _cancelPlanningRefresh();
-      final stored = await settingsRepo.fetchSettingsById(1);
+      final stored = await settingsRepo.fetchSettings();
       final focusTimeDuration = stored!.selectedFocusDurationStored * 60;
       final reqRounds = stored.requestedNumberOfSessions;
       emit(TimerInitial(1, focusTimeDuration, reqRounds));
@@ -86,7 +86,7 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
 
   void _onTimerInit(TimerInit event, Emitter<PomodoroTimerState> emit) async {
     // done for now 17:25 17/05
-    final stored = await settingsRepo.fetchSettingsById(1);
+    final stored = await settingsRepo.fetchSettings();
     final focusTimeDuration = stored!.selectedFocusDurationStored * 60;
     final reqRounds = stored.requestedNumberOfSessions;
     _cancelPlanningRefresh();
@@ -94,7 +94,7 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
   }
 
   void _onRoundPlan(RoundPlan event, Emitter<PomodoroTimerState> emit) async {
-    final stored = await settingsRepo.fetchSettingsById(1);
+    final stored = await settingsRepo.fetchSettings();
     final subjects = await subjectRepo.fetchAllSubjects();
     final focusTimeDuration = stored!.selectedFocusDurationStored;
     final breakDuration = stored.selectedBreakDurationStored;
@@ -124,7 +124,7 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
   }
 
   void _onChangePlan(ChangePlan event, Emitter<PomodoroTimerState> emit) async {
-    final stored = await settingsRepo.fetchSettingsById(1);
+    final stored = await settingsRepo.fetchSettings();
     final subjects = await subjectRepo.fetchAllSubjects();
     final focusTimeDuration = stored!.selectedFocusDurationStored;
     final breakDuration = stored.selectedBreakDurationStored;
@@ -476,9 +476,9 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
             ),
           );
           await subjectRepo.increaseSubjectTime(
-              (state.selectedDuration - state.duration),
-              state.subject!.id,
-              state.currentMemorySessionID);
+              addedTime: (state.selectedDuration - state.duration),
+              id: state.subject!.id,
+              sessionId: state.currentMemorySessionID);
         }
         add(TimerInit());
       } else if ((state.runTimes + 1) < state.sessions.length) {
@@ -496,9 +496,9 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
             ),
           );
           await subjectRepo.increaseSubjectTime(
-              (state.selectedDuration - state.duration),
-              state.subject!.id,
-              state.currentMemorySessionID);
+              addedTime: (state.selectedDuration - state.duration),
+              id: state.subject!.id,
+              sessionId: state.currentMemorySessionID);
         }
         await memorySessionRepo.updateMemorySessionWrite(
             state.currentMemorySessionID,
@@ -518,18 +518,20 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
                       (state.selectedDuration - state.duration)
                   : (state.selectedDuration - state.duration)),
             ));
-        await memorySessionRepo.updateMemorySessionWrite(
-            state.currentMemorySessionID + 1,
-            MemoryCountdownVariableCompanion(
-              startingTime: Value(now),
-            ));
+        final nextSession = await memorySessionRepo.getNextSession(
+            state.currentMemorySessionID, state.currentRoundID);
+
+        if (nextSession != null) {
+          await memorySessionRepo.updateMemorySessionWrite(nextSession.id,
+              MemoryCountdownVariableCompanion(startingTime: Value(now)));
+        }
 
         emit(TimerRunInProgress(
             state.sessions[state.runTimes + 1].plannedDuration,
             state.runTimes + 1,
             (state.runTimes + 1) % 2 == 0 ? state.showTime + 1 : state.showTime,
             state.sessions[state.runTimes + 1].plannedDuration,
-            state.currentMemorySessionID + 1,
+            nextSession!.id,
             state
                 .defaultSessionsPerRound, // how many sessions are there in the round, name change needed
             state.currentRoundID,

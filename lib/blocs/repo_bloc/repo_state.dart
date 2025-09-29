@@ -10,6 +10,9 @@ class CreateSubjectState extends RepoState {
   const CreateSubjectState({required this.subjects, required this.makeable});
   final List<SubjectData?> subjects;
   final SubjectMaking makeable;
+  @override
+  String toString() =>
+      "name:${makeable.name}  optional focus:${makeable.optionalFocusTime} optional break: ${makeable.optionalBreakTime} subid: ${makeable.subid}";
 }
 
 class CreateGoalState extends RepoState {

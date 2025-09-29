@@ -11,13 +11,11 @@ class $SettingsVariablesTable extends SettingsVariables
   $SettingsVariablesTable(this.attachedDatabase, [this._alias]);
   static const VerificationMeta _idMeta = const VerificationMeta('id');
   @override
-  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
       'id', aliasedName, false,
-      hasAutoIncrement: true,
-      type: DriftSqlType.int,
+      type: DriftSqlType.string,
       requiredDuringInsert: false,
-      defaultConstraints:
-          GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'));
+      clientDefault: () => const Uuid().v4());
   static const VerificationMeta _windowOnTopMeta =
       const VerificationMeta('windowOnTop');
   @override
@@ -145,7 +143,7 @@ class $SettingsVariablesTable extends SettingsVariables
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return SettingsVariable(
       id: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
+          .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
       windowOnTop: attachedDatabase.typeMapping
           .read(DriftSqlType.bool, data['${effectivePrefix}window_on_top'])!,
       requestedNumberOfSessions: attachedDatabase.typeMapping.read(
@@ -174,7 +172,7 @@ class $SettingsVariablesTable extends SettingsVariables
 
 class SettingsVariable extends DataClass
     implements Insertable<SettingsVariable> {
-  final int id;
+  final String id;
   final bool windowOnTop;
   final int requestedNumberOfSessions;
   final int selectedBreakDurationStored;
@@ -192,7 +190,7 @@ class SettingsVariable extends DataClass
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    map['id'] = Variable<int>(id);
+    map['id'] = Variable<String>(id);
     map['window_on_top'] = Variable<bool>(windowOnTop);
     map['requested_number_of_sessions'] =
         Variable<int>(requestedNumberOfSessions);
@@ -222,7 +220,7 @@ class SettingsVariable extends DataClass
       {ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return SettingsVariable(
-      id: serializer.fromJson<int>(json['id']),
+      id: serializer.fromJson<String>(json['id']),
       windowOnTop: serializer.fromJson<bool>(json['windowOnTop']),
       requestedNumberOfSessions:
           serializer.fromJson<int>(json['requestedNumberOfSessions']),
@@ -240,7 +238,7 @@ class SettingsVariable extends DataClass
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
-      'id': serializer.toJson<int>(id),
+      'id': serializer.toJson<String>(id),
       'windowOnTop': serializer.toJson<bool>(windowOnTop),
       'requestedNumberOfSessions':
           serializer.toJson<int>(requestedNumberOfSessions),
@@ -255,7 +253,7 @@ class SettingsVariable extends DataClass
   }
 
   SettingsVariable copyWith(
-          {int? id,
+          {String? id,
           bool? windowOnTop,
           int? requestedNumberOfSessions,
           int? selectedBreakDurationStored,
@@ -341,13 +339,14 @@ class SettingsVariable extends DataClass
 }
 
 class SettingsVariablesCompanion extends UpdateCompanion<SettingsVariable> {
-  final Value<int> id;
+  final Value<String> id;
   final Value<bool> windowOnTop;
   final Value<int> requestedNumberOfSessions;
   final Value<int> selectedBreakDurationStored;
   final Value<int> selectedFocusDurationStored;
   final Value<int> selectedLongBreakDurationStored;
   final Value<bool> roundPlanningByDefault;
+  final Value<int> rowid;
   const SettingsVariablesCompanion({
     this.id = const Value.absent(),
     this.windowOnTop = const Value.absent(),
@@ -356,6 +355,7 @@ class SettingsVariablesCompanion extends UpdateCompanion<SettingsVariable> {
     this.selectedFocusDurationStored = const Value.absent(),
     this.selectedLongBreakDurationStored = const Value.absent(),
     this.roundPlanningByDefault = const Value.absent(),
+    this.rowid = const Value.absent(),
   });
   SettingsVariablesCompanion.insert({
     this.id = const Value.absent(),
@@ -365,6 +365,7 @@ class SettingsVariablesCompanion extends UpdateCompanion<SettingsVariable> {
     required int selectedFocusDurationStored,
     required int selectedLongBreakDurationStored,
     this.roundPlanningByDefault = const Value.absent(),
+    this.rowid = const Value.absent(),
   })  : windowOnTop = Value(windowOnTop),
         requestedNumberOfSessions = Value(requestedNumberOfSessions),
         selectedBreakDurationStored = Value(selectedBreakDurationStored),
@@ -372,13 +373,14 @@ class SettingsVariablesCompanion extends UpdateCompanion<SettingsVariable> {
         selectedLongBreakDurationStored =
             Value(selectedLongBreakDurationStored);
   static Insertable<SettingsVariable> custom({
-    Expression<int>? id,
+    Expression<String>? id,
     Expression<bool>? windowOnTop,
     Expression<int>? requestedNumberOfSessions,
     Expression<int>? selectedBreakDurationStored,
     Expression<int>? selectedFocusDurationStored,
     Expression<int>? selectedLongBreakDurationStored,
     Expression<bool>? roundPlanningByDefault,
+    Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -393,17 +395,19 @@ class SettingsVariablesCompanion extends UpdateCompanion<SettingsVariable> {
         'selected_long_break_duration_stored': selectedLongBreakDurationStored,
       if (roundPlanningByDefault != null)
         'round_planning_by_default': roundPlanningByDefault,
+      if (rowid != null) 'rowid': rowid,
     });
   }
 
   SettingsVariablesCompanion copyWith(
-      {Value<int>? id,
+      {Value<String>? id,
       Value<bool>? windowOnTop,
       Value<int>? requestedNumberOfSessions,
       Value<int>? selectedBreakDurationStored,
       Value<int>? selectedFocusDurationStored,
       Value<int>? selectedLongBreakDurationStored,
-      Value<bool>? roundPlanningByDefault}) {
+      Value<bool>? roundPlanningByDefault,
+      Value<int>? rowid}) {
     return SettingsVariablesCompanion(
       id: id ?? this.id,
       windowOnTop: windowOnTop ?? this.windowOnTop,
@@ -417,6 +421,7 @@ class SettingsVariablesCompanion extends UpdateCompanion<SettingsVariable> {
           this.selectedLongBreakDurationStored,
       roundPlanningByDefault:
           roundPlanningByDefault ?? this.roundPlanningByDefault,
+      rowid: rowid ?? this.rowid,
     );
   }
 
@@ -424,7 +429,7 @@ class SettingsVariablesCompanion extends UpdateCompanion<SettingsVariable> {
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     if (id.present) {
-      map['id'] = Variable<int>(id.value);
+      map['id'] = Variable<String>(id.value);
     }
     if (windowOnTop.present) {
       map['window_on_top'] = Variable<bool>(windowOnTop.value);
@@ -449,6 +454,9 @@ class SettingsVariablesCompanion extends UpdateCompanion<SettingsVariable> {
       map['round_planning_by_default'] =
           Variable<bool>(roundPlanningByDefault.value);
     }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
     return map;
   }
 
@@ -462,7 +470,8 @@ class SettingsVariablesCompanion extends UpdateCompanion<SettingsVariable> {
           ..write('selectedFocusDurationStored: $selectedFocusDurationStored, ')
           ..write(
               'selectedLongBreakDurationStored: $selectedLongBreakDurationStored, ')
-          ..write('roundPlanningByDefault: $roundPlanningByDefault')
+          ..write('roundPlanningByDefault: $roundPlanningByDefault, ')
+          ..write('rowid: $rowid')
           ..write(')'))
         .toString();
   }
@@ -476,13 +485,11 @@ class $MemoryCountdownVariableTable extends MemoryCountdownVariable
   $MemoryCountdownVariableTable(this.attachedDatabase, [this._alias]);
   static const VerificationMeta _idMeta = const VerificationMeta('id');
   @override
-  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
       'id', aliasedName, false,
-      hasAutoIncrement: true,
-      type: DriftSqlType.int,
+      type: DriftSqlType.string,
       requiredDuringInsert: false,
-      defaultConstraints:
-          GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'));
+      clientDefault: () => const Uuid().v4());
   static const VerificationMeta _roundGoalMeta =
       const VerificationMeta('roundGoal');
   @override
@@ -492,9 +499,9 @@ class $MemoryCountdownVariableTable extends MemoryCountdownVariable
   static const VerificationMeta _roundIdMeta =
       const VerificationMeta('roundId');
   @override
-  late final GeneratedColumn<int> roundId = GeneratedColumn<int>(
+  late final GeneratedColumn<String> roundId = GeneratedColumn<String>(
       'round_id', aliasedName, false,
-      type: DriftSqlType.int, requiredDuringInsert: true);
+      type: DriftSqlType.string, requiredDuringInsert: true);
   static const VerificationMeta _propableCauseMeta =
       const VerificationMeta('propableCause');
   @override
@@ -576,9 +583,9 @@ class $MemoryCountdownVariableTable extends MemoryCountdownVariable
   static const VerificationMeta _subjectMeta =
       const VerificationMeta('subject');
   @override
-  late final GeneratedColumn<int> subject = GeneratedColumn<int>(
+  late final GeneratedColumn<String> subject = GeneratedColumn<String>(
       'subject', aliasedName, true,
-      type: DriftSqlType.int, requiredDuringInsert: false);
+      type: DriftSqlType.string, requiredDuringInsert: false);
   @override
   List<GeneratedColumn> get $columns => [
         id,
@@ -713,11 +720,11 @@ class $MemoryCountdownVariableTable extends MemoryCountdownVariable
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return MemoryCountdownVariableData(
       id: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
+          .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
       roundGoal: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}round_goal'])!,
       roundId: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}round_id'])!,
+          .read(DriftSqlType.string, data['${effectivePrefix}round_id'])!,
       propableCause: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}propable_cause']),
       durationLeft: attachedDatabase.typeMapping
@@ -743,7 +750,7 @@ class $MemoryCountdownVariableTable extends MemoryCountdownVariable
       type: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}type'])!,
       subject: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}subject']),
+          .read(DriftSqlType.string, data['${effectivePrefix}subject']),
     );
   }
 
@@ -755,9 +762,9 @@ class $MemoryCountdownVariableTable extends MemoryCountdownVariable
 
 class MemoryCountdownVariableData extends DataClass
     implements Insertable<MemoryCountdownVariableData> {
-  final int id;
+  final String id;
   final int roundGoal;
-  final int roundId;
+  final String roundId;
   final String? propableCause;
   final int? durationLeft;
   final int roundRunTime;
@@ -770,7 +777,7 @@ class MemoryCountdownVariableData extends DataClass
   final bool? completed;
   final bool active;
   final String type;
-  final int? subject;
+  final String? subject;
   const MemoryCountdownVariableData(
       {required this.id,
       required this.roundGoal,
@@ -791,9 +798,9 @@ class MemoryCountdownVariableData extends DataClass
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    map['id'] = Variable<int>(id);
+    map['id'] = Variable<String>(id);
     map['round_goal'] = Variable<int>(roundGoal);
-    map['round_id'] = Variable<int>(roundId);
+    map['round_id'] = Variable<String>(roundId);
     if (!nullToAbsent || propableCause != null) {
       map['propable_cause'] = Variable<String>(propableCause);
     }
@@ -821,7 +828,7 @@ class MemoryCountdownVariableData extends DataClass
     map['active'] = Variable<bool>(active);
     map['type'] = Variable<String>(type);
     if (!nullToAbsent || subject != null) {
-      map['subject'] = Variable<int>(subject);
+      map['subject'] = Variable<String>(subject);
     }
     return map;
   }
@@ -867,9 +874,9 @@ class MemoryCountdownVariableData extends DataClass
       {ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return MemoryCountdownVariableData(
-      id: serializer.fromJson<int>(json['id']),
+      id: serializer.fromJson<String>(json['id']),
       roundGoal: serializer.fromJson<int>(json['roundGoal']),
-      roundId: serializer.fromJson<int>(json['roundId']),
+      roundId: serializer.fromJson<String>(json['roundId']),
       propableCause: serializer.fromJson<String?>(json['propableCause']),
       durationLeft: serializer.fromJson<int?>(json['durationLeft']),
       roundRunTime: serializer.fromJson<int>(json['roundRunTime']),
@@ -883,16 +890,16 @@ class MemoryCountdownVariableData extends DataClass
       completed: serializer.fromJson<bool?>(json['completed']),
       active: serializer.fromJson<bool>(json['active']),
       type: serializer.fromJson<String>(json['type']),
-      subject: serializer.fromJson<int?>(json['subject']),
+      subject: serializer.fromJson<String?>(json['subject']),
     );
   }
   @override
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
-      'id': serializer.toJson<int>(id),
+      'id': serializer.toJson<String>(id),
       'roundGoal': serializer.toJson<int>(roundGoal),
-      'roundId': serializer.toJson<int>(roundId),
+      'roundId': serializer.toJson<String>(roundId),
       'propableCause': serializer.toJson<String?>(propableCause),
       'durationLeft': serializer.toJson<int?>(durationLeft),
       'roundRunTime': serializer.toJson<int>(roundRunTime),
@@ -905,14 +912,14 @@ class MemoryCountdownVariableData extends DataClass
       'completed': serializer.toJson<bool?>(completed),
       'active': serializer.toJson<bool>(active),
       'type': serializer.toJson<String>(type),
-      'subject': serializer.toJson<int?>(subject),
+      'subject': serializer.toJson<String?>(subject),
     };
   }
 
   MemoryCountdownVariableData copyWith(
-          {int? id,
+          {String? id,
           int? roundGoal,
-          int? roundId,
+          String? roundId,
           Value<String?> propableCause = const Value.absent(),
           Value<int?> durationLeft = const Value.absent(),
           int? roundRunTime,
@@ -925,7 +932,7 @@ class MemoryCountdownVariableData extends DataClass
           Value<bool?> completed = const Value.absent(),
           bool? active,
           String? type,
-          Value<int?> subject = const Value.absent()}) =>
+          Value<String?> subject = const Value.absent()}) =>
       MemoryCountdownVariableData(
         id: id ?? this.id,
         roundGoal: roundGoal ?? this.roundGoal,
@@ -1054,9 +1061,9 @@ class MemoryCountdownVariableData extends DataClass
 
 class MemoryCountdownVariableCompanion
     extends UpdateCompanion<MemoryCountdownVariableData> {
-  final Value<int> id;
+  final Value<String> id;
   final Value<int> roundGoal;
-  final Value<int> roundId;
+  final Value<String> roundId;
   final Value<String?> propableCause;
   final Value<int?> durationLeft;
   final Value<int> roundRunTime;
@@ -1069,7 +1076,8 @@ class MemoryCountdownVariableCompanion
   final Value<bool?> completed;
   final Value<bool> active;
   final Value<String> type;
-  final Value<int?> subject;
+  final Value<String?> subject;
+  final Value<int> rowid;
   const MemoryCountdownVariableCompanion({
     this.id = const Value.absent(),
     this.roundGoal = const Value.absent(),
@@ -1087,11 +1095,12 @@ class MemoryCountdownVariableCompanion
     this.active = const Value.absent(),
     this.type = const Value.absent(),
     this.subject = const Value.absent(),
+    this.rowid = const Value.absent(),
   });
   MemoryCountdownVariableCompanion.insert({
     this.id = const Value.absent(),
     required int roundGoal,
-    required int roundId,
+    required String roundId,
     this.propableCause = const Value.absent(),
     this.durationLeft = const Value.absent(),
     required int roundRunTime,
@@ -1105,6 +1114,7 @@ class MemoryCountdownVariableCompanion
     this.active = const Value.absent(),
     required String type,
     this.subject = const Value.absent(),
+    this.rowid = const Value.absent(),
   })  : roundGoal = Value(roundGoal),
         roundId = Value(roundId),
         roundRunTime = Value(roundRunTime),
@@ -1112,9 +1122,9 @@ class MemoryCountdownVariableCompanion
         expStartingTime = Value(expStartingTime),
         type = Value(type);
   static Insertable<MemoryCountdownVariableData> custom({
-    Expression<int>? id,
+    Expression<String>? id,
     Expression<int>? roundGoal,
-    Expression<int>? roundId,
+    Expression<String>? roundId,
     Expression<String>? propableCause,
     Expression<int>? durationLeft,
     Expression<int>? roundRunTime,
@@ -1127,7 +1137,8 @@ class MemoryCountdownVariableCompanion
     Expression<bool>? completed,
     Expression<bool>? active,
     Expression<String>? type,
-    Expression<int>? subject,
+    Expression<String>? subject,
+    Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -1147,13 +1158,14 @@ class MemoryCountdownVariableCompanion
       if (active != null) 'active': active,
       if (type != null) 'type': type,
       if (subject != null) 'subject': subject,
+      if (rowid != null) 'rowid': rowid,
     });
   }
 
   MemoryCountdownVariableCompanion copyWith(
-      {Value<int>? id,
+      {Value<String>? id,
       Value<int>? roundGoal,
-      Value<int>? roundId,
+      Value<String>? roundId,
       Value<String?>? propableCause,
       Value<int?>? durationLeft,
       Value<int>? roundRunTime,
@@ -1166,7 +1178,8 @@ class MemoryCountdownVariableCompanion
       Value<bool?>? completed,
       Value<bool>? active,
       Value<String>? type,
-      Value<int?>? subject}) {
+      Value<String?>? subject,
+      Value<int>? rowid}) {
     return MemoryCountdownVariableCompanion(
       id: id ?? this.id,
       roundGoal: roundGoal ?? this.roundGoal,
@@ -1184,6 +1197,7 @@ class MemoryCountdownVariableCompanion
       active: active ?? this.active,
       type: type ?? this.type,
       subject: subject ?? this.subject,
+      rowid: rowid ?? this.rowid,
     );
   }
 
@@ -1191,13 +1205,13 @@ class MemoryCountdownVariableCompanion
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     if (id.present) {
-      map['id'] = Variable<int>(id.value);
+      map['id'] = Variable<String>(id.value);
     }
     if (roundGoal.present) {
       map['round_goal'] = Variable<int>(roundGoal.value);
     }
     if (roundId.present) {
-      map['round_id'] = Variable<int>(roundId.value);
+      map['round_id'] = Variable<String>(roundId.value);
     }
     if (propableCause.present) {
       map['propable_cause'] = Variable<String>(propableCause.value);
@@ -1236,7 +1250,10 @@ class MemoryCountdownVariableCompanion
       map['type'] = Variable<String>(type.value);
     }
     if (subject.present) {
-      map['subject'] = Variable<int>(subject.value);
+      map['subject'] = Variable<String>(subject.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
     }
     return map;
   }
@@ -1259,7 +1276,8 @@ class MemoryCountdownVariableCompanion
           ..write('completed: $completed, ')
           ..write('active: $active, ')
           ..write('type: $type, ')
-          ..write('subject: $subject')
+          ..write('subject: $subject, ')
+          ..write('rowid: $rowid')
           ..write(')'))
         .toString();
   }
@@ -1273,13 +1291,11 @@ class $RoundVariableTable extends RoundVariable
   $RoundVariableTable(this.attachedDatabase, [this._alias]);
   static const VerificationMeta _idMeta = const VerificationMeta('id');
   @override
-  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
       'id', aliasedName, false,
-      hasAutoIncrement: true,
-      type: DriftSqlType.int,
+      type: DriftSqlType.string,
       requiredDuringInsert: false,
-      defaultConstraints:
-          GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'));
+      clientDefault: () => const Uuid().v4());
   static const VerificationMeta _completedMeta =
       const VerificationMeta('completed');
   @override
@@ -1404,7 +1420,7 @@ class $RoundVariableTable extends RoundVariable
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return RoundVariableData(
       id: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
+          .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
       completed: attachedDatabase.typeMapping
           .read(DriftSqlType.bool, data['${effectivePrefix}completed'])!,
       propableCause: attachedDatabase.typeMapping
@@ -1430,7 +1446,7 @@ class $RoundVariableTable extends RoundVariable
 
 class RoundVariableData extends DataClass
     implements Insertable<RoundVariableData> {
-  final int id;
+  final String id;
   final bool completed;
   final String? propableCause;
   final int plannedDuration;
@@ -1450,7 +1466,7 @@ class RoundVariableData extends DataClass
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    map['id'] = Variable<int>(id);
+    map['id'] = Variable<String>(id);
     map['completed'] = Variable<bool>(completed);
     if (!nullToAbsent || propableCause != null) {
       map['propable_cause'] = Variable<String>(propableCause);
@@ -1494,7 +1510,7 @@ class RoundVariableData extends DataClass
       {ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return RoundVariableData(
-      id: serializer.fromJson<int>(json['id']),
+      id: serializer.fromJson<String>(json['id']),
       completed: serializer.fromJson<bool>(json['completed']),
       propableCause: serializer.fromJson<String?>(json['propableCause']),
       plannedDuration: serializer.fromJson<int>(json['plannedDuration']),
@@ -1509,7 +1525,7 @@ class RoundVariableData extends DataClass
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
-      'id': serializer.toJson<int>(id),
+      'id': serializer.toJson<String>(id),
       'completed': serializer.toJson<bool>(completed),
       'propableCause': serializer.toJson<String?>(propableCause),
       'plannedDuration': serializer.toJson<int>(plannedDuration),
@@ -1521,7 +1537,7 @@ class RoundVariableData extends DataClass
   }
 
   RoundVariableData copyWith(
-          {int? id,
+          {String? id,
           bool? completed,
           Value<String?> propableCause = const Value.absent(),
           int? plannedDuration,
@@ -1600,7 +1616,7 @@ class RoundVariableData extends DataClass
 }
 
 class RoundVariableCompanion extends UpdateCompanion<RoundVariableData> {
-  final Value<int> id;
+  final Value<String> id;
   final Value<bool> completed;
   final Value<String?> propableCause;
   final Value<int> plannedDuration;
@@ -1608,6 +1624,7 @@ class RoundVariableCompanion extends UpdateCompanion<RoundVariableData> {
   final Value<DateTime> startingTime;
   final Value<DateTime?> expFinishTime;
   final Value<DateTime?> finishTime;
+  final Value<int> rowid;
   const RoundVariableCompanion({
     this.id = const Value.absent(),
     this.completed = const Value.absent(),
@@ -1617,6 +1634,7 @@ class RoundVariableCompanion extends UpdateCompanion<RoundVariableData> {
     this.startingTime = const Value.absent(),
     this.expFinishTime = const Value.absent(),
     this.finishTime = const Value.absent(),
+    this.rowid = const Value.absent(),
   });
   RoundVariableCompanion.insert({
     this.id = const Value.absent(),
@@ -1627,10 +1645,11 @@ class RoundVariableCompanion extends UpdateCompanion<RoundVariableData> {
     required DateTime startingTime,
     this.expFinishTime = const Value.absent(),
     this.finishTime = const Value.absent(),
+    this.rowid = const Value.absent(),
   })  : plannedDuration = Value(plannedDuration),
         startingTime = Value(startingTime);
   static Insertable<RoundVariableData> custom({
-    Expression<int>? id,
+    Expression<String>? id,
     Expression<bool>? completed,
     Expression<String>? propableCause,
     Expression<int>? plannedDuration,
@@ -1638,6 +1657,7 @@ class RoundVariableCompanion extends UpdateCompanion<RoundVariableData> {
     Expression<DateTime>? startingTime,
     Expression<DateTime>? expFinishTime,
     Expression<DateTime>? finishTime,
+    Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -1649,18 +1669,20 @@ class RoundVariableCompanion extends UpdateCompanion<RoundVariableData> {
       if (startingTime != null) 'starting_time': startingTime,
       if (expFinishTime != null) 'exp_finish_time': expFinishTime,
       if (finishTime != null) 'finish_time': finishTime,
+      if (rowid != null) 'rowid': rowid,
     });
   }
 
   RoundVariableCompanion copyWith(
-      {Value<int>? id,
+      {Value<String>? id,
       Value<bool>? completed,
       Value<String?>? propableCause,
       Value<int>? plannedDuration,
       Value<int?>? actuallyDoneDuration,
       Value<DateTime>? startingTime,
       Value<DateTime?>? expFinishTime,
-      Value<DateTime?>? finishTime}) {
+      Value<DateTime?>? finishTime,
+      Value<int>? rowid}) {
     return RoundVariableCompanion(
       id: id ?? this.id,
       completed: completed ?? this.completed,
@@ -1670,6 +1692,7 @@ class RoundVariableCompanion extends UpdateCompanion<RoundVariableData> {
       startingTime: startingTime ?? this.startingTime,
       expFinishTime: expFinishTime ?? this.expFinishTime,
       finishTime: finishTime ?? this.finishTime,
+      rowid: rowid ?? this.rowid,
     );
   }
 
@@ -1677,7 +1700,7 @@ class RoundVariableCompanion extends UpdateCompanion<RoundVariableData> {
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     if (id.present) {
-      map['id'] = Variable<int>(id.value);
+      map['id'] = Variable<String>(id.value);
     }
     if (completed.present) {
       map['completed'] = Variable<bool>(completed.value);
@@ -1700,6 +1723,9 @@ class RoundVariableCompanion extends UpdateCompanion<RoundVariableData> {
     if (finishTime.present) {
       map['finish_time'] = Variable<DateTime>(finishTime.value);
     }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
     return map;
   }
 
@@ -1713,7 +1739,8 @@ class RoundVariableCompanion extends UpdateCompanion<RoundVariableData> {
           ..write('actuallyDoneDuration: $actuallyDoneDuration, ')
           ..write('startingTime: $startingTime, ')
           ..write('expFinishTime: $expFinishTime, ')
-          ..write('finishTime: $finishTime')
+          ..write('finishTime: $finishTime, ')
+          ..write('rowid: $rowid')
           ..write(')'))
         .toString();
   }
@@ -1726,13 +1753,11 @@ class $SubjectTable extends Subject with TableInfo<$SubjectTable, SubjectData> {
   $SubjectTable(this.attachedDatabase, [this._alias]);
   static const VerificationMeta _idMeta = const VerificationMeta('id');
   @override
-  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
       'id', aliasedName, false,
-      hasAutoIncrement: true,
-      type: DriftSqlType.int,
+      type: DriftSqlType.string,
       requiredDuringInsert: false,
-      defaultConstraints:
-          GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'));
+      clientDefault: () => const Uuid().v4());
   static const VerificationMeta _nameMeta = const VerificationMeta('name');
   @override
   late final GeneratedColumn<String> name = GeneratedColumn<String>(
@@ -1752,9 +1777,9 @@ class $SubjectTable extends Subject with TableInfo<$SubjectTable, SubjectData> {
   static const VerificationMeta _superSubjectIDMeta =
       const VerificationMeta('superSubjectID');
   @override
-  late final GeneratedColumn<int> superSubjectID = GeneratedColumn<int>(
+  late final GeneratedColumn<String> superSubjectID = GeneratedColumn<String>(
       'super_subject_i_d', aliasedName, true,
-      type: DriftSqlType.int,
+      type: DriftSqlType.string,
       requiredDuringInsert: false,
       $customConstraints: 'REFERENCES subject(id)');
   static const VerificationMeta _createdAtMeta =
@@ -1780,18 +1805,18 @@ class $SubjectTable extends Subject with TableInfo<$SubjectTable, SubjectData> {
   static const VerificationMeta _lastFocuzdOnSessionIDMeta =
       const VerificationMeta('lastFocuzdOnSessionID');
   @override
-  late final GeneratedColumn<int> lastFocuzdOnSessionID = GeneratedColumn<int>(
-      'last_focuzd_on_session_i_d', aliasedName, true,
-      type: DriftSqlType.int,
-      requiredDuringInsert: false,
-      defaultConstraints: GeneratedColumn.constraintIsAlways(
-          'REFERENCES memory_countdown_variable (id)'));
+  late final GeneratedColumn<String> lastFocuzdOnSessionID =
+      GeneratedColumn<String>('last_focuzd_on_session_i_d', aliasedName, true,
+          type: DriftSqlType.string,
+          requiredDuringInsert: false,
+          defaultConstraints: GeneratedColumn.constraintIsAlways(
+              'REFERENCES memory_countdown_variable (id)'));
   static const VerificationMeta _linkSubMeta =
       const VerificationMeta('linkSub');
   @override
-  late final GeneratedColumn<int> linkSub = GeneratedColumn<int>(
+  late final GeneratedColumn<String> linkSub = GeneratedColumn<String>(
       'link_sub', aliasedName, true,
-      type: DriftSqlType.int,
+      type: DriftSqlType.string,
       requiredDuringInsert: false,
       $customConstraints: 'REFERENCES subject(id)');
   static const VerificationMeta _totalTimeSpentMeta =
@@ -1916,23 +1941,24 @@ class $SubjectTable extends Subject with TableInfo<$SubjectTable, SubjectData> {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return SubjectData(
       id: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
+          .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
       name: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}name'])!,
       address: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}address'])!,
-      superSubjectID: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}super_subject_i_d']),
+      superSubjectID: attachedDatabase.typeMapping.read(
+          DriftSqlType.string, data['${effectivePrefix}super_subject_i_d']),
       createdAt: attachedDatabase.typeMapping
           .read(DriftSqlType.dateTime, data['${effectivePrefix}created_at'])!,
       updatedAt: attachedDatabase.typeMapping
           .read(DriftSqlType.dateTime, data['${effectivePrefix}updated_at'])!,
       subSubjects: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}sub_subjects'])!,
-      lastFocuzdOnSessionID: attachedDatabase.typeMapping.read(DriftSqlType.int,
+      lastFocuzdOnSessionID: attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
           data['${effectivePrefix}last_focuzd_on_session_i_d']),
       linkSub: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}link_sub']),
+          .read(DriftSqlType.string, data['${effectivePrefix}link_sub']),
       totalTimeSpent: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}total_time_spent'])!,
       optinalFocusTime: attachedDatabase.typeMapping
@@ -1949,15 +1975,15 @@ class $SubjectTable extends Subject with TableInfo<$SubjectTable, SubjectData> {
 }
 
 class SubjectData extends DataClass implements Insertable<SubjectData> {
-  final int id;
+  final String id;
   final String name;
   final String address;
-  final int? superSubjectID;
+  final String? superSubjectID;
   final DateTime createdAt;
   final DateTime updatedAt;
   final int subSubjects;
-  final int? lastFocuzdOnSessionID;
-  final int? linkSub;
+  final String? lastFocuzdOnSessionID;
+  final String? linkSub;
   final int totalTimeSpent;
   final int? optinalFocusTime;
   final int? optinalBreakTime;
@@ -1977,20 +2003,21 @@ class SubjectData extends DataClass implements Insertable<SubjectData> {
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    map['id'] = Variable<int>(id);
+    map['id'] = Variable<String>(id);
     map['name'] = Variable<String>(name);
     map['address'] = Variable<String>(address);
     if (!nullToAbsent || superSubjectID != null) {
-      map['super_subject_i_d'] = Variable<int>(superSubjectID);
+      map['super_subject_i_d'] = Variable<String>(superSubjectID);
     }
     map['created_at'] = Variable<DateTime>(createdAt);
     map['updated_at'] = Variable<DateTime>(updatedAt);
     map['sub_subjects'] = Variable<int>(subSubjects);
     if (!nullToAbsent || lastFocuzdOnSessionID != null) {
-      map['last_focuzd_on_session_i_d'] = Variable<int>(lastFocuzdOnSessionID);
+      map['last_focuzd_on_session_i_d'] =
+          Variable<String>(lastFocuzdOnSessionID);
     }
     if (!nullToAbsent || linkSub != null) {
-      map['link_sub'] = Variable<int>(linkSub);
+      map['link_sub'] = Variable<String>(linkSub);
     }
     map['total_time_spent'] = Variable<int>(totalTimeSpent);
     if (!nullToAbsent || optinalFocusTime != null) {
@@ -2033,16 +2060,16 @@ class SubjectData extends DataClass implements Insertable<SubjectData> {
       {ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return SubjectData(
-      id: serializer.fromJson<int>(json['id']),
+      id: serializer.fromJson<String>(json['id']),
       name: serializer.fromJson<String>(json['name']),
       address: serializer.fromJson<String>(json['address']),
-      superSubjectID: serializer.fromJson<int?>(json['superSubjectID']),
+      superSubjectID: serializer.fromJson<String?>(json['superSubjectID']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
       updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
       subSubjects: serializer.fromJson<int>(json['subSubjects']),
       lastFocuzdOnSessionID:
-          serializer.fromJson<int?>(json['lastFocuzdOnSessionID']),
-      linkSub: serializer.fromJson<int?>(json['linkSub']),
+          serializer.fromJson<String?>(json['lastFocuzdOnSessionID']),
+      linkSub: serializer.fromJson<String?>(json['linkSub']),
       totalTimeSpent: serializer.fromJson<int>(json['totalTimeSpent']),
       optinalFocusTime: serializer.fromJson<int?>(json['optinalFocusTime']),
       optinalBreakTime: serializer.fromJson<int?>(json['optinalBreakTime']),
@@ -2052,15 +2079,16 @@ class SubjectData extends DataClass implements Insertable<SubjectData> {
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
-      'id': serializer.toJson<int>(id),
+      'id': serializer.toJson<String>(id),
       'name': serializer.toJson<String>(name),
       'address': serializer.toJson<String>(address),
-      'superSubjectID': serializer.toJson<int?>(superSubjectID),
+      'superSubjectID': serializer.toJson<String?>(superSubjectID),
       'createdAt': serializer.toJson<DateTime>(createdAt),
       'updatedAt': serializer.toJson<DateTime>(updatedAt),
       'subSubjects': serializer.toJson<int>(subSubjects),
-      'lastFocuzdOnSessionID': serializer.toJson<int?>(lastFocuzdOnSessionID),
-      'linkSub': serializer.toJson<int?>(linkSub),
+      'lastFocuzdOnSessionID':
+          serializer.toJson<String?>(lastFocuzdOnSessionID),
+      'linkSub': serializer.toJson<String?>(linkSub),
       'totalTimeSpent': serializer.toJson<int>(totalTimeSpent),
       'optinalFocusTime': serializer.toJson<int?>(optinalFocusTime),
       'optinalBreakTime': serializer.toJson<int?>(optinalBreakTime),
@@ -2068,15 +2096,15 @@ class SubjectData extends DataClass implements Insertable<SubjectData> {
   }
 
   SubjectData copyWith(
-          {int? id,
+          {String? id,
           String? name,
           String? address,
-          Value<int?> superSubjectID = const Value.absent(),
+          Value<String?> superSubjectID = const Value.absent(),
           DateTime? createdAt,
           DateTime? updatedAt,
           int? subSubjects,
-          Value<int?> lastFocuzdOnSessionID = const Value.absent(),
-          Value<int?> linkSub = const Value.absent(),
+          Value<String?> lastFocuzdOnSessionID = const Value.absent(),
+          Value<String?> linkSub = const Value.absent(),
           int? totalTimeSpent,
           Value<int?> optinalFocusTime = const Value.absent(),
           Value<int?> optinalBreakTime = const Value.absent()}) =>
@@ -2181,18 +2209,19 @@ class SubjectData extends DataClass implements Insertable<SubjectData> {
 }
 
 class SubjectCompanion extends UpdateCompanion<SubjectData> {
-  final Value<int> id;
+  final Value<String> id;
   final Value<String> name;
   final Value<String> address;
-  final Value<int?> superSubjectID;
+  final Value<String?> superSubjectID;
   final Value<DateTime> createdAt;
   final Value<DateTime> updatedAt;
   final Value<int> subSubjects;
-  final Value<int?> lastFocuzdOnSessionID;
-  final Value<int?> linkSub;
+  final Value<String?> lastFocuzdOnSessionID;
+  final Value<String?> linkSub;
   final Value<int> totalTimeSpent;
   final Value<int?> optinalFocusTime;
   final Value<int?> optinalBreakTime;
+  final Value<int> rowid;
   const SubjectCompanion({
     this.id = const Value.absent(),
     this.name = const Value.absent(),
@@ -2206,6 +2235,7 @@ class SubjectCompanion extends UpdateCompanion<SubjectData> {
     this.totalTimeSpent = const Value.absent(),
     this.optinalFocusTime = const Value.absent(),
     this.optinalBreakTime = const Value.absent(),
+    this.rowid = const Value.absent(),
   });
   SubjectCompanion.insert({
     this.id = const Value.absent(),
@@ -2220,23 +2250,25 @@ class SubjectCompanion extends UpdateCompanion<SubjectData> {
     this.totalTimeSpent = const Value.absent(),
     this.optinalFocusTime = const Value.absent(),
     this.optinalBreakTime = const Value.absent(),
+    this.rowid = const Value.absent(),
   })  : name = Value(name),
         address = Value(address),
         createdAt = Value(createdAt),
         updatedAt = Value(updatedAt);
   static Insertable<SubjectData> custom({
-    Expression<int>? id,
+    Expression<String>? id,
     Expression<String>? name,
     Expression<String>? address,
-    Expression<int>? superSubjectID,
+    Expression<String>? superSubjectID,
     Expression<DateTime>? createdAt,
     Expression<DateTime>? updatedAt,
     Expression<int>? subSubjects,
-    Expression<int>? lastFocuzdOnSessionID,
-    Expression<int>? linkSub,
+    Expression<String>? lastFocuzdOnSessionID,
+    Expression<String>? linkSub,
     Expression<int>? totalTimeSpent,
     Expression<int>? optinalFocusTime,
     Expression<int>? optinalBreakTime,
+    Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -2252,22 +2284,24 @@ class SubjectCompanion extends UpdateCompanion<SubjectData> {
       if (totalTimeSpent != null) 'total_time_spent': totalTimeSpent,
       if (optinalFocusTime != null) 'optinal_focus_time': optinalFocusTime,
       if (optinalBreakTime != null) 'optinal_break_time': optinalBreakTime,
+      if (rowid != null) 'rowid': rowid,
     });
   }
 
   SubjectCompanion copyWith(
-      {Value<int>? id,
+      {Value<String>? id,
       Value<String>? name,
       Value<String>? address,
-      Value<int?>? superSubjectID,
+      Value<String?>? superSubjectID,
       Value<DateTime>? createdAt,
       Value<DateTime>? updatedAt,
       Value<int>? subSubjects,
-      Value<int?>? lastFocuzdOnSessionID,
-      Value<int?>? linkSub,
+      Value<String?>? lastFocuzdOnSessionID,
+      Value<String?>? linkSub,
       Value<int>? totalTimeSpent,
       Value<int?>? optinalFocusTime,
-      Value<int?>? optinalBreakTime}) {
+      Value<int?>? optinalBreakTime,
+      Value<int>? rowid}) {
     return SubjectCompanion(
       id: id ?? this.id,
       name: name ?? this.name,
@@ -2282,6 +2316,7 @@ class SubjectCompanion extends UpdateCompanion<SubjectData> {
       totalTimeSpent: totalTimeSpent ?? this.totalTimeSpent,
       optinalFocusTime: optinalFocusTime ?? this.optinalFocusTime,
       optinalBreakTime: optinalBreakTime ?? this.optinalBreakTime,
+      rowid: rowid ?? this.rowid,
     );
   }
 
@@ -2289,7 +2324,7 @@ class SubjectCompanion extends UpdateCompanion<SubjectData> {
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     if (id.present) {
-      map['id'] = Variable<int>(id.value);
+      map['id'] = Variable<String>(id.value);
     }
     if (name.present) {
       map['name'] = Variable<String>(name.value);
@@ -2298,7 +2333,7 @@ class SubjectCompanion extends UpdateCompanion<SubjectData> {
       map['address'] = Variable<String>(address.value);
     }
     if (superSubjectID.present) {
-      map['super_subject_i_d'] = Variable<int>(superSubjectID.value);
+      map['super_subject_i_d'] = Variable<String>(superSubjectID.value);
     }
     if (createdAt.present) {
       map['created_at'] = Variable<DateTime>(createdAt.value);
@@ -2311,10 +2346,10 @@ class SubjectCompanion extends UpdateCompanion<SubjectData> {
     }
     if (lastFocuzdOnSessionID.present) {
       map['last_focuzd_on_session_i_d'] =
-          Variable<int>(lastFocuzdOnSessionID.value);
+          Variable<String>(lastFocuzdOnSessionID.value);
     }
     if (linkSub.present) {
-      map['link_sub'] = Variable<int>(linkSub.value);
+      map['link_sub'] = Variable<String>(linkSub.value);
     }
     if (totalTimeSpent.present) {
       map['total_time_spent'] = Variable<int>(totalTimeSpent.value);
@@ -2324,6 +2359,9 @@ class SubjectCompanion extends UpdateCompanion<SubjectData> {
     }
     if (optinalBreakTime.present) {
       map['optinal_break_time'] = Variable<int>(optinalBreakTime.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
     }
     return map;
   }
@@ -2342,7 +2380,8 @@ class SubjectCompanion extends UpdateCompanion<SubjectData> {
           ..write('linkSub: $linkSub, ')
           ..write('totalTimeSpent: $totalTimeSpent, ')
           ..write('optinalFocusTime: $optinalFocusTime, ')
-          ..write('optinalBreakTime: $optinalBreakTime')
+          ..write('optinalBreakTime: $optinalBreakTime, ')
+          ..write('rowid: $rowid')
           ..write(')'))
         .toString();
   }
@@ -2356,19 +2395,17 @@ class $OutPlanningVariableTable extends OutPlanningVariable
   $OutPlanningVariableTable(this.attachedDatabase, [this._alias]);
   static const VerificationMeta _idMeta = const VerificationMeta('id');
   @override
-  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
       'id', aliasedName, false,
-      hasAutoIncrement: true,
-      type: DriftSqlType.int,
+      type: DriftSqlType.string,
       requiredDuringInsert: false,
-      defaultConstraints:
-          GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'));
+      clientDefault: () => const Uuid().v4());
   static const VerificationMeta _memoryCountdownIDMeta =
       const VerificationMeta('memoryCountdownID');
   @override
-  late final GeneratedColumn<int> memoryCountdownID = GeneratedColumn<int>(
-      'memory_countdown_i_d', aliasedName, false,
-      type: DriftSqlType.int, requiredDuringInsert: true);
+  late final GeneratedColumn<String> memoryCountdownID =
+      GeneratedColumn<String>('memory_countdown_i_d', aliasedName, false,
+          type: DriftSqlType.string, requiredDuringInsert: true);
   static const VerificationMeta _startingTimeMeta =
       const VerificationMeta('startingTime');
   @override
@@ -2469,9 +2506,9 @@ class $OutPlanningVariableTable extends OutPlanningVariable
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return OutPlanningVariableData(
       id: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
+          .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
       memoryCountdownID: attachedDatabase.typeMapping.read(
-          DriftSqlType.int, data['${effectivePrefix}memory_countdown_i_d'])!,
+          DriftSqlType.string, data['${effectivePrefix}memory_countdown_i_d'])!,
       startingTime: attachedDatabase.typeMapping
           .read(DriftSqlType.dateTime, data['${effectivePrefix}starting_time']),
       finishTime: attachedDatabase.typeMapping
@@ -2493,8 +2530,8 @@ class $OutPlanningVariableTable extends OutPlanningVariable
 
 class OutPlanningVariableData extends DataClass
     implements Insertable<OutPlanningVariableData> {
-  final int id;
-  final int memoryCountdownID;
+  final String id;
+  final String memoryCountdownID;
   final DateTime? startingTime;
   final DateTime? finishTime;
   final int? duration;
@@ -2511,8 +2548,8 @@ class OutPlanningVariableData extends DataClass
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    map['id'] = Variable<int>(id);
-    map['memory_countdown_i_d'] = Variable<int>(memoryCountdownID);
+    map['id'] = Variable<String>(id);
+    map['memory_countdown_i_d'] = Variable<String>(memoryCountdownID);
     if (!nullToAbsent || startingTime != null) {
       map['starting_time'] = Variable<DateTime>(startingTime);
     }
@@ -2551,8 +2588,8 @@ class OutPlanningVariableData extends DataClass
       {ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return OutPlanningVariableData(
-      id: serializer.fromJson<int>(json['id']),
-      memoryCountdownID: serializer.fromJson<int>(json['memoryCountdownID']),
+      id: serializer.fromJson<String>(json['id']),
+      memoryCountdownID: serializer.fromJson<String>(json['memoryCountdownID']),
       startingTime: serializer.fromJson<DateTime?>(json['startingTime']),
       finishTime: serializer.fromJson<DateTime?>(json['finishTime']),
       duration: serializer.fromJson<int?>(json['duration']),
@@ -2564,8 +2601,8 @@ class OutPlanningVariableData extends DataClass
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
-      'id': serializer.toJson<int>(id),
-      'memoryCountdownID': serializer.toJson<int>(memoryCountdownID),
+      'id': serializer.toJson<String>(id),
+      'memoryCountdownID': serializer.toJson<String>(memoryCountdownID),
       'startingTime': serializer.toJson<DateTime?>(startingTime),
       'finishTime': serializer.toJson<DateTime?>(finishTime),
       'duration': serializer.toJson<int?>(duration),
@@ -2575,8 +2612,8 @@ class OutPlanningVariableData extends DataClass
   }
 
   OutPlanningVariableData copyWith(
-          {int? id,
-          int? memoryCountdownID,
+          {String? id,
+          String? memoryCountdownID,
           Value<DateTime?> startingTime = const Value.absent(),
           Value<DateTime?> finishTime = const Value.absent(),
           Value<int?> duration = const Value.absent(),
@@ -2641,13 +2678,14 @@ class OutPlanningVariableData extends DataClass
 
 class OutPlanningVariableCompanion
     extends UpdateCompanion<OutPlanningVariableData> {
-  final Value<int> id;
-  final Value<int> memoryCountdownID;
+  final Value<String> id;
+  final Value<String> memoryCountdownID;
   final Value<DateTime?> startingTime;
   final Value<DateTime?> finishTime;
   final Value<int?> duration;
   final Value<String?> type;
   final Value<bool> isActive;
+  final Value<int> rowid;
   const OutPlanningVariableCompanion({
     this.id = const Value.absent(),
     this.memoryCountdownID = const Value.absent(),
@@ -2656,24 +2694,27 @@ class OutPlanningVariableCompanion
     this.duration = const Value.absent(),
     this.type = const Value.absent(),
     this.isActive = const Value.absent(),
+    this.rowid = const Value.absent(),
   });
   OutPlanningVariableCompanion.insert({
     this.id = const Value.absent(),
-    required int memoryCountdownID,
+    required String memoryCountdownID,
     this.startingTime = const Value.absent(),
     this.finishTime = const Value.absent(),
     this.duration = const Value.absent(),
     this.type = const Value.absent(),
     this.isActive = const Value.absent(),
+    this.rowid = const Value.absent(),
   }) : memoryCountdownID = Value(memoryCountdownID);
   static Insertable<OutPlanningVariableData> custom({
-    Expression<int>? id,
-    Expression<int>? memoryCountdownID,
+    Expression<String>? id,
+    Expression<String>? memoryCountdownID,
     Expression<DateTime>? startingTime,
     Expression<DateTime>? finishTime,
     Expression<int>? duration,
     Expression<String>? type,
     Expression<bool>? isActive,
+    Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -2683,17 +2724,19 @@ class OutPlanningVariableCompanion
       if (duration != null) 'duration': duration,
       if (type != null) 'type': type,
       if (isActive != null) 'is_active': isActive,
+      if (rowid != null) 'rowid': rowid,
     });
   }
 
   OutPlanningVariableCompanion copyWith(
-      {Value<int>? id,
-      Value<int>? memoryCountdownID,
+      {Value<String>? id,
+      Value<String>? memoryCountdownID,
       Value<DateTime?>? startingTime,
       Value<DateTime?>? finishTime,
       Value<int?>? duration,
       Value<String?>? type,
-      Value<bool>? isActive}) {
+      Value<bool>? isActive,
+      Value<int>? rowid}) {
     return OutPlanningVariableCompanion(
       id: id ?? this.id,
       memoryCountdownID: memoryCountdownID ?? this.memoryCountdownID,
@@ -2702,6 +2745,7 @@ class OutPlanningVariableCompanion
       duration: duration ?? this.duration,
       type: type ?? this.type,
       isActive: isActive ?? this.isActive,
+      rowid: rowid ?? this.rowid,
     );
   }
 
@@ -2709,10 +2753,10 @@ class OutPlanningVariableCompanion
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     if (id.present) {
-      map['id'] = Variable<int>(id.value);
+      map['id'] = Variable<String>(id.value);
     }
     if (memoryCountdownID.present) {
-      map['memory_countdown_i_d'] = Variable<int>(memoryCountdownID.value);
+      map['memory_countdown_i_d'] = Variable<String>(memoryCountdownID.value);
     }
     if (startingTime.present) {
       map['starting_time'] = Variable<DateTime>(startingTime.value);
@@ -2729,6 +2773,9 @@ class OutPlanningVariableCompanion
     if (isActive.present) {
       map['is_active'] = Variable<bool>(isActive.value);
     }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
     return map;
   }
 
@@ -2741,7 +2788,8 @@ class OutPlanningVariableCompanion
           ..write('finishTime: $finishTime, ')
           ..write('duration: $duration, ')
           ..write('type: $type, ')
-          ..write('isActive: $isActive')
+          ..write('isActive: $isActive, ')
+          ..write('rowid: $rowid')
           ..write(')'))
         .toString();
   }
@@ -2754,13 +2802,11 @@ class $GoalTable extends Goal with TableInfo<$GoalTable, GoalData> {
   $GoalTable(this.attachedDatabase, [this._alias]);
   static const VerificationMeta _idMeta = const VerificationMeta('id');
   @override
-  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
       'id', aliasedName, false,
-      hasAutoIncrement: true,
-      type: DriftSqlType.int,
+      type: DriftSqlType.string,
       requiredDuringInsert: false,
-      defaultConstraints:
-          GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'));
+      clientDefault: () => const Uuid().v4());
   static const VerificationMeta _codeNameMeta =
       const VerificationMeta('codeName');
   @override
@@ -2841,9 +2887,9 @@ class $GoalTable extends Goal with TableInfo<$GoalTable, GoalData> {
   static const VerificationMeta _subjectIdZMeta =
       const VerificationMeta('subjectIdZ');
   @override
-  late final GeneratedColumn<int> subjectIdZ = GeneratedColumn<int>(
+  late final GeneratedColumn<String> subjectIdZ = GeneratedColumn<String>(
       'subject_id_z', aliasedName, true,
-      type: DriftSqlType.int, requiredDuringInsert: false);
+      type: DriftSqlType.string, requiredDuringInsert: false);
   static const VerificationMeta _xSessionsZMeta =
       const VerificationMeta('xSessionsZ');
   @override
@@ -2853,9 +2899,9 @@ class $GoalTable extends Goal with TableInfo<$GoalTable, GoalData> {
   static const VerificationMeta _subjectIdFMeta =
       const VerificationMeta('subjectIdF');
   @override
-  late final GeneratedColumn<int> subjectIdF = GeneratedColumn<int>(
+  late final GeneratedColumn<String> subjectIdF = GeneratedColumn<String>(
       'subject_id_f', aliasedName, true,
-      type: DriftSqlType.int, requiredDuringInsert: false);
+      type: DriftSqlType.string, requiredDuringInsert: false);
   static const VerificationMeta _xSessionsFMeta =
       const VerificationMeta('xSessionsF');
   @override
@@ -3025,7 +3071,7 @@ class $GoalTable extends Goal with TableInfo<$GoalTable, GoalData> {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return GoalData(
       id: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
+          .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
       codeName: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}code_name'])!,
       type: attachedDatabase.typeMapping
@@ -3053,11 +3099,11 @@ class $GoalTable extends Goal with TableInfo<$GoalTable, GoalData> {
       xSessionsR: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}x_sessions_r']),
       subjectIdZ: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}subject_id_z']),
+          .read(DriftSqlType.string, data['${effectivePrefix}subject_id_z']),
       xSessionsZ: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}x_sessions_z']),
       subjectIdF: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}subject_id_f']),
+          .read(DriftSqlType.string, data['${effectivePrefix}subject_id_f']),
       xSessionsF: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}x_sessions_f']),
       successPercentage: attachedDatabase.typeMapping.read(
@@ -3072,7 +3118,7 @@ class $GoalTable extends Goal with TableInfo<$GoalTable, GoalData> {
 }
 
 class GoalData extends DataClass implements Insertable<GoalData> {
-  final int id;
+  final String id;
   final String codeName;
   final int type;
   final DateTime createdAt;
@@ -3086,9 +3132,9 @@ class GoalData extends DataClass implements Insertable<GoalData> {
   final double? plannedRatio;
   final double? realRatio;
   final int? xSessionsR;
-  final int? subjectIdZ;
+  final String? subjectIdZ;
   final int? xSessionsZ;
-  final int? subjectIdF;
+  final String? subjectIdF;
   final int? xSessionsF;
   final double successPercentage;
   const GoalData(
@@ -3114,7 +3160,7 @@ class GoalData extends DataClass implements Insertable<GoalData> {
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    map['id'] = Variable<int>(id);
+    map['id'] = Variable<String>(id);
     map['code_name'] = Variable<String>(codeName);
     map['type'] = Variable<int>(type);
     map['created_at'] = Variable<DateTime>(createdAt);
@@ -3143,13 +3189,13 @@ class GoalData extends DataClass implements Insertable<GoalData> {
       map['x_sessions_r'] = Variable<int>(xSessionsR);
     }
     if (!nullToAbsent || subjectIdZ != null) {
-      map['subject_id_z'] = Variable<int>(subjectIdZ);
+      map['subject_id_z'] = Variable<String>(subjectIdZ);
     }
     if (!nullToAbsent || xSessionsZ != null) {
       map['x_sessions_z'] = Variable<int>(xSessionsZ);
     }
     if (!nullToAbsent || subjectIdF != null) {
-      map['subject_id_f'] = Variable<int>(subjectIdF);
+      map['subject_id_f'] = Variable<String>(subjectIdF);
     }
     if (!nullToAbsent || xSessionsF != null) {
       map['x_sessions_f'] = Variable<int>(xSessionsF);
@@ -3208,7 +3254,7 @@ class GoalData extends DataClass implements Insertable<GoalData> {
       {ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return GoalData(
-      id: serializer.fromJson<int>(json['id']),
+      id: serializer.fromJson<String>(json['id']),
       codeName: serializer.fromJson<String>(json['codeName']),
       type: serializer.fromJson<int>(json['type']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
@@ -3222,9 +3268,9 @@ class GoalData extends DataClass implements Insertable<GoalData> {
       plannedRatio: serializer.fromJson<double?>(json['plannedRatio']),
       realRatio: serializer.fromJson<double?>(json['realRatio']),
       xSessionsR: serializer.fromJson<int?>(json['xSessionsR']),
-      subjectIdZ: serializer.fromJson<int?>(json['subjectIdZ']),
+      subjectIdZ: serializer.fromJson<String?>(json['subjectIdZ']),
       xSessionsZ: serializer.fromJson<int?>(json['xSessionsZ']),
-      subjectIdF: serializer.fromJson<int?>(json['subjectIdF']),
+      subjectIdF: serializer.fromJson<String?>(json['subjectIdF']),
       xSessionsF: serializer.fromJson<int?>(json['xSessionsF']),
       successPercentage: serializer.fromJson<double>(json['successPercentage']),
     );
@@ -3233,7 +3279,7 @@ class GoalData extends DataClass implements Insertable<GoalData> {
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
-      'id': serializer.toJson<int>(id),
+      'id': serializer.toJson<String>(id),
       'codeName': serializer.toJson<String>(codeName),
       'type': serializer.toJson<int>(type),
       'createdAt': serializer.toJson<DateTime>(createdAt),
@@ -3247,16 +3293,16 @@ class GoalData extends DataClass implements Insertable<GoalData> {
       'plannedRatio': serializer.toJson<double?>(plannedRatio),
       'realRatio': serializer.toJson<double?>(realRatio),
       'xSessionsR': serializer.toJson<int?>(xSessionsR),
-      'subjectIdZ': serializer.toJson<int?>(subjectIdZ),
+      'subjectIdZ': serializer.toJson<String?>(subjectIdZ),
       'xSessionsZ': serializer.toJson<int?>(xSessionsZ),
-      'subjectIdF': serializer.toJson<int?>(subjectIdF),
+      'subjectIdF': serializer.toJson<String?>(subjectIdF),
       'xSessionsF': serializer.toJson<int?>(xSessionsF),
       'successPercentage': serializer.toJson<double>(successPercentage),
     };
   }
 
   GoalData copyWith(
-          {int? id,
+          {String? id,
           String? codeName,
           int? type,
           DateTime? createdAt,
@@ -3270,9 +3316,9 @@ class GoalData extends DataClass implements Insertable<GoalData> {
           Value<double?> plannedRatio = const Value.absent(),
           Value<double?> realRatio = const Value.absent(),
           Value<int?> xSessionsR = const Value.absent(),
-          Value<int?> subjectIdZ = const Value.absent(),
+          Value<String?> subjectIdZ = const Value.absent(),
           Value<int?> xSessionsZ = const Value.absent(),
-          Value<int?> subjectIdF = const Value.absent(),
+          Value<String?> subjectIdF = const Value.absent(),
           Value<int?> xSessionsF = const Value.absent(),
           double? successPercentage}) =>
       GoalData(
@@ -3416,7 +3462,7 @@ class GoalData extends DataClass implements Insertable<GoalData> {
 }
 
 class GoalCompanion extends UpdateCompanion<GoalData> {
-  final Value<int> id;
+  final Value<String> id;
   final Value<String> codeName;
   final Value<int> type;
   final Value<DateTime> createdAt;
@@ -3430,11 +3476,12 @@ class GoalCompanion extends UpdateCompanion<GoalData> {
   final Value<double?> plannedRatio;
   final Value<double?> realRatio;
   final Value<int?> xSessionsR;
-  final Value<int?> subjectIdZ;
+  final Value<String?> subjectIdZ;
   final Value<int?> xSessionsZ;
-  final Value<int?> subjectIdF;
+  final Value<String?> subjectIdF;
   final Value<int?> xSessionsF;
   final Value<double> successPercentage;
+  final Value<int> rowid;
   const GoalCompanion({
     this.id = const Value.absent(),
     this.codeName = const Value.absent(),
@@ -3455,6 +3502,7 @@ class GoalCompanion extends UpdateCompanion<GoalData> {
     this.subjectIdF = const Value.absent(),
     this.xSessionsF = const Value.absent(),
     this.successPercentage = const Value.absent(),
+    this.rowid = const Value.absent(),
   });
   GoalCompanion.insert({
     this.id = const Value.absent(),
@@ -3476,6 +3524,7 @@ class GoalCompanion extends UpdateCompanion<GoalData> {
     this.subjectIdF = const Value.absent(),
     this.xSessionsF = const Value.absent(),
     this.successPercentage = const Value.absent(),
+    this.rowid = const Value.absent(),
   })  : codeName = Value(codeName),
         type = Value(type),
         createdAt = Value(createdAt),
@@ -3483,7 +3532,7 @@ class GoalCompanion extends UpdateCompanion<GoalData> {
         startPeriod2 = Value(startPeriod2),
         endPeriod2 = Value(endPeriod2);
   static Insertable<GoalData> custom({
-    Expression<int>? id,
+    Expression<String>? id,
     Expression<String>? codeName,
     Expression<int>? type,
     Expression<DateTime>? createdAt,
@@ -3497,11 +3546,12 @@ class GoalCompanion extends UpdateCompanion<GoalData> {
     Expression<double>? plannedRatio,
     Expression<double>? realRatio,
     Expression<int>? xSessionsR,
-    Expression<int>? subjectIdZ,
+    Expression<String>? subjectIdZ,
     Expression<int>? xSessionsZ,
-    Expression<int>? subjectIdF,
+    Expression<String>? subjectIdF,
     Expression<int>? xSessionsF,
     Expression<double>? successPercentage,
+    Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -3523,11 +3573,12 @@ class GoalCompanion extends UpdateCompanion<GoalData> {
       if (subjectIdF != null) 'subject_id_f': subjectIdF,
       if (xSessionsF != null) 'x_sessions_f': xSessionsF,
       if (successPercentage != null) 'success_percentage': successPercentage,
+      if (rowid != null) 'rowid': rowid,
     });
   }
 
   GoalCompanion copyWith(
-      {Value<int>? id,
+      {Value<String>? id,
       Value<String>? codeName,
       Value<int>? type,
       Value<DateTime>? createdAt,
@@ -3541,11 +3592,12 @@ class GoalCompanion extends UpdateCompanion<GoalData> {
       Value<double?>? plannedRatio,
       Value<double?>? realRatio,
       Value<int?>? xSessionsR,
-      Value<int?>? subjectIdZ,
+      Value<String?>? subjectIdZ,
       Value<int?>? xSessionsZ,
-      Value<int?>? subjectIdF,
+      Value<String?>? subjectIdF,
       Value<int?>? xSessionsF,
-      Value<double>? successPercentage}) {
+      Value<double>? successPercentage,
+      Value<int>? rowid}) {
     return GoalCompanion(
       id: id ?? this.id,
       codeName: codeName ?? this.codeName,
@@ -3566,6 +3618,7 @@ class GoalCompanion extends UpdateCompanion<GoalData> {
       subjectIdF: subjectIdF ?? this.subjectIdF,
       xSessionsF: xSessionsF ?? this.xSessionsF,
       successPercentage: successPercentage ?? this.successPercentage,
+      rowid: rowid ?? this.rowid,
     );
   }
 
@@ -3573,7 +3626,7 @@ class GoalCompanion extends UpdateCompanion<GoalData> {
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     if (id.present) {
-      map['id'] = Variable<int>(id.value);
+      map['id'] = Variable<String>(id.value);
     }
     if (codeName.present) {
       map['code_name'] = Variable<String>(codeName.value);
@@ -3615,19 +3668,22 @@ class GoalCompanion extends UpdateCompanion<GoalData> {
       map['x_sessions_r'] = Variable<int>(xSessionsR.value);
     }
     if (subjectIdZ.present) {
-      map['subject_id_z'] = Variable<int>(subjectIdZ.value);
+      map['subject_id_z'] = Variable<String>(subjectIdZ.value);
     }
     if (xSessionsZ.present) {
       map['x_sessions_z'] = Variable<int>(xSessionsZ.value);
     }
     if (subjectIdF.present) {
-      map['subject_id_f'] = Variable<int>(subjectIdF.value);
+      map['subject_id_f'] = Variable<String>(subjectIdF.value);
     }
     if (xSessionsF.present) {
       map['x_sessions_f'] = Variable<int>(xSessionsF.value);
     }
     if (successPercentage.present) {
       map['success_percentage'] = Variable<double>(successPercentage.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
     }
     return map;
   }
@@ -3653,7 +3709,8 @@ class GoalCompanion extends UpdateCompanion<GoalData> {
           ..write('xSessionsZ: $xSessionsZ, ')
           ..write('subjectIdF: $subjectIdF, ')
           ..write('xSessionsF: $xSessionsF, ')
-          ..write('successPercentage: $successPercentage')
+          ..write('successPercentage: $successPercentage, ')
+          ..write('rowid: $rowid')
           ..write(')'))
         .toString();
   }
@@ -3687,23 +3744,25 @@ abstract class _$AppDatabase extends GeneratedDatabase {
 
 typedef $$SettingsVariablesTableCreateCompanionBuilder
     = SettingsVariablesCompanion Function({
-  Value<int> id,
+  Value<String> id,
   required bool windowOnTop,
   required int requestedNumberOfSessions,
   required int selectedBreakDurationStored,
   required int selectedFocusDurationStored,
   required int selectedLongBreakDurationStored,
   Value<bool> roundPlanningByDefault,
+  Value<int> rowid,
 });
 typedef $$SettingsVariablesTableUpdateCompanionBuilder
     = SettingsVariablesCompanion Function({
-  Value<int> id,
+  Value<String> id,
   Value<bool> windowOnTop,
   Value<int> requestedNumberOfSessions,
   Value<int> selectedBreakDurationStored,
   Value<int> selectedFocusDurationStored,
   Value<int> selectedLongBreakDurationStored,
   Value<bool> roundPlanningByDefault,
+  Value<int> rowid,
 });
 
 class $$SettingsVariablesTableFilterComposer
@@ -3715,7 +3774,7 @@ class $$SettingsVariablesTableFilterComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  ColumnFilters<int> get id => $composableBuilder(
+  ColumnFilters<String> get id => $composableBuilder(
       column: $table.id, builder: (column) => ColumnFilters(column));
 
   ColumnFilters<bool> get windowOnTop => $composableBuilder(
@@ -3751,7 +3810,7 @@ class $$SettingsVariablesTableOrderingComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  ColumnOrderings<int> get id => $composableBuilder(
+  ColumnOrderings<String> get id => $composableBuilder(
       column: $table.id, builder: (column) => ColumnOrderings(column));
 
   ColumnOrderings<bool> get windowOnTop => $composableBuilder(
@@ -3788,7 +3847,7 @@ class $$SettingsVariablesTableAnnotationComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  GeneratedColumn<int> get id =>
+  GeneratedColumn<String> get id =>
       $composableBuilder(column: $table.id, builder: (column) => column);
 
   GeneratedColumn<bool> get windowOnTop => $composableBuilder(
@@ -3840,13 +3899,14 @@ class $$SettingsVariablesTableTableManager extends RootTableManager<
               $$SettingsVariablesTableAnnotationComposer(
                   $db: db, $table: table),
           updateCompanionCallback: ({
-            Value<int> id = const Value.absent(),
+            Value<String> id = const Value.absent(),
             Value<bool> windowOnTop = const Value.absent(),
             Value<int> requestedNumberOfSessions = const Value.absent(),
             Value<int> selectedBreakDurationStored = const Value.absent(),
             Value<int> selectedFocusDurationStored = const Value.absent(),
             Value<int> selectedLongBreakDurationStored = const Value.absent(),
             Value<bool> roundPlanningByDefault = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
           }) =>
               SettingsVariablesCompanion(
             id: id,
@@ -3856,15 +3916,17 @@ class $$SettingsVariablesTableTableManager extends RootTableManager<
             selectedFocusDurationStored: selectedFocusDurationStored,
             selectedLongBreakDurationStored: selectedLongBreakDurationStored,
             roundPlanningByDefault: roundPlanningByDefault,
+            rowid: rowid,
           ),
           createCompanionCallback: ({
-            Value<int> id = const Value.absent(),
+            Value<String> id = const Value.absent(),
             required bool windowOnTop,
             required int requestedNumberOfSessions,
             required int selectedBreakDurationStored,
             required int selectedFocusDurationStored,
             required int selectedLongBreakDurationStored,
             Value<bool> roundPlanningByDefault = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
           }) =>
               SettingsVariablesCompanion.insert(
             id: id,
@@ -3874,6 +3936,7 @@ class $$SettingsVariablesTableTableManager extends RootTableManager<
             selectedFocusDurationStored: selectedFocusDurationStored,
             selectedLongBreakDurationStored: selectedLongBreakDurationStored,
             roundPlanningByDefault: roundPlanningByDefault,
+            rowid: rowid,
           ),
           withReferenceMapper: (p0) => p0
               .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
@@ -3899,9 +3962,9 @@ typedef $$SettingsVariablesTableProcessedTableManager = ProcessedTableManager<
     PrefetchHooks Function()>;
 typedef $$MemoryCountdownVariableTableCreateCompanionBuilder
     = MemoryCountdownVariableCompanion Function({
-  Value<int> id,
+  Value<String> id,
   required int roundGoal,
-  required int roundId,
+  required String roundId,
   Value<String?> propableCause,
   Value<int?> durationLeft,
   required int roundRunTime,
@@ -3914,13 +3977,14 @@ typedef $$MemoryCountdownVariableTableCreateCompanionBuilder
   Value<bool?> completed,
   Value<bool> active,
   required String type,
-  Value<int?> subject,
+  Value<String?> subject,
+  Value<int> rowid,
 });
 typedef $$MemoryCountdownVariableTableUpdateCompanionBuilder
     = MemoryCountdownVariableCompanion Function({
-  Value<int> id,
+  Value<String> id,
   Value<int> roundGoal,
-  Value<int> roundId,
+  Value<String> roundId,
   Value<String?> propableCause,
   Value<int?> durationLeft,
   Value<int> roundRunTime,
@@ -3933,7 +3997,8 @@ typedef $$MemoryCountdownVariableTableUpdateCompanionBuilder
   Value<bool?> completed,
   Value<bool> active,
   Value<String> type,
-  Value<int?> subject,
+  Value<String?> subject,
+  Value<int> rowid,
 });
 
 final class $$MemoryCountdownVariableTableReferences extends BaseReferences<
@@ -3948,8 +4013,8 @@ final class $$MemoryCountdownVariableTableReferences extends BaseReferences<
               db.memoryCountdownVariable.id, db.subject.lastFocuzdOnSessionID));
 
   $$SubjectTableProcessedTableManager get subjectRefs {
-    final manager = $$SubjectTableTableManager($_db, $_db.subject).filter(
-        (f) => f.lastFocuzdOnSessionID.id.sqlEquals($_itemColumn<int>('id')!));
+    final manager = $$SubjectTableTableManager($_db, $_db.subject).filter((f) =>
+        f.lastFocuzdOnSessionID.id.sqlEquals($_itemColumn<String>('id')!));
 
     final cache = $_typedResult.readTableOrNull(_subjectRefsTable($_db));
     return ProcessedTableManager(
@@ -3966,13 +4031,13 @@ class $$MemoryCountdownVariableTableFilterComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  ColumnFilters<int> get id => $composableBuilder(
+  ColumnFilters<String> get id => $composableBuilder(
       column: $table.id, builder: (column) => ColumnFilters(column));
 
   ColumnFilters<int> get roundGoal => $composableBuilder(
       column: $table.roundGoal, builder: (column) => ColumnFilters(column));
 
-  ColumnFilters<int> get roundId => $composableBuilder(
+  ColumnFilters<String> get roundId => $composableBuilder(
       column: $table.roundId, builder: (column) => ColumnFilters(column));
 
   ColumnFilters<String> get propableCause => $composableBuilder(
@@ -4014,7 +4079,7 @@ class $$MemoryCountdownVariableTableFilterComposer
   ColumnFilters<String> get type => $composableBuilder(
       column: $table.type, builder: (column) => ColumnFilters(column));
 
-  ColumnFilters<int> get subject => $composableBuilder(
+  ColumnFilters<String> get subject => $composableBuilder(
       column: $table.subject, builder: (column) => ColumnFilters(column));
 
   Expression<bool> subjectRefs(
@@ -4048,13 +4113,13 @@ class $$MemoryCountdownVariableTableOrderingComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  ColumnOrderings<int> get id => $composableBuilder(
+  ColumnOrderings<String> get id => $composableBuilder(
       column: $table.id, builder: (column) => ColumnOrderings(column));
 
   ColumnOrderings<int> get roundGoal => $composableBuilder(
       column: $table.roundGoal, builder: (column) => ColumnOrderings(column));
 
-  ColumnOrderings<int> get roundId => $composableBuilder(
+  ColumnOrderings<String> get roundId => $composableBuilder(
       column: $table.roundId, builder: (column) => ColumnOrderings(column));
 
   ColumnOrderings<String> get propableCause => $composableBuilder(
@@ -4101,7 +4166,7 @@ class $$MemoryCountdownVariableTableOrderingComposer
   ColumnOrderings<String> get type => $composableBuilder(
       column: $table.type, builder: (column) => ColumnOrderings(column));
 
-  ColumnOrderings<int> get subject => $composableBuilder(
+  ColumnOrderings<String> get subject => $composableBuilder(
       column: $table.subject, builder: (column) => ColumnOrderings(column));
 }
 
@@ -4114,13 +4179,13 @@ class $$MemoryCountdownVariableTableAnnotationComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  GeneratedColumn<int> get id =>
+  GeneratedColumn<String> get id =>
       $composableBuilder(column: $table.id, builder: (column) => column);
 
   GeneratedColumn<int> get roundGoal =>
       $composableBuilder(column: $table.roundGoal, builder: (column) => column);
 
-  GeneratedColumn<int> get roundId =>
+  GeneratedColumn<String> get roundId =>
       $composableBuilder(column: $table.roundId, builder: (column) => column);
 
   GeneratedColumn<String> get propableCause => $composableBuilder(
@@ -4159,7 +4224,7 @@ class $$MemoryCountdownVariableTableAnnotationComposer
   GeneratedColumn<String> get type =>
       $composableBuilder(column: $table.type, builder: (column) => column);
 
-  GeneratedColumn<int> get subject =>
+  GeneratedColumn<String> get subject =>
       $composableBuilder(column: $table.subject, builder: (column) => column);
 
   Expression<T> subjectRefs<T extends Object>(
@@ -4211,9 +4276,9 @@ class $$MemoryCountdownVariableTableTableManager extends RootTableManager<
               $$MemoryCountdownVariableTableAnnotationComposer(
                   $db: db, $table: table),
           updateCompanionCallback: ({
-            Value<int> id = const Value.absent(),
+            Value<String> id = const Value.absent(),
             Value<int> roundGoal = const Value.absent(),
-            Value<int> roundId = const Value.absent(),
+            Value<String> roundId = const Value.absent(),
             Value<String?> propableCause = const Value.absent(),
             Value<int?> durationLeft = const Value.absent(),
             Value<int> roundRunTime = const Value.absent(),
@@ -4226,7 +4291,8 @@ class $$MemoryCountdownVariableTableTableManager extends RootTableManager<
             Value<bool?> completed = const Value.absent(),
             Value<bool> active = const Value.absent(),
             Value<String> type = const Value.absent(),
-            Value<int?> subject = const Value.absent(),
+            Value<String?> subject = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
           }) =>
               MemoryCountdownVariableCompanion(
             id: id,
@@ -4245,11 +4311,12 @@ class $$MemoryCountdownVariableTableTableManager extends RootTableManager<
             active: active,
             type: type,
             subject: subject,
+            rowid: rowid,
           ),
           createCompanionCallback: ({
-            Value<int> id = const Value.absent(),
+            Value<String> id = const Value.absent(),
             required int roundGoal,
-            required int roundId,
+            required String roundId,
             Value<String?> propableCause = const Value.absent(),
             Value<int?> durationLeft = const Value.absent(),
             required int roundRunTime,
@@ -4262,7 +4329,8 @@ class $$MemoryCountdownVariableTableTableManager extends RootTableManager<
             Value<bool?> completed = const Value.absent(),
             Value<bool> active = const Value.absent(),
             required String type,
-            Value<int?> subject = const Value.absent(),
+            Value<String?> subject = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
           }) =>
               MemoryCountdownVariableCompanion.insert(
             id: id,
@@ -4281,6 +4349,7 @@ class $$MemoryCountdownVariableTableTableManager extends RootTableManager<
             active: active,
             type: type,
             subject: subject,
+            rowid: rowid,
           ),
           withReferenceMapper: (p0) => p0
               .map((e) => (
@@ -4332,7 +4401,7 @@ typedef $$MemoryCountdownVariableTableProcessedTableManager
         PrefetchHooks Function({bool subjectRefs})>;
 typedef $$RoundVariableTableCreateCompanionBuilder = RoundVariableCompanion
     Function({
-  Value<int> id,
+  Value<String> id,
   Value<bool> completed,
   Value<String?> propableCause,
   required int plannedDuration,
@@ -4340,10 +4409,11 @@ typedef $$RoundVariableTableCreateCompanionBuilder = RoundVariableCompanion
   required DateTime startingTime,
   Value<DateTime?> expFinishTime,
   Value<DateTime?> finishTime,
+  Value<int> rowid,
 });
 typedef $$RoundVariableTableUpdateCompanionBuilder = RoundVariableCompanion
     Function({
-  Value<int> id,
+  Value<String> id,
   Value<bool> completed,
   Value<String?> propableCause,
   Value<int> plannedDuration,
@@ -4351,6 +4421,7 @@ typedef $$RoundVariableTableUpdateCompanionBuilder = RoundVariableCompanion
   Value<DateTime> startingTime,
   Value<DateTime?> expFinishTime,
   Value<DateTime?> finishTime,
+  Value<int> rowid,
 });
 
 class $$RoundVariableTableFilterComposer
@@ -4362,7 +4433,7 @@ class $$RoundVariableTableFilterComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  ColumnFilters<int> get id => $composableBuilder(
+  ColumnFilters<String> get id => $composableBuilder(
       column: $table.id, builder: (column) => ColumnFilters(column));
 
   ColumnFilters<bool> get completed => $composableBuilder(
@@ -4398,7 +4469,7 @@ class $$RoundVariableTableOrderingComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  ColumnOrderings<int> get id => $composableBuilder(
+  ColumnOrderings<String> get id => $composableBuilder(
       column: $table.id, builder: (column) => ColumnOrderings(column));
 
   ColumnOrderings<bool> get completed => $composableBuilder(
@@ -4437,7 +4508,7 @@ class $$RoundVariableTableAnnotationComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  GeneratedColumn<int> get id =>
+  GeneratedColumn<String> get id =>
       $composableBuilder(column: $table.id, builder: (column) => column);
 
   GeneratedColumn<bool> get completed =>
@@ -4488,7 +4559,7 @@ class $$RoundVariableTableTableManager extends RootTableManager<
           createComputedFieldComposer: () =>
               $$RoundVariableTableAnnotationComposer($db: db, $table: table),
           updateCompanionCallback: ({
-            Value<int> id = const Value.absent(),
+            Value<String> id = const Value.absent(),
             Value<bool> completed = const Value.absent(),
             Value<String?> propableCause = const Value.absent(),
             Value<int> plannedDuration = const Value.absent(),
@@ -4496,6 +4567,7 @@ class $$RoundVariableTableTableManager extends RootTableManager<
             Value<DateTime> startingTime = const Value.absent(),
             Value<DateTime?> expFinishTime = const Value.absent(),
             Value<DateTime?> finishTime = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
           }) =>
               RoundVariableCompanion(
             id: id,
@@ -4506,9 +4578,10 @@ class $$RoundVariableTableTableManager extends RootTableManager<
             startingTime: startingTime,
             expFinishTime: expFinishTime,
             finishTime: finishTime,
+            rowid: rowid,
           ),
           createCompanionCallback: ({
-            Value<int> id = const Value.absent(),
+            Value<String> id = const Value.absent(),
             Value<bool> completed = const Value.absent(),
             Value<String?> propableCause = const Value.absent(),
             required int plannedDuration,
@@ -4516,6 +4589,7 @@ class $$RoundVariableTableTableManager extends RootTableManager<
             required DateTime startingTime,
             Value<DateTime?> expFinishTime = const Value.absent(),
             Value<DateTime?> finishTime = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
           }) =>
               RoundVariableCompanion.insert(
             id: id,
@@ -4526,6 +4600,7 @@ class $$RoundVariableTableTableManager extends RootTableManager<
             startingTime: startingTime,
             expFinishTime: expFinishTime,
             finishTime: finishTime,
+            rowid: rowid,
           ),
           withReferenceMapper: (p0) => p0
               .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
@@ -4550,32 +4625,34 @@ typedef $$RoundVariableTableProcessedTableManager = ProcessedTableManager<
     RoundVariableData,
     PrefetchHooks Function()>;
 typedef $$SubjectTableCreateCompanionBuilder = SubjectCompanion Function({
-  Value<int> id,
+  Value<String> id,
   required String name,
   required String address,
-  Value<int?> superSubjectID,
+  Value<String?> superSubjectID,
   required DateTime createdAt,
   required DateTime updatedAt,
   Value<int> subSubjects,
-  Value<int?> lastFocuzdOnSessionID,
-  Value<int?> linkSub,
+  Value<String?> lastFocuzdOnSessionID,
+  Value<String?> linkSub,
   Value<int> totalTimeSpent,
   Value<int?> optinalFocusTime,
   Value<int?> optinalBreakTime,
+  Value<int> rowid,
 });
 typedef $$SubjectTableUpdateCompanionBuilder = SubjectCompanion Function({
-  Value<int> id,
+  Value<String> id,
   Value<String> name,
   Value<String> address,
-  Value<int?> superSubjectID,
+  Value<String?> superSubjectID,
   Value<DateTime> createdAt,
   Value<DateTime> updatedAt,
   Value<int> subSubjects,
-  Value<int?> lastFocuzdOnSessionID,
-  Value<int?> linkSub,
+  Value<String?> lastFocuzdOnSessionID,
+  Value<String?> linkSub,
   Value<int> totalTimeSpent,
   Value<int?> optinalFocusTime,
   Value<int?> optinalBreakTime,
+  Value<int> rowid,
 });
 
 final class $$SubjectTableReferences
@@ -4589,7 +4666,7 @@ final class $$SubjectTableReferences
 
   $$MemoryCountdownVariableTableProcessedTableManager?
       get lastFocuzdOnSessionID {
-    final $_column = $_itemColumn<int>('last_focuzd_on_session_i_d');
+    final $_column = $_itemColumn<String>('last_focuzd_on_session_i_d');
     if ($_column == null) return null;
     final manager = $$MemoryCountdownVariableTableTableManager(
             $_db, $_db.memoryCountdownVariable)
@@ -4611,7 +4688,7 @@ class $$SubjectTableFilterComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  ColumnFilters<int> get id => $composableBuilder(
+  ColumnFilters<String> get id => $composableBuilder(
       column: $table.id, builder: (column) => ColumnFilters(column));
 
   ColumnFilters<String> get name => $composableBuilder(
@@ -4620,7 +4697,7 @@ class $$SubjectTableFilterComposer
   ColumnFilters<String> get address => $composableBuilder(
       column: $table.address, builder: (column) => ColumnFilters(column));
 
-  ColumnFilters<int> get superSubjectID => $composableBuilder(
+  ColumnFilters<String> get superSubjectID => $composableBuilder(
       column: $table.superSubjectID,
       builder: (column) => ColumnFilters(column));
 
@@ -4633,7 +4710,7 @@ class $$SubjectTableFilterComposer
   ColumnFilters<int> get subSubjects => $composableBuilder(
       column: $table.subSubjects, builder: (column) => ColumnFilters(column));
 
-  ColumnFilters<int> get linkSub => $composableBuilder(
+  ColumnFilters<String> get linkSub => $composableBuilder(
       column: $table.linkSub, builder: (column) => ColumnFilters(column));
 
   ColumnFilters<int> get totalTimeSpent => $composableBuilder(
@@ -4679,7 +4756,7 @@ class $$SubjectTableOrderingComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  ColumnOrderings<int> get id => $composableBuilder(
+  ColumnOrderings<String> get id => $composableBuilder(
       column: $table.id, builder: (column) => ColumnOrderings(column));
 
   ColumnOrderings<String> get name => $composableBuilder(
@@ -4688,7 +4765,7 @@ class $$SubjectTableOrderingComposer
   ColumnOrderings<String> get address => $composableBuilder(
       column: $table.address, builder: (column) => ColumnOrderings(column));
 
-  ColumnOrderings<int> get superSubjectID => $composableBuilder(
+  ColumnOrderings<String> get superSubjectID => $composableBuilder(
       column: $table.superSubjectID,
       builder: (column) => ColumnOrderings(column));
 
@@ -4701,7 +4778,7 @@ class $$SubjectTableOrderingComposer
   ColumnOrderings<int> get subSubjects => $composableBuilder(
       column: $table.subSubjects, builder: (column) => ColumnOrderings(column));
 
-  ColumnOrderings<int> get linkSub => $composableBuilder(
+  ColumnOrderings<String> get linkSub => $composableBuilder(
       column: $table.linkSub, builder: (column) => ColumnOrderings(column));
 
   ColumnOrderings<int> get totalTimeSpent => $composableBuilder(
@@ -4747,7 +4824,7 @@ class $$SubjectTableAnnotationComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  GeneratedColumn<int> get id =>
+  GeneratedColumn<String> get id =>
       $composableBuilder(column: $table.id, builder: (column) => column);
 
   GeneratedColumn<String> get name =>
@@ -4756,7 +4833,7 @@ class $$SubjectTableAnnotationComposer
   GeneratedColumn<String> get address =>
       $composableBuilder(column: $table.address, builder: (column) => column);
 
-  GeneratedColumn<int> get superSubjectID => $composableBuilder(
+  GeneratedColumn<String> get superSubjectID => $composableBuilder(
       column: $table.superSubjectID, builder: (column) => column);
 
   GeneratedColumn<DateTime> get createdAt =>
@@ -4768,7 +4845,7 @@ class $$SubjectTableAnnotationComposer
   GeneratedColumn<int> get subSubjects => $composableBuilder(
       column: $table.subSubjects, builder: (column) => column);
 
-  GeneratedColumn<int> get linkSub =>
+  GeneratedColumn<String> get linkSub =>
       $composableBuilder(column: $table.linkSub, builder: (column) => column);
 
   GeneratedColumn<int> get totalTimeSpent => $composableBuilder(
@@ -4825,18 +4902,19 @@ class $$SubjectTableTableManager extends RootTableManager<
           createComputedFieldComposer: () =>
               $$SubjectTableAnnotationComposer($db: db, $table: table),
           updateCompanionCallback: ({
-            Value<int> id = const Value.absent(),
+            Value<String> id = const Value.absent(),
             Value<String> name = const Value.absent(),
             Value<String> address = const Value.absent(),
-            Value<int?> superSubjectID = const Value.absent(),
+            Value<String?> superSubjectID = const Value.absent(),
             Value<DateTime> createdAt = const Value.absent(),
             Value<DateTime> updatedAt = const Value.absent(),
             Value<int> subSubjects = const Value.absent(),
-            Value<int?> lastFocuzdOnSessionID = const Value.absent(),
-            Value<int?> linkSub = const Value.absent(),
+            Value<String?> lastFocuzdOnSessionID = const Value.absent(),
+            Value<String?> linkSub = const Value.absent(),
             Value<int> totalTimeSpent = const Value.absent(),
             Value<int?> optinalFocusTime = const Value.absent(),
             Value<int?> optinalBreakTime = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
           }) =>
               SubjectCompanion(
             id: id,
@@ -4851,20 +4929,22 @@ class $$SubjectTableTableManager extends RootTableManager<
             totalTimeSpent: totalTimeSpent,
             optinalFocusTime: optinalFocusTime,
             optinalBreakTime: optinalBreakTime,
+            rowid: rowid,
           ),
           createCompanionCallback: ({
-            Value<int> id = const Value.absent(),
+            Value<String> id = const Value.absent(),
             required String name,
             required String address,
-            Value<int?> superSubjectID = const Value.absent(),
+            Value<String?> superSubjectID = const Value.absent(),
             required DateTime createdAt,
             required DateTime updatedAt,
             Value<int> subSubjects = const Value.absent(),
-            Value<int?> lastFocuzdOnSessionID = const Value.absent(),
-            Value<int?> linkSub = const Value.absent(),
+            Value<String?> lastFocuzdOnSessionID = const Value.absent(),
+            Value<String?> linkSub = const Value.absent(),
             Value<int> totalTimeSpent = const Value.absent(),
             Value<int?> optinalFocusTime = const Value.absent(),
             Value<int?> optinalBreakTime = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
           }) =>
               SubjectCompanion.insert(
             id: id,
@@ -4879,6 +4959,7 @@ class $$SubjectTableTableManager extends RootTableManager<
             totalTimeSpent: totalTimeSpent,
             optinalFocusTime: optinalFocusTime,
             optinalBreakTime: optinalBreakTime,
+            rowid: rowid,
           ),
           withReferenceMapper: (p0) => p0
               .map((e) =>
@@ -4937,23 +5018,25 @@ typedef $$SubjectTableProcessedTableManager = ProcessedTableManager<
     PrefetchHooks Function({bool lastFocuzdOnSessionID})>;
 typedef $$OutPlanningVariableTableCreateCompanionBuilder
     = OutPlanningVariableCompanion Function({
-  Value<int> id,
-  required int memoryCountdownID,
+  Value<String> id,
+  required String memoryCountdownID,
   Value<DateTime?> startingTime,
   Value<DateTime?> finishTime,
   Value<int?> duration,
   Value<String?> type,
   Value<bool> isActive,
+  Value<int> rowid,
 });
 typedef $$OutPlanningVariableTableUpdateCompanionBuilder
     = OutPlanningVariableCompanion Function({
-  Value<int> id,
-  Value<int> memoryCountdownID,
+  Value<String> id,
+  Value<String> memoryCountdownID,
   Value<DateTime?> startingTime,
   Value<DateTime?> finishTime,
   Value<int?> duration,
   Value<String?> type,
   Value<bool> isActive,
+  Value<int> rowid,
 });
 
 class $$OutPlanningVariableTableFilterComposer
@@ -4965,10 +5048,10 @@ class $$OutPlanningVariableTableFilterComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  ColumnFilters<int> get id => $composableBuilder(
+  ColumnFilters<String> get id => $composableBuilder(
       column: $table.id, builder: (column) => ColumnFilters(column));
 
-  ColumnFilters<int> get memoryCountdownID => $composableBuilder(
+  ColumnFilters<String> get memoryCountdownID => $composableBuilder(
       column: $table.memoryCountdownID,
       builder: (column) => ColumnFilters(column));
 
@@ -4997,10 +5080,10 @@ class $$OutPlanningVariableTableOrderingComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  ColumnOrderings<int> get id => $composableBuilder(
+  ColumnOrderings<String> get id => $composableBuilder(
       column: $table.id, builder: (column) => ColumnOrderings(column));
 
-  ColumnOrderings<int> get memoryCountdownID => $composableBuilder(
+  ColumnOrderings<String> get memoryCountdownID => $composableBuilder(
       column: $table.memoryCountdownID,
       builder: (column) => ColumnOrderings(column));
 
@@ -5030,10 +5113,10 @@ class $$OutPlanningVariableTableAnnotationComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  GeneratedColumn<int> get id =>
+  GeneratedColumn<String> get id =>
       $composableBuilder(column: $table.id, builder: (column) => column);
 
-  GeneratedColumn<int> get memoryCountdownID => $composableBuilder(
+  GeneratedColumn<String> get memoryCountdownID => $composableBuilder(
       column: $table.memoryCountdownID, builder: (column) => column);
 
   GeneratedColumn<DateTime> get startingTime => $composableBuilder(
@@ -5082,13 +5165,14 @@ class $$OutPlanningVariableTableTableManager extends RootTableManager<
               $$OutPlanningVariableTableAnnotationComposer(
                   $db: db, $table: table),
           updateCompanionCallback: ({
-            Value<int> id = const Value.absent(),
-            Value<int> memoryCountdownID = const Value.absent(),
+            Value<String> id = const Value.absent(),
+            Value<String> memoryCountdownID = const Value.absent(),
             Value<DateTime?> startingTime = const Value.absent(),
             Value<DateTime?> finishTime = const Value.absent(),
             Value<int?> duration = const Value.absent(),
             Value<String?> type = const Value.absent(),
             Value<bool> isActive = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
           }) =>
               OutPlanningVariableCompanion(
             id: id,
@@ -5098,15 +5182,17 @@ class $$OutPlanningVariableTableTableManager extends RootTableManager<
             duration: duration,
             type: type,
             isActive: isActive,
+            rowid: rowid,
           ),
           createCompanionCallback: ({
-            Value<int> id = const Value.absent(),
-            required int memoryCountdownID,
+            Value<String> id = const Value.absent(),
+            required String memoryCountdownID,
             Value<DateTime?> startingTime = const Value.absent(),
             Value<DateTime?> finishTime = const Value.absent(),
             Value<int?> duration = const Value.absent(),
             Value<String?> type = const Value.absent(),
             Value<bool> isActive = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
           }) =>
               OutPlanningVariableCompanion.insert(
             id: id,
@@ -5116,6 +5202,7 @@ class $$OutPlanningVariableTableTableManager extends RootTableManager<
             duration: duration,
             type: type,
             isActive: isActive,
+            rowid: rowid,
           ),
           withReferenceMapper: (p0) => p0
               .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
@@ -5141,7 +5228,7 @@ typedef $$OutPlanningVariableTableProcessedTableManager = ProcessedTableManager<
     OutPlanningVariableData,
     PrefetchHooks Function()>;
 typedef $$GoalTableCreateCompanionBuilder = GoalCompanion Function({
-  Value<int> id,
+  Value<String> id,
   required String codeName,
   required int type,
   required DateTime createdAt,
@@ -5155,14 +5242,15 @@ typedef $$GoalTableCreateCompanionBuilder = GoalCompanion Function({
   Value<double?> plannedRatio,
   Value<double?> realRatio,
   Value<int?> xSessionsR,
-  Value<int?> subjectIdZ,
+  Value<String?> subjectIdZ,
   Value<int?> xSessionsZ,
-  Value<int?> subjectIdF,
+  Value<String?> subjectIdF,
   Value<int?> xSessionsF,
   Value<double> successPercentage,
+  Value<int> rowid,
 });
 typedef $$GoalTableUpdateCompanionBuilder = GoalCompanion Function({
-  Value<int> id,
+  Value<String> id,
   Value<String> codeName,
   Value<int> type,
   Value<DateTime> createdAt,
@@ -5176,11 +5264,12 @@ typedef $$GoalTableUpdateCompanionBuilder = GoalCompanion Function({
   Value<double?> plannedRatio,
   Value<double?> realRatio,
   Value<int?> xSessionsR,
-  Value<int?> subjectIdZ,
+  Value<String?> subjectIdZ,
   Value<int?> xSessionsZ,
-  Value<int?> subjectIdF,
+  Value<String?> subjectIdF,
   Value<int?> xSessionsF,
   Value<double> successPercentage,
+  Value<int> rowid,
 });
 
 class $$GoalTableFilterComposer extends Composer<_$AppDatabase, $GoalTable> {
@@ -5191,7 +5280,7 @@ class $$GoalTableFilterComposer extends Composer<_$AppDatabase, $GoalTable> {
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  ColumnFilters<int> get id => $composableBuilder(
+  ColumnFilters<String> get id => $composableBuilder(
       column: $table.id, builder: (column) => ColumnFilters(column));
 
   ColumnFilters<String> get codeName => $composableBuilder(
@@ -5233,13 +5322,13 @@ class $$GoalTableFilterComposer extends Composer<_$AppDatabase, $GoalTable> {
   ColumnFilters<int> get xSessionsR => $composableBuilder(
       column: $table.xSessionsR, builder: (column) => ColumnFilters(column));
 
-  ColumnFilters<int> get subjectIdZ => $composableBuilder(
+  ColumnFilters<String> get subjectIdZ => $composableBuilder(
       column: $table.subjectIdZ, builder: (column) => ColumnFilters(column));
 
   ColumnFilters<int> get xSessionsZ => $composableBuilder(
       column: $table.xSessionsZ, builder: (column) => ColumnFilters(column));
 
-  ColumnFilters<int> get subjectIdF => $composableBuilder(
+  ColumnFilters<String> get subjectIdF => $composableBuilder(
       column: $table.subjectIdF, builder: (column) => ColumnFilters(column));
 
   ColumnFilters<int> get xSessionsF => $composableBuilder(
@@ -5258,7 +5347,7 @@ class $$GoalTableOrderingComposer extends Composer<_$AppDatabase, $GoalTable> {
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  ColumnOrderings<int> get id => $composableBuilder(
+  ColumnOrderings<String> get id => $composableBuilder(
       column: $table.id, builder: (column) => ColumnOrderings(column));
 
   ColumnOrderings<String> get codeName => $composableBuilder(
@@ -5305,13 +5394,13 @@ class $$GoalTableOrderingComposer extends Composer<_$AppDatabase, $GoalTable> {
   ColumnOrderings<int> get xSessionsR => $composableBuilder(
       column: $table.xSessionsR, builder: (column) => ColumnOrderings(column));
 
-  ColumnOrderings<int> get subjectIdZ => $composableBuilder(
+  ColumnOrderings<String> get subjectIdZ => $composableBuilder(
       column: $table.subjectIdZ, builder: (column) => ColumnOrderings(column));
 
   ColumnOrderings<int> get xSessionsZ => $composableBuilder(
       column: $table.xSessionsZ, builder: (column) => ColumnOrderings(column));
 
-  ColumnOrderings<int> get subjectIdF => $composableBuilder(
+  ColumnOrderings<String> get subjectIdF => $composableBuilder(
       column: $table.subjectIdF, builder: (column) => ColumnOrderings(column));
 
   ColumnOrderings<int> get xSessionsF => $composableBuilder(
@@ -5331,7 +5420,7 @@ class $$GoalTableAnnotationComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  GeneratedColumn<int> get id =>
+  GeneratedColumn<String> get id =>
       $composableBuilder(column: $table.id, builder: (column) => column);
 
   GeneratedColumn<String> get codeName =>
@@ -5373,13 +5462,13 @@ class $$GoalTableAnnotationComposer
   GeneratedColumn<int> get xSessionsR => $composableBuilder(
       column: $table.xSessionsR, builder: (column) => column);
 
-  GeneratedColumn<int> get subjectIdZ => $composableBuilder(
+  GeneratedColumn<String> get subjectIdZ => $composableBuilder(
       column: $table.subjectIdZ, builder: (column) => column);
 
   GeneratedColumn<int> get xSessionsZ => $composableBuilder(
       column: $table.xSessionsZ, builder: (column) => column);
 
-  GeneratedColumn<int> get subjectIdF => $composableBuilder(
+  GeneratedColumn<String> get subjectIdF => $composableBuilder(
       column: $table.subjectIdF, builder: (column) => column);
 
   GeneratedColumn<int> get xSessionsF => $composableBuilder(
@@ -5412,7 +5501,7 @@ class $$GoalTableTableManager extends RootTableManager<
           createComputedFieldComposer: () =>
               $$GoalTableAnnotationComposer($db: db, $table: table),
           updateCompanionCallback: ({
-            Value<int> id = const Value.absent(),
+            Value<String> id = const Value.absent(),
             Value<String> codeName = const Value.absent(),
             Value<int> type = const Value.absent(),
             Value<DateTime> createdAt = const Value.absent(),
@@ -5426,11 +5515,12 @@ class $$GoalTableTableManager extends RootTableManager<
             Value<double?> plannedRatio = const Value.absent(),
             Value<double?> realRatio = const Value.absent(),
             Value<int?> xSessionsR = const Value.absent(),
-            Value<int?> subjectIdZ = const Value.absent(),
+            Value<String?> subjectIdZ = const Value.absent(),
             Value<int?> xSessionsZ = const Value.absent(),
-            Value<int?> subjectIdF = const Value.absent(),
+            Value<String?> subjectIdF = const Value.absent(),
             Value<int?> xSessionsF = const Value.absent(),
             Value<double> successPercentage = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
           }) =>
               GoalCompanion(
             id: id,
@@ -5452,9 +5542,10 @@ class $$GoalTableTableManager extends RootTableManager<
             subjectIdF: subjectIdF,
             xSessionsF: xSessionsF,
             successPercentage: successPercentage,
+            rowid: rowid,
           ),
           createCompanionCallback: ({
-            Value<int> id = const Value.absent(),
+            Value<String> id = const Value.absent(),
             required String codeName,
             required int type,
             required DateTime createdAt,
@@ -5468,11 +5559,12 @@ class $$GoalTableTableManager extends RootTableManager<
             Value<double?> plannedRatio = const Value.absent(),
             Value<double?> realRatio = const Value.absent(),
             Value<int?> xSessionsR = const Value.absent(),
-            Value<int?> subjectIdZ = const Value.absent(),
+            Value<String?> subjectIdZ = const Value.absent(),
             Value<int?> xSessionsZ = const Value.absent(),
-            Value<int?> subjectIdF = const Value.absent(),
+            Value<String?> subjectIdF = const Value.absent(),
             Value<int?> xSessionsF = const Value.absent(),
             Value<double> successPercentage = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
           }) =>
               GoalCompanion.insert(
             id: id,
@@ -5494,6 +5586,7 @@ class $$GoalTableTableManager extends RootTableManager<
             subjectIdF: subjectIdF,
             xSessionsF: xSessionsF,
             successPercentage: successPercentage,
+            rowid: rowid,
           ),
           withReferenceMapper: (p0) => p0
               .map((e) => (e.readTable(table), BaseReferences(db, table, e)))

@@ -9,17 +9,21 @@ class SubjectTreeNode {
     required this.totalTimeSpent,
     required this.updatedAt,
     required this.subject,
+    this.optionalFocusTime,
+    this.optionalBreakTime,
     this.lastFocuzdOnSessionID = 0,
     this.children = const <SubjectTreeNode>[],
   });
 
   final String title;
-  final int id;
-  final int? superId;
+  final String id;
+  final String? superId;
   final int subSubjects;
   final DateTime updatedAt;
   final int lastFocuzdOnSessionID;
   final int totalTimeSpent;
+  final int? optionalFocusTime;
+  final int? optionalBreakTime;
   final SubjectData subject;
   final List<SubjectTreeNode> children;
 }

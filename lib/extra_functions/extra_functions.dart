@@ -10,7 +10,7 @@ import 'package:window_manager/window_manager.dart';
 
 mixin class ExtraFunctions {
   Future<void> getThePermanentList(List<SessionVariablePlanning> list,
-      MemorySessionRepository memoryrepo, int roundID) async {
+      MemorySessionRepository memoryrepo, String roundID) async {
     List<MemoryCountdownVariableData> historyList = [];
 
     DateTime now = DateTime.now().toLocal();
@@ -35,7 +35,7 @@ mixin class ExtraFunctions {
         type = "e";
       }
       historyList.add(MemoryCountdownVariableData(
-        id: i,
+        id: "$i",
         type: type,
         roundGoal: list.length ~/ 2,
         roundId: roundID,
@@ -142,20 +142,33 @@ class SessionVariablePlanning {
   SubjectData? subject;
 }
 
+enum DurationOrigin {
+  inherited,
+  manual,
+}
+
 class SubjectMaking {
   SubjectMaking(
       {required this.name,
       this.subid,
       this.address,
+      this.linkId,
       this.optionalTimes,
       this.optionalBreakTime,
-      this.optionalFocusTime});
-  int? subid; //TASK: Rename this
+      this.optionalFocusTime,
+      this.alreadyDoneTime,
+      this.durationOrigin,
+      required this.changeTime});
+  String? subid; //TASK: Rename this
   String? address;
   String name;
+  String? linkId;
   bool? optionalTimes;
   int? optionalBreakTime;
   int? optionalFocusTime;
+  int? alreadyDoneTime;
+  int changeTime;
+  DurationOrigin? durationOrigin;
 }
 
 class GoalMaking {

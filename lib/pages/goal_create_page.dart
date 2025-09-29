@@ -195,7 +195,7 @@ class _GoalCreatePageState extends State<GoalCreatePage> {
   }
 }
 
-Future<String> _getSubjectNamebyID(int id) async {
+Future<String> _getSubjectNamebyID(String id) async {
   var subjectRepo = SubjectRepository(AppDatabase.instance);
   var subject = await subjectRepo.fetchSubjectByID(id);
   return subject?.name ?? '';

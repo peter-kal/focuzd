@@ -54,5 +54,5 @@ class SaveGoalToDB extends RepoEvent {
 
 class DeleteSubjectDB extends RepoEvent {
   const DeleteSubjectDB({required this.id});
-  final int id;
+  final String id;
 }

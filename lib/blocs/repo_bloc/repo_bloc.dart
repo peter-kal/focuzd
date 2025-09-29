@@ -33,32 +33,33 @@ class RepoBloc extends Bloc<RepoEvent, RepoState> {
   final goalRepo = GoalRepository(AppDatabase.instance);
   void _onUpdateSettingsVariables(
       UpdateSettingVariables event, Emitter<RepoState> emit) async {
+    var settings = await settingsRepo.fetchSettings();
     switch (event.selectedToChange) {
       case 1:
-        await settingsRepo.updateSetting(1,
+        await settingsRepo.updateSetting(settings!.id,
             SettingsVariablesCompanion(windowOnTop: Value(event.changedVar)));
         break;
       case 2:
         await settingsRepo.updateSetting(
-            1,
+            settings!.id,
             SettingsVariablesCompanion(
                 requestedNumberOfSessions: Value(event.changedVar)));
         break;
       case 3:
         await settingsRepo.updateSetting(
-            1,
+            settings!.id,
             SettingsVariablesCompanion(
                 selectedBreakDurationStored: Value(event.changedVar)));
         break;
       case 4:
         await settingsRepo.updateSetting(
-            1,
+            settings!.id,
             SettingsVariablesCompanion(
                 selectedFocusDurationStored: Value(event.changedVar)));
         break;
       case 5:
         await settingsRepo.updateSetting(
-            1,
+            settings!.id,
             SettingsVariablesCompanion(
                 selectedLongBreakDurationStored: Value(event.changedVar)));
         break;
@@ -71,7 +72,7 @@ class RepoBloc extends Bloc<RepoEvent, RepoState> {
 
   Future<void> _onEmitStateWithDBVars(
       EmitStateWithDBVars event, Emitter<RepoState> emit) async {
-    final has = await settingsRepo.fetchSettingsById(1);
+    final has = await settingsRepo.fetchSettings();
     await subjectRepo.updateAllSubjectsSubSubjectCount();
     await subjectRepo.updateAllSubjectAddresses();
     final subjectList = await subjectRepo.fetchAllSubjects();
@@ -129,8 +130,9 @@ class RepoBloc extends Bloc<RepoEvent, RepoState> {
 
   void _onResetSettingsEvent(
       ResetSettings event, Emitter<RepoState> emit) async {
+    var settings = await settingsRepo.fetchSettings();
     settingsRepo.updateSetting(
-        1,
+        settings!.id,
         SettingsVariablesCompanion(
           windowOnTop: Value(false),
           requestedNumberOfSessions: Value(4),
@@ -139,15 +141,6 @@ class RepoBloc extends Bloc<RepoEvent, RepoState> {
           selectedFocusDurationStored: Value(25),
         ));
     add(EmitStateWithDBVars());
-  }
-
-  Future<void> _onAddingSubject(
-      CreatingSubject event, Emitter<RepoState> emit) async {
-    // Implement your logic to add a subject
-    var sub = SubjectMaking(
-        name: "Add Name", subid: null, address: "> ", optionalTimes: false);
-    emit(CreateSubjectState(
-        subjects: await subjectRepo.fetchAllSubjects(), makeable: sub));
   }
 
   Future<void> _onCreatingGoal(
@@ -174,21 +167,6 @@ class RepoBloc extends Bloc<RepoEvent, RepoState> {
     }
   }
 
-  Future<void> _onAddingSubjectToDB(
-      AddSubjectToDB event, Emitter<RepoState> emit) async {
-    // Implement your logic to add a subject
-    final state = this.state;
-    if (state is CreateSubjectState) {
-      await subjectRepo.insertSubject(SubjectCompanion(
-        name: Value(state.makeable.name),
-        superSubjectID: Value(state.makeable.subid),
-        address: Value(state.makeable.address!),
-        createdAt: Value(DateTime.now()),
-        updatedAt: Value(DateTime.now()),
-      ));
-    }
-  }
-
   Future<void> _onSaveGoalToDB(
       SaveGoalToDB event, Emitter<RepoState> emit) async {
     final state = this.state;
@@ -207,27 +185,92 @@ class RepoBloc extends Bloc<RepoEvent, RepoState> {
     }
   }
 
+  Future<void> _onAddingSubject(
+      CreatingSubject event, Emitter<RepoState> emit) async {
+    // Implement your logic to add a subject
+    var sub = SubjectMaking(
+        changeTime: 1,
+        name: "Add Name",
+        subid: null,
+        address: "> ",
+        optionalTimes: false);
+    emit(CreateSubjectState(
+        subjects: await subjectRepo.fetchAllSubjects(), makeable: sub));
+  }
+
+  Future<void> _onAddingSubjectToDB(
+      AddSubjectToDB event, Emitter<RepoState> emit) async {
+    // Implement your logic to add a subject
+    final state = this.state;
+    if (state is CreateSubjectState) {
+      await subjectRepo.insertSubject(SubjectCompanion(
+        name: Value(state.makeable.name),
+        superSubjectID: Value(state.makeable.subid),
+        address: Value(state.makeable.address!),
+        createdAt: Value(DateTime.now()),
+        updatedAt: Value(DateTime.now()),
+        optinalFocusTime: Value(state.makeable.optionalTimes == true
+            ? state.makeable.optionalFocusTime
+            : null),
+        optinalBreakTime: Value(state.makeable.optionalTimes == true
+            ? state.makeable.optionalBreakTime
+            : null),
+        linkSub: Value(state.makeable.linkId ?? null),
+      ));
+      if (state.makeable.alreadyDoneTime != null &&
+          state.makeable.alreadyDoneTime != 0 &&
+          state.makeable.subid != null) {
+        var subs = await subjectRepo.getTheLatestAdded();
+        await subjectRepo.increaseSubjectTime(
+          addedTime: state.makeable.alreadyDoneTime!,
+          id: subs!.id,
+        );
+      }
+    }
+  }
+
   void _onUpdateAddingSubject(
       UpdateAddingSubject event, Emitter<RepoState> emit) async {
     final state = this.state;
     if (state is CreateSubjectState) {
-      if (event.newMakeable.subid != null) {
-        var addr =
-            await subjectRepo.getSubjectAddress(event.newMakeable.subid!);
-        event.newMakeable.address = "$addr > ${state.makeable.name}";
+      final updatedMakeable = event.newMakeable;
+      final bool isNewSuperSubject =
+          updatedMakeable.subid != state.makeable.subid;
+
+      // Handle super subject selection and inheritance
+      if (updatedMakeable.subid != null) {
+        // Fetch the parent subject from DB
+        final subjectAtHand =
+            await subjectRepo.fetchSubjectByID(updatedMakeable.subid!);
+
+        if (subjectAtHand != null && subjectAtHand.optinalFocusTime != null) {
+          // Always inherit if not explicitly disabled manually
+          if (!(updatedMakeable.optionalTimes == false &&
+              updatedMakeable.durationOrigin == DurationOrigin.manual)) {
+            updatedMakeable.optionalTimes = true;
+            updatedMakeable.optionalFocusTime = subjectAtHand.optinalFocusTime!;
+            updatedMakeable.optionalBreakTime =
+                subjectAtHand.optinalBreakTime ?? 5;
+            updatedMakeable.durationOrigin = DurationOrigin.inherited;
+
+            print("→ Inherited times from parent: "
+                "focus=${updatedMakeable.optionalFocusTime}, "
+                "break=${updatedMakeable.optionalBreakTime}");
+          }
+        }
+
+        // Build the address
+        final address =
+            await subjectRepo.getSubjectAddress(updatedMakeable.subid!);
+        updatedMakeable.address = "$address > ${updatedMakeable.name}";
       } else {
-        event.newMakeable.address = " > ${event.newMakeable.name}";
+        updatedMakeable.address = " > ${updatedMakeable.name}";
       }
-      if (event.newMakeable.optionalTimes != state.makeable.optionalTimes &&
-          event.newMakeable.optionalTimes == true) {
-        var settings = await settingsRepo.fetchSettingsById(1);
-        int focus = settings?.selectedFocusDurationStored ?? 25;
-        int breakT = settings?.selectedBreakDurationStored ?? 5;
-        event.newMakeable.optionalBreakTime = breakT * 60;
-        event.newMakeable.optionalFocusTime = focus * 60;
-      }
+
+      updatedMakeable.changeTime = state.makeable.changeTime + 1;
+
       emit(CreateSubjectState(
-          makeable: event.newMakeable, subjects: state.subjects));
+          makeable: updatedMakeable, subjects: state.subjects));
     }
   }
 

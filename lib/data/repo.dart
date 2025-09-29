@@ -24,7 +24,7 @@ class SubjectRepository {
 
   List<SubjectTreeNode> buildSubjectTree(List<SubjectData> subjects) {
     // Step 1: Create a map from id to node for fast lookup
-    final Map<int, SubjectTreeNode> nodeMap = {};
+    final Map<String, SubjectTreeNode> nodeMap = {};
 
     // Step 2: Create all nodes and store them in the map
     for (final subject in subjects) {
@@ -37,6 +37,8 @@ class SubjectRepository {
             subject.superSubjectID, // Add this to your SubjectTreeNode class
         totalTimeSpent: subject.totalTimeSpent,
         updatedAt: subject.updatedAt,
+        optionalFocusTime: subject.optinalFocusTime,
+        optionalBreakTime: subject.optinalBreakTime,
         children: [],
       );
     }
@@ -62,12 +64,19 @@ class SubjectRepository {
     return parts.sublist(0, parts.length - 1).join('>');
   }
 
-  Future<SubjectData?> fetchSubjectByID(int id) async {
+  Future<SubjectData?> fetchSubjectByID(String id) async {
     return await (_db.select(_db.subject)..where((tbl) => tbl.id.equals(id)))
         .getSingleOrNull();
   }
 
-  Future<void> deleteSubjectByID(int id) async {
+  Future<SubjectData?> getTheLatestAdded() async {
+    return await (_db.select(_db.subject)
+          ..orderBy([(tbl) => OrderingTerm.desc(tbl.createdAt)])
+          ..limit(1))
+        .getSingleOrNull();
+  }
+
+  Future<void> deleteSubjectByID(String id) async {
     _db.delete(_db.subject)
       ..where((tbl) => tbl.id.equals(id))
       ..go();
@@ -77,14 +86,14 @@ class SubjectRepository {
     await _db.into(_db.subject).insert(subject);
   }
 
-  Future<List<SubjectData>> fetchSubSubjects(int id) async {
+  Future<List<SubjectData>> fetchSubSubjects(String id) async {
     return await (_db.select(_db.subject)
           ..where((tbl) => tbl.superSubjectID.equals(id))
           ..orderBy([(tbl) => OrderingTerm.desc(tbl.createdAt)]))
         .get();
   }
 
-  Future<int> countSubSubjects(int subjectId) async {
+  Future<int> countSubSubjects(String subjectId) async {
     // Get direct sub-subjects
     var subSubjects = await (_db.select(_db.subject)
           ..where((tbl) => tbl.superSubjectID.equals(subjectId)))
@@ -116,9 +125,11 @@ class SubjectRepository {
     }
   }
 
-  Future<void> increaseSubjectTime(int addedTime, int id, int sessionId) async {
+  Future<void> increaseSubjectTime(
+      {required int addedTime, required String id, String? sessionId}) async {
     var subject = await fetchSubjectByID(id);
     print("start");
+    print(addedTime);
     await editSubjectWrite(
         id,
         SubjectCompanion(
@@ -128,11 +139,15 @@ class SubjectRepository {
 
     if (subject!.superSubjectID != null) {
       print("will repeat");
-      increaseSubjectTime(addedTime, subject.superSubjectID!, sessionId);
+      print(addedTime);
+      increaseSubjectTime(
+          addedTime: addedTime,
+          id: subject.superSubjectID!,
+          sessionId: sessionId);
     }
   }
 
-  Future<String> getSubjectAddress(int subjectId) async {
+  Future<String> getSubjectAddress(String subjectId) async {
     List<String> path = [];
 
     var current = await fetchSubjectByID(subjectId);
@@ -166,7 +181,8 @@ class SubjectRepository {
     }
   }
 
-  Future<void> editSubjectWrite(int id, SubjectCompanion updatedSubject) async {
+  Future<void> editSubjectWrite(
+      String id, SubjectCompanion updatedSubject) async {
     await (_db.update(_db.subject)..where((tbl) => tbl.id.equals(id)))
         .write(updatedSubject);
   }
@@ -185,7 +201,7 @@ class OutPlanningVariableRepo {
   OutPlanningVariableRepo(this._db);
 
   Future<List<OutPlanningVariableData>> fetchOutPlanningsByCountdownID(
-      int id) async {
+      String id) async {
     return await (_db.select(_db.outPlanningVariable)
           ..where((tbl) => tbl.memoryCountdownID.equals(id)))
         .get();
@@ -195,7 +211,7 @@ class OutPlanningVariableRepo {
     return await _db.select(_db.outPlanningVariable).get();
   }
 
-  Future<void> updateOutPlanning(int outPlanningID,
+  Future<void> updateOutPlanning(String outPlanningID,
       OutPlanningVariableCompanion updatedOutPlanning) async {
     await (_db.update(_db.outPlanningVariable)
           ..where((tbl) => tbl.id.equals(outPlanningID)))
@@ -207,7 +223,7 @@ class OutPlanningVariableRepo {
     await _db.into(_db.outPlanningVariable).insert(outplanning);
   }
 
-  Future<OutPlanningVariableData?> getActiveOutPlanning(int id) async {
+  Future<OutPlanningVariableData?> getActiveOutPlanning(String id) async {
     return await (_db.select(_db.outPlanningVariable)
           ..where((tbl) => tbl.memoryCountdownID.equals(id))
           ..where((tbl) => tbl.isActive.equals(true)))
@@ -220,22 +236,21 @@ class SettingsRepository {
 
   SettingsRepository(this._db);
 
-  // Fetch settings by ID
-  Future<SettingsVariable?> fetchSettingsById(int id) async {
-    return await (_db.select(_db.settingsVariables)
-          ..where((tbl) => tbl.id.equals(id)))
-        .getSingleOrNull();
+  Future<SettingsVariable?> fetchSettings() async {
+    return await (_db.select(_db.settingsVariables).getSingleOrNull());
   }
 
-  // Update a specific setting
   Future<void> updateSetting(
-      int id, SettingsVariablesCompanion updatedSetting) async {
+      String id, SettingsVariablesCompanion updatedSetting) async {
     await (_db.update(_db.settingsVariables)..where((tbl) => tbl.id.equals(id)))
         .write(updatedSetting);
   }
+  // Fetch settings by ID
+
+  // Update a specific setting
 
   // Delete settings by ID
-  Future<void> deleteSettingsById(int id) async {
+  Future<void> deleteSettingsById(String id) async {
     await (_db.delete(_db.settingsVariables)..where((tbl) => tbl.id.equals(id)))
         .go();
   }
@@ -257,15 +272,29 @@ class MemorySessionRepository {
     return await _db.select(_db.memoryCountdownVariable).get();
   }
 
+  Future<MemoryCountdownVariableData?> getNextSession(
+      String currentSessionId, String roundId) async {
+    final current = await fetchMemorySessionById(currentSessionId);
+    if (current == null) return null;
+
+    return await (_db.select(_db.memoryCountdownVariable)
+          ..where((tbl) => tbl.roundId.equals(roundId))
+          ..where((tbl) =>
+              tbl.roundRunTime.isBiggerThan(Variable(current.roundRunTime)))
+          ..orderBy([(t) => OrderingTerm.asc(t.roundRunTime)])
+          ..limit(1))
+        .getSingleOrNull();
+  }
+
   Future<List<MemoryCountdownVariableData>> fetchMemoryCountdownsBySubject(
-      int id) async {
+      String id) async {
     return await (_db.select(_db.memoryCountdownVariable)
           ..where((tbl) => tbl.subject.equals(id))
           ..orderBy([(tbl) => OrderingTerm.desc(tbl.finishTime)]))
         .get();
   }
 
-  Future<List> fetchMemoryCountdownByRoundID(int roundId) async {
+  Future<List> fetchMemoryCountdownByRoundID(String roundId) async {
     return await (_db.select(_db.memoryCountdownVariable)
           ..where((tbl) => tbl.roundId.equals(roundId))
           ..orderBy([(tbl) => OrderingTerm.asc(tbl.finishTime)]))
@@ -292,7 +321,7 @@ class MemorySessionRepository {
   }
 
   // Fetch memory session by ID
-  Future<MemoryCountdownVariableData?> fetchMemorySessionById(int id) async {
+  Future<MemoryCountdownVariableData?> fetchMemorySessionById(String id) async {
     return await (_db.select(_db.memoryCountdownVariable)
           ..where((tbl) => tbl.id.equals(id)))
         .getSingleOrNull();
@@ -306,14 +335,14 @@ class MemorySessionRepository {
 
   // edit specific with write not replace
   Future<void> updateMemorySessionWrite(
-      int id, MemoryCountdownVariableCompanion updatedSession) async {
+      String id, MemoryCountdownVariableCompanion updatedSession) async {
     await (_db.update(_db.memoryCountdownVariable)
           ..where((tbl) => tbl.id.equals(id)))
         .write(updatedSession);
   }
 
   // Delete memory session by ID
-  Future<void> deleteMemorySessionById(int id) async {
+  Future<void> deleteMemorySessionById(String id) async {
     await (_db.delete(_db.memoryCountdownVariable)
           ..where((tbl) => tbl.id.equals(id)))
         .go();
@@ -360,7 +389,7 @@ class RoundRepository {
   }
 
   // Fetch round by ID
-  Future<RoundVariableData?> fetchRoundById(int id) async {
+  Future<RoundVariableData?> fetchRoundById(String id) async {
     return await (_db.select(_db.roundVariable)
           ..where((tbl) => tbl.id.equals(id)))
         .getSingleOrNull();
@@ -373,13 +402,13 @@ class RoundRepository {
 
   // Write update (partial)
   Future<void> updateRoundWrite(
-      int id, RoundVariableCompanion updatedRound) async {
+      String id, RoundVariableCompanion updatedRound) async {
     await (_db.update(_db.roundVariable)..where((tbl) => tbl.id.equals(id)))
         .write(updatedRound);
   }
 
   // Delete round by ID
-  Future<void> deleteRoundById(int id) async {
+  Future<void> deleteRoundById(String id) async {
     await (_db.delete(_db.roundVariable)..where((tbl) => tbl.id.equals(id)))
         .go();
   }

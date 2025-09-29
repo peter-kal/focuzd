@@ -2,6 +2,7 @@ import 'package:drift/drift.dart';
 import 'package:drift_flutter/drift_flutter.dart';
 import 'package:flutter/foundation.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:uuid/uuid.dart';
 import 'db_tables.dart';
 part 'app_db.g.dart';
 
@@ -38,6 +39,11 @@ class AppDatabase extends _$AppDatabase {
         await into(subject).insert(SubjectCompanion(
             name: Value("Mathematics"),
             address: Value("> Mathematics"),
+            createdAt: Value(DateTime.now()),
+            updatedAt: Value(DateTime.now())));
+        await into(subject).insert(SubjectCompanion(
+            name: Value("Ergotherapy"),
+            address: Value("> Ergotherapy"),
             createdAt: Value(DateTime.now()),
             updatedAt: Value(DateTime.now())));
         await into(settingsVariables).insert(SettingsVariablesCompanion(

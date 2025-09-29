@@ -1,7 +1,8 @@
 import 'package:drift/drift.dart';
+import 'package:uuid/uuid.dart';
 
 class SettingsVariables extends Table {
-  IntColumn get id => integer().autoIncrement()();
+  TextColumn get id => text().clientDefault(() => const Uuid().v4())();
   BoolColumn get windowOnTop => boolean()();
   IntColumn get requestedNumberOfSessions => integer()();
   IntColumn get selectedBreakDurationStored => integer()();
@@ -9,10 +10,12 @@ class SettingsVariables extends Table {
   IntColumn get selectedLongBreakDurationStored => integer()();
   BoolColumn get roundPlanningByDefault =>
       boolean().withDefault(Constant(true))();
+  @override
+  Set<Column> get primaryKey => {id};
 }
 
 class RoundVariable extends Table {
-  IntColumn get id => integer().autoIncrement()();
+  TextColumn get id => text().clientDefault(() => const Uuid().v4())();
   BoolColumn get completed => boolean().withDefault(const Constant(false))();
   TextColumn get propableCause =>
       text().nullable()(); // to be used when the round hasn't gone as planned
@@ -23,13 +26,15 @@ class RoundVariable extends Table {
   DateTimeColumn get expFinishTime => dateTime()
       .nullable()(); // in the round-centric approach that can also be called plannedFinishTime
   DateTimeColumn get finishTime => dateTime().nullable()();
+  @override
+  Set<Column> get primaryKey => {id};
 }
 
 class MemoryCountdownVariable extends Table {
-  IntColumn get id => integer().autoIncrement()();
+  TextColumn get id => text().clientDefault(() => const Uuid().v4())();
   IntColumn get roundGoal =>
       integer()(); // will be deprecated, keeping it just for testing, an ensuring the session will be part of the right round
-  IntColumn get roundId => integer()(); //what round it belongs to
+  TextColumn get roundId => text()(); //what round it belongs to
   TextColumn get propableCause =>
       text().nullable()(); // to be used when the session hasn't gone as planned
   IntColumn get durationLeft => integer().nullable()();
@@ -48,40 +53,46 @@ class MemoryCountdownVariable extends Table {
   BoolColumn get active => boolean().withDefault(const Constant(
       false))(); //opposites with completed in some form, in completed true active must be false
   TextColumn get type => text()(); //'focus' 'break' 'longbreak'
-  IntColumn get subject => integer().nullable()();
+  TextColumn get subject => text().nullable()();
+  @override
+  Set<Column> get primaryKey => {id};
 }
 
 class OutPlanningVariable extends Table {
-  IntColumn get id => integer().autoIncrement()();
-  IntColumn get memoryCountdownID => integer()();
+  TextColumn get id => text().clientDefault(() => const Uuid().v4())();
+  TextColumn get memoryCountdownID => text()();
   DateTimeColumn get startingTime => dateTime().nullable()();
   DateTimeColumn get finishTime => dateTime().nullable()();
   IntColumn get duration => integer().nullable()();
   TextColumn get type => text().nullable()(); // pause time or reset time
   BoolColumn get isActive => boolean().withDefault(const Constant(false))();
+  @override
+  Set<Column> get primaryKey => {id};
 }
 
 class Subject extends Table {
-  IntColumn get id => integer().autoIncrement()();
+  TextColumn get id => text().clientDefault(() => const Uuid().v4())();
   TextColumn get name => text().unique().withLength(max: 99)();
   TextColumn get address => text().unique()();
-  IntColumn get superSubjectID =>
-      integer().nullable().customConstraint('REFERENCES subject(id)')();
+  TextColumn get superSubjectID =>
+      text().nullable().customConstraint('REFERENCES subject(id)')();
   DateTimeColumn get createdAt => dateTime()();
   DateTimeColumn get updatedAt => dateTime()();
   IntColumn get subSubjects => integer().withDefault(const Constant(0))();
-  IntColumn get lastFocuzdOnSessionID =>
-      integer().nullable().references(MemoryCountdownVariable, #id)();
-  IntColumn get linkSub =>
-      integer().nullable().customConstraint('REFERENCES subject(id)')();
+  TextColumn get lastFocuzdOnSessionID =>
+      text().nullable().references(MemoryCountdownVariable, #id)();
+  TextColumn get linkSub =>
+      text().nullable().customConstraint('REFERENCES subject(id)')();
   IntColumn get totalTimeSpent => integer()
       .withDefault(const Constant(0))(); // total time spent on the subject
   IntColumn get optinalFocusTime => integer().nullable()();
   IntColumn get optinalBreakTime => integer().nullable()();
+  @override
+  Set<Column> get primaryKey => {id};
 }
 
 class Goal extends Table {
-  IntColumn get id => integer().autoIncrement()();
+  TextColumn get id => text().clientDefault(() => const Uuid().v4())();
   TextColumn get codeName => text()();
   IntColumn get type => integer()(); //1,2,3,4,5
   DateTimeColumn get createdAt => dateTime()();
@@ -107,12 +118,14 @@ class Goal extends Table {
       integer().nullable()(); // r period of time +- y type 2,5
   // sybject types
   // Only one subject for type 3, 5
-  IntColumn get subjectIdZ => integer().nullable()();
+  TextColumn get subjectIdZ => text().nullable()();
   IntColumn get xSessionsZ =>
       integer().nullable()(); // when 5 will become a duplicate
   // For type 4 we need two
-  IntColumn get subjectIdF => integer().nullable()();
+  TextColumn get subjectIdF => text().nullable()();
   IntColumn get xSessionsF => integer().nullable()();
   // determined after the deadline of a goal and continiuously updated during the entire life of the goal
   RealColumn get successPercentage => real().withDefault(const Constant(00))();
+  @override
+  Set<Column> get primaryKey => {id};
 }
