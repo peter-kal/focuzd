@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_fancy_tree_view2/flutter_fancy_tree_view2.dart';
 import 'package:focuzd/blocs/blocs.dart';
 import 'package:focuzd/data/app_db.dart';
+import 'package:focuzd/extra_functions/extra_functions.dart';
 import 'package:focuzd/extra_widgets/subject_tree_node.dart';
 
 import 'package:focuzd/l10n/app_localizations.dart';
@@ -17,7 +18,7 @@ class SubjectsPage extends StatefulWidget {
 }
 
 // TASK: make settings
-class _SubjectsPageState extends State<SubjectsPage> {
+class _SubjectsPageState extends State<SubjectsPage> with ExtraFunctions {
   int pixelSize = 0;
   double getTheSize(int size) {
     if (size < 30) {
@@ -92,7 +93,21 @@ class _SubjectsPageState extends State<SubjectsPage> {
                                         overflow: TextOverflow.ellipsis,
                                       ),
                                     ),
-                                    SizedBox(height: 3),
+                                    entry.node.optionalFocusTime != null
+                                        ? SizedBox(
+                                            width: 60,
+                                            height: 25,
+                                            child: Row(children: [
+                                              Text(minutesString(entry
+                                                      .node.optionalFocusTime ??
+                                                  0)),
+                                              SizedBox(width: 4),
+                                              Text(minutesString(entry
+                                                      .node.optionalBreakTime ??
+                                                  0))
+                                            ]),
+                                          )
+                                        : SizedBox.shrink(),
                                     Container(
                                       padding: EdgeInsets.symmetric(
                                         horizontal: 2,
@@ -131,4 +146,9 @@ class _SubjectsPageState extends State<SubjectsPage> {
       },
     ); //sca
   }
+}
+
+String _formatTime(DateTime? time) {
+  if (time == null) return '--:--';
+  return "${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}";
 }
