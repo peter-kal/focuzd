@@ -65,7 +65,7 @@ class AppDatabase extends _$AppDatabase {
 
 LazyDatabase _openConnection() {
   return LazyDatabase(() async {
-    final directory = await getApplicationDocumentsDirectory();
+    final directory = await getApplicationSupportDirectory();
     return driftDatabase(
       name: 'focuzd_app_db',
       native: DriftNativeOptions(databaseDirectory: () async => directory),
