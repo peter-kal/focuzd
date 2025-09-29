@@ -12,7 +12,7 @@ class CreateSubjectState extends RepoState {
   final SubjectMaking makeable;
   @override
   String toString() =>
-      "name:${makeable.name}  optional focus:${makeable.optionalFocusTime} optional break: ${makeable.optionalBreakTime} subid: ${makeable.subid}";
+      "name:${makeable.name}  optional:${makeable.optionalTimes}, focus:${makeable.optionalFocusTime} optional break: ${makeable.optionalBreakTime} subid: ${makeable.subid} origin: ${makeable.durationOrigin}";
 }
 
 class CreateGoalState extends RepoState {

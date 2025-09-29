@@ -256,6 +256,7 @@ class _SubjectCreatePageState extends State<SubjectCreatePage> {
                             ),
                             DurationSpinbox(
                               onChanged: (value) {
+                                print("passing $value");
                                 var makeable = state.makeable;
                                 makeable.durationOrigin = DurationOrigin.manual;
                                 makeable.optionalBreakTime = value.inSeconds;

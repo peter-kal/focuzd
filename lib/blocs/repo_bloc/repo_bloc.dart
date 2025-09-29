@@ -193,7 +193,10 @@ class RepoBloc extends Bloc<RepoEvent, RepoState> {
         name: "Add Name",
         subid: null,
         address: "> ",
-        optionalTimes: false);
+        durationOrigin: DurationOrigin.inherited,
+        optionalTimes: false,
+        optionalBreakTime: 5 * 60,
+        optionalFocusTime: 25 * 60);
     emit(CreateSubjectState(
         subjects: await subjectRepo.fetchAllSubjects(), makeable: sub));
   }
@@ -233,7 +236,7 @@ class RepoBloc extends Bloc<RepoEvent, RepoState> {
       UpdateAddingSubject event, Emitter<RepoState> emit) async {
     final state = this.state;
     if (state is CreateSubjectState) {
-      final updatedMakeable = event.newMakeable;
+      var updatedMakeable = event.newMakeable;
       final bool isNewSuperSubject =
           updatedMakeable.subid != state.makeable.subid;
 
@@ -243,23 +246,29 @@ class RepoBloc extends Bloc<RepoEvent, RepoState> {
         final subjectAtHand =
             await subjectRepo.fetchSubjectByID(updatedMakeable.subid!);
 
-        if (subjectAtHand != null && subjectAtHand.optinalFocusTime != null) {
+        if (subjectAtHand != null &&
+            subjectAtHand.optinalFocusTime != null &&
+            subjectAtHand.optinalBreakTime != null) {
           // Always inherit if not explicitly disabled manually
-          if (!(updatedMakeable.optionalTimes == false &&
-              updatedMakeable.durationOrigin == DurationOrigin.manual)) {
+          if ((updatedMakeable.optionalTimes == false &&
+              updatedMakeable.durationOrigin == DurationOrigin.inherited &&
+              subjectAtHand.optinalFocusTime != null)) {
             updatedMakeable.optionalTimes = true;
             updatedMakeable.optionalFocusTime = subjectAtHand.optinalFocusTime!;
             updatedMakeable.optionalBreakTime =
                 subjectAtHand.optinalBreakTime ?? 5;
-            updatedMakeable.durationOrigin = DurationOrigin.inherited;
 
             print("→ Inherited times from parent: "
                 "focus=${updatedMakeable.optionalFocusTime}, "
                 "break=${updatedMakeable.optionalBreakTime}");
+          } else if (updatedMakeable.durationOrigin == DurationOrigin.manual) {
+            print("entered");
+            updatedMakeable.optionalBreakTime ??
+                state.makeable.optionalBreakTime;
           }
         }
 
-        // Build the address
+        // Build the addressoptionalTimes
         final address =
             await subjectRepo.getSubjectAddress(updatedMakeable.subid!);
         updatedMakeable.address = "$address > ${updatedMakeable.name}";
