@@ -163,7 +163,7 @@ class _SubjectCreatePageState extends State<SubjectCreatePage> {
                                 width: 250,
                                 child: FutureBuilder(
                                     future: _getSubjectNamebyID(
-                                        state.makeable.subid!),
+                                        state.makeable.linkId!),
                                     builder: (context, asyncSnapshot) {
                                       if (asyncSnapshot.connectionState ==
                                           ConnectionState.done) {

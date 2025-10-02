@@ -221,13 +221,18 @@ class RepoBloc extends Bloc<RepoEvent, RepoState> {
         linkSub: Value(state.makeable.linkId ?? null),
       ));
       if (state.makeable.alreadyDoneTime != null &&
-          state.makeable.alreadyDoneTime != 0 &&
-          state.makeable.subid != null) {
+          state.makeable.alreadyDoneTime != 0) {
         var subs = await subjectRepo.getTheLatestAdded();
         await subjectRepo.increaseSubjectTime(
           addedTime: state.makeable.alreadyDoneTime!,
           id: subs!.id,
         );
+        if (state.makeable.linkId != null) {
+          await subjectRepo.increaseSubjectTime(
+            addedTime: state.makeable.alreadyDoneTime!,
+            id: state.makeable.linkId!,
+          );
+        }
       }
     }
   }
@@ -237,8 +242,6 @@ class RepoBloc extends Bloc<RepoEvent, RepoState> {
     final state = this.state;
     if (state is CreateSubjectState) {
       var updatedMakeable = event.newMakeable;
-      final bool isNewSuperSubject =
-          updatedMakeable.subid != state.makeable.subid;
 
       // Handle super subject selection and inheritance
       if (updatedMakeable.subid != null) {
@@ -288,6 +291,11 @@ class RepoBloc extends Bloc<RepoEvent, RepoState> {
     final state = this.state;
     if (state is RepoVariablesGivenState) {
       subjectRepo.deleteSubjectByID(event.id);
+      var sub = await subjectRepo.fetchSubjectByID(event.id);
+      if (sub!.linkSub != null) {
+        subjectRepo.decreaseSubjectTime(
+            id: sub.linkSub!, reducedTime: sub.totalTimeSpent);
+      }
       add(EmitStateWithDBVars());
     }
   }

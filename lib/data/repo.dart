@@ -77,6 +77,10 @@ class SubjectRepository {
   }
 
   Future<void> deleteSubjectByID(String id) async {
+    var sub = await fetchSubjectByID(id);
+    if (sub!.totalTimeSpent != 0) {
+      await decreaseSubjectTime(reducedTime: sub.totalTimeSpent, id: id);
+    }
     _db.delete(_db.subject)
       ..where((tbl) => tbl.id.equals(id))
       ..go();
@@ -126,7 +130,10 @@ class SubjectRepository {
   }
 
   Future<void> increaseSubjectTime(
-      {required int addedTime, required String id, String? sessionId}) async {
+      // tree structure
+      {required int addedTime,
+      required String id,
+      String? sessionId}) async {
     var subject = await fetchSubjectByID(id);
     print("start");
     print(addedTime);
@@ -144,6 +151,23 @@ class SubjectRepository {
           addedTime: addedTime,
           id: subject.superSubjectID!,
           sessionId: sessionId);
+    }
+  }
+
+  Future<void> decreaseSubjectTime(
+      {required int reducedTime, required String id}) async {
+    var subject = await fetchSubjectByID(id);
+    await editSubjectWrite(
+        id,
+        SubjectCompanion(
+            totalTimeSpent: Value((subject?.totalTimeSpent ?? 0) - reducedTime),
+            updatedAt: Value(DateTime.now())));
+
+    if (subject!.superSubjectID != null) {
+      decreaseSubjectTime(
+        reducedTime: reducedTime,
+        id: subject.superSubjectID!,
+      );
     }
   }
 
