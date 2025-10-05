@@ -94,6 +94,13 @@ class _SettingsPageState extends State<SettingsPage> {
               ],
             ),
             appBar: YaruWindowTitleBar(
+              onClose: (context) {
+                Future.delayed(Duration(seconds: 2), () async {
+                  print(
+                      "window is closing, who you gonna call ? The BLoC-busters");
+                  BlocProvider.of<PomodoroBloc>(context).add(WindowIsClosing());
+                });
+              },
               title: Text(l10n.AppLocalizations.of(context)!.settingsPage),
               leading: YaruIconButton(
                 tooltip: l10n.AppLocalizations.of(context)!.backArrowTooltip,

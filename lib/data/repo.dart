@@ -321,7 +321,7 @@ class MemorySessionRepository {
   Future<List> fetchMemoryCountdownByRoundID(String roundId) async {
     return await (_db.select(_db.memoryCountdownVariable)
           ..where((tbl) => tbl.roundId.equals(roundId))
-          ..orderBy([(tbl) => OrderingTerm.asc(tbl.finishTime)]))
+          ..orderBy([(tbl) => OrderingTerm.asc(tbl.expStartingTime)]))
         .get();
   }
 

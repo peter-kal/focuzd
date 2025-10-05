@@ -11,6 +11,7 @@ import 'package:focuzd/blocs/pomodoro_bloc/ticker.dart';
 import 'package:focuzd/data/app_db.dart';
 import 'package:focuzd/data/repo.dart';
 import 'package:focuzd/extra_functions/extra_functions.dart';
+import 'package:window_manager/window_manager.dart';
 part 'pomodoro_event.dart';
 part 'pomodoro_state.dart';
 
@@ -566,38 +567,151 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
   }
 
   void _onWindowIsClosing(
-      WindowIsClosing event, Emitter<PomodoroTimerState> emit) async {
-    final state = this.state;
+    WindowIsClosing event,
+    Emitter<PomodoroTimerState> emit,
+  ) async {
     final now = DateTime.now();
-    final currentSession = await memorySessionRepo.getCurrentSession();
+    final state = this.state;
+
+    // stop timers immediately
+    _planningRefreshTimer?.cancel();
+    _pauseRefreshTimer?.cancel();
+    _tickerSubscription?.cancel();
+
+    // helper: close any active out-planning only for the current session
+    Future<void> closeActiveOutPlanningForSession(String memoryId) async {
+      try {
+        final active = await outPlanningRepo.getActiveOutPlanning(memoryId);
+        if (active != null) {
+          final finish = DateTime.now();
+          await outPlanningRepo.updateOutPlanning(
+            active.id,
+            OutPlanningVariableCompanion(
+              finishTime: Value(finish),
+              isActive: Value(false),
+              duration:
+                  Value(finish.difference(active.startingTime!).inSeconds),
+            ),
+          );
+        }
+      } catch (e) {
+        print('⚠️ Failed to close active out-planning for $memoryId: $e');
+      }
+    }
+
+    // helper: cancel every future session in same round after `startingAfterId`
+    // cancel all sessions in a round that haven't started yet
+    Future<void> cancelFutureSessions({
+      required String startingAfterId,
+      required String roundId,
+    }) async {
+      print("before trying");
+      try {
+        // fetch *all* sessions of the round
+        final allSessions =
+            await memorySessionRepo.fetchMemoryCountdownByRoundID(roundId);
+
+        // find index of the current one to only affect later sessions
+        final startIndex =
+            allSessions.indexWhere((s) => s.id == startingAfterId);
+        print("before if");
+
+        print(startIndex);
+        if (startIndex != -1 && startIndex < allSessions.length - 1) {
+          // everything after current one is considered “future”
+          final futureSessions = allSessions.sublist(startIndex + 1);
+          print(futureSessions.length.toString());
+          for (final session in futureSessions) {
+            // cancel only sessions that haven't started
+            print("hello 1 ");
+            if (session.startingTime == null && session.finishTime == null) {
+              print("Helllo");
+              await memorySessionRepo.updateMemorySessionWrite(
+                session.id,
+                MemoryCountdownVariableCompanion(
+                  finishTime: Value(DateTime.now()),
+                  actuallyDoneDuration: Value(0),
+                  durationLeft: Value(session.plannedDuration),
+                  propableCause: Value('cancelled'),
+                  completed: Value(false),
+                ),
+              );
+            }
+          }
+        }
+      } catch (e) {
+        print(' Error cancelling future sessions: $e');
+      }
+    }
+
+    // -------- CASE 1: timer is running --------
     if (state is TimerRunInProgress) {
-      if (currentSession != null) {
-        await memorySessionRepo.updateMemorySessionWrite(
-          currentSession.id,
-          MemoryCountdownVariableCompanion(
+      await memorySessionRepo.updateMemorySessionWrite(
+        state.currentMemorySessionID,
+        MemoryCountdownVariableCompanion(
+          finishTime: Value(now),
+          durationLeft: Value(state.duration),
+          actuallyDoneDuration: Value(state.selectedDuration - state.duration),
+          propableCause: Value('closed'),
+        ),
+      );
+
+      await closeActiveOutPlanningForSession(state.currentMemorySessionID);
+      print("prep for cancelling");
+      await cancelFutureSessions(
+        startingAfterId: state.currentMemorySessionID,
+        roundId: state.currentRoundID,
+      );
+
+      final round = await roundRepo.fetchRoundById(state.currentRoundID);
+      if (round != null) {
+        await roundRepo.updateRoundWrite(
+          round.id,
+          RoundVariableCompanion(
             finishTime: Value(now),
-            durationLeft: Value(state.duration),
-            actuallyDoneDuration: Value(
-              now.difference(currentSession.startingTime!).inSeconds,
-            ),
+            completed: Value(true),
           ),
         );
-      } else {
-        print("null");
       }
-    } else if (state is TimerRunPause) {
-      if (currentSession != null) {
-        await memorySessionRepo.updateMemorySessionWrite(
-          currentSession.id,
-          MemoryCountdownVariableCompanion(
+    }
+
+    // -------- CASE 2: timer is paused --------
+    else if (state is TimerRunPause) {
+      await memorySessionRepo.updateMemorySessionWrite(
+        state.currentMemorySessionID,
+        MemoryCountdownVariableCompanion(
+          finishTime: Value(now),
+          durationLeft: Value(state.duration),
+          actuallyDoneDuration: Value(state.selectedDuration - state.duration),
+          propableCause: Value('closed'),
+        ),
+      );
+
+      await closeActiveOutPlanningForSession(state.currentMemorySessionID);
+
+      await cancelFutureSessions(
+        startingAfterId: state.currentMemorySessionID,
+        roundId: state.currentRoundID,
+      );
+
+      final round = await roundRepo.fetchRoundById(state.currentRoundID);
+      if (round != null) {
+        await roundRepo.updateRoundWrite(
+          round.id,
+          RoundVariableCompanion(
             finishTime: Value(now),
-            durationLeft: Value(state.duration),
-            actuallyDoneDuration: Value(
-              now.difference(currentSession.startingTime!).inSeconds,
-            ),
+            completed: Value(true),
           ),
         );
       }
+    }
+
+    // finally allow app to close
+    try {
+      await windowManager.setPreventClose(false);
+      exit(0);
+    } catch (e) {
+      print('⚠️ Could not release window close lock: $e');
     }
   }
 }

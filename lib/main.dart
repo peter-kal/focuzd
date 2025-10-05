@@ -21,6 +21,7 @@ Future<void> main() async {
     fullScreen: false,
   );
   await windowManager.waitUntilReadyToShow(options, () async {
+    await windowManager.setPreventClose(true);
     windowManager.focus();
     windowManager.show();
   });
@@ -37,7 +38,6 @@ Future<void> main() async {
                 PomodoroBloc(ticker: const Ticker())..add(const TimerInit()))
       ],
       child: Builder(builder: (context) {
-        windowManager.addListener(MyWindowListener());
         return const FocuzdApp();
       })));
 }

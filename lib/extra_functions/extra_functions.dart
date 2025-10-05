@@ -1,12 +1,9 @@
 import 'package:drift/drift.dart';
 
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:focuzd/blocs/pomodoro_bloc/pomodoro_bloc.dart';
 import 'package:focuzd/data/app_db.dart';
 import 'package:focuzd/data/repo.dart';
 import 'package:intl/intl.dart';
-import 'package:window_manager/window_manager.dart';
 
 mixin class ExtraFunctions {
   Future<void> getThePermanentList(List<SessionVariablePlanning> list,
@@ -120,16 +117,6 @@ mixin class ExtraFunctions {
       }
     }
     return list;
-  }
-}
-
-class MyWindowListener extends WindowListener {
-  @override
-  void onWindowClose() async {
-    windowManager.setPreventClose(true);
-    print("window is closing");
-    await windowManager.setPreventClose(false);
-    await windowManager.destroy();
   }
 }
 

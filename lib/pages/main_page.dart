@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:focuzd/blocs/blocs.dart';
@@ -53,6 +55,13 @@ class _MainPageState extends State<MainPage> with ExtraFunctions {
             },
           ),
           appBar: YaruWindowTitleBar(
+            onClose: (context) {
+              Future.delayed(Duration(seconds: 2), () async {
+                print(
+                    "window is closing, who you gonna call ? The BLoC-busters");
+                BlocProvider.of<PomodoroBloc>(context).add(WindowIsClosing());
+              });
+            },
             actions: [
               YaruIconButton(
                 tooltip: AppLocalizations.of(context)!.settingsPage,

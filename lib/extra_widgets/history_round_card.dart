@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:focuzd/data/app_db.dart';
 import 'package:focuzd/data/repo.dart';
 import 'package:focuzd/extra_widgets/countdown_interface.dart';
+import 'package:yaru/yaru.dart';
 
 class SessionBlock {
   final MemoryCountdownVariableData first;
@@ -209,47 +210,56 @@ class CountdownRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
         padding: const EdgeInsets.symmetric(vertical: 4),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Row(
-              children: [
-                Container(
-                    width: 8,
-                    height: 8,
-                    decoration: BoxDecoration(
-                        color: c.type == 'focus'
-                            ? Theme.of(context).primaryColor
-                            : Colors.green,
-                        shape: BoxShape.circle)),
-                const SizedBox(width: 8),
-                c.type == 'focus'
-                    ? c.subject == null
-                        ? Text("Focus")
-                        : FutureBuilder(
-                            future: _getSubjectName(c.subject!),
-                            builder: (context, asyncSnapshot) {
-                              if (asyncSnapshot.connectionState ==
-                                  ConnectionState.done) {
-                                if (asyncSnapshot.data == null) {
-                                  return Text("");
-                                }
-                                return Text("Focus: ${asyncSnapshot.data!}",
-                                    style: const TextStyle(
-                                        fontWeight: FontWeight.w500));
-                              } else {
-                                return Text("...");
-                              }
-                            })
-                    : Text("Break")
-              ],
-            ),
-            const SizedBox(width: 8),
-            Text(
-                "${_formatTime(c.startingTime)} - ${_formatTime(c.finishTime)} (${(c.actuallyDoneDuration! / 60).round()} min)",
-                style: const TextStyle(fontSize: 12, color: Colors.grey)),
-          ],
-        ));
+        child: c.propableCause == "cancelled"
+            ? YaruInfoBox(
+                title: Text("Cancelled"),
+                subtitle: Text(
+                    "${_formatTime(c.startingTime)} - ${_formatTime(c.finishTime)} (${(c.actuallyDoneDuration! / 60).round()} min)",
+                    style: const TextStyle(fontSize: 12, color: Colors.grey)),
+                yaruInfoType: YaruInfoType.danger,
+              )
+            : Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Row(
+                    children: [
+                      Container(
+                          width: 8,
+                          height: 8,
+                          decoration: BoxDecoration(
+                              color: c.type == 'focus'
+                                  ? Theme.of(context).primaryColor
+                                  : Colors.green,
+                              shape: BoxShape.circle)),
+                      const SizedBox(width: 8),
+                      c.type == 'focus'
+                          ? c.subject == null
+                              ? Text("Focus")
+                              : FutureBuilder(
+                                  future: _getSubjectName(c.subject!),
+                                  builder: (context, asyncSnapshot) {
+                                    if (asyncSnapshot.connectionState ==
+                                        ConnectionState.done) {
+                                      if (asyncSnapshot.data == null) {
+                                        return Text("");
+                                      }
+                                      return Text(
+                                          "Focus: ${asyncSnapshot.data!}",
+                                          style: const TextStyle(
+                                              fontWeight: FontWeight.w500));
+                                    } else {
+                                      return Text("...");
+                                    }
+                                  })
+                          : Text("Break")
+                    ],
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                      "${_formatTime(c.startingTime)} - ${_formatTime(c.finishTime)} (${(c.actuallyDoneDuration! / 60).round()} min)",
+                      style: const TextStyle(fontSize: 12, color: Colors.grey)),
+                ],
+              ));
   }
 }
 
