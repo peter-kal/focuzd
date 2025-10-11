@@ -1,3 +1,4 @@
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -24,67 +25,79 @@ class RoundPlanningPage extends StatelessWidget {
         if (state is RoundPlanning) {
           return Scaffold(
             appBar: YaruWindowTitleBar(
-              title:  Text(AppLocalizations.of(context)!.roundPlanningTitleBar),
-             leading: YaruIconButton(
-                icon:  Icon(Icons.close),
+              title: Text(AppLocalizations.of(context)!.roundPlanningTitleBar),
+              leading: YaruIconButton(
+                icon: Icon(Icons.close),
                 onPressed: () {
-                  BlocProvider.of<PomodoroBloc>(context).add(const SetTimeInnit());
+                  BlocProvider.of<PomodoroBloc>(context)
+                      .add(const SetTimeInnit());
                   BlocProvider.of<PageNavigationBloc>(context)
                       .add(const MainPageEvent());
                 },
               ),
             ),
             bottomNavigationBar: BottomAppBar(
-              height: 100,
+              height: 150,
               elevation: 10,
               child: Column(
                 children: [
+                  Text("${(state.planlist.length ~/ 2)} sessions",
+                      style: Theme.of(context).textTheme.bodyLarge),
+                  SizedBox(
+                    height: 5,
+                  ),
                   Text(
-                            DateFormat('HH:mm').format(state.expFinishRoundTime),
-                            style: Theme.of(context).textTheme.bodyLarge,
-                          ),
-                          SizedBox(height: 10,),
+                    DateFormat('HH:mm').format(state.expFinishRoundTime),
+                    style: Theme.of(context).textTheme.bodyLarge,
+                  ),
+                  SizedBox(
+                    height: 5,
+                  ),
+                  Text(
+                    "${state.expFinishRoundTime.difference(DateTime.now()).inMinutes.toString()} min",
+                    style: Theme.of(context).textTheme.bodyLarge,
+                  ),
+                  SizedBox(
+                    height: 8,
+                  ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          
-                          
-                          FilledButton(
-                            onPressed: () {
-                              BlocProvider.of<PomodoroBloc>(context)
-                                  .add(ChangePlan(1));
-                            },
-                            child:  Text(AppLocalizations.of(context)!.addSessionButton),
-                          ),
-                          
-                          ElevatedButton(
-                            child: Text(AppLocalizations.of(context)!.startButtonOnPlanning),
-                            onPressed: () {
-                              BlocProvider.of<PomodoroBloc>(context)
-                                  .add(ChangePlan(4));
-                              BlocProvider.of<PomodoroBloc>(context)
-                                  .add(StartRound());
-                              
-                            },
-                          ),
-                        ],
+                    children: [
+                      FilledButton(
+                        onPressed: () {
+                          BlocProvider.of<PomodoroBloc>(context)
+                              .add(ChangePlan(1));
+                        },
+                        child: Text(
+                            AppLocalizations.of(context)!.addSessionButton),
                       ),
+                      ElevatedButton(
+                        child: Text(AppLocalizations.of(context)!
+                            .startButtonOnPlanning),
+                        onPressed: () {
+                          BlocProvider.of<PomodoroBloc>(context)
+                              .add(ChangePlan(4));
+                          BlocProvider.of<PomodoroBloc>(context)
+                              .add(StartRound());
+                        },
+                      ),
+                    ],
+                  ),
                 ],
               ),
             ),
-            body:  ListView.builder(
+            body: ListView.builder(
               padding: EdgeInsets.all(10),
-                    itemCount: state.planlist.length,
-                    itemBuilder: (context, index) {
-                      return SessionTilePlanning(
-                        state.planlist[index],
-                        index,
-                        state.planlist,
-                        state.subjects,
-                      );
-                    },
-                  ),
-           
+              itemCount: state.planlist.length,
+              itemBuilder: (context, index) {
+                return SessionTilePlanning(
+                  state.planlist[index],
+                  index,
+                  state.planlist,
+                  state.subjects,
+                );
+              },
+            ),
           );
         } else {
           return const YaruCircularProgressIndicator();
