@@ -54,7 +54,7 @@ class RoundPlanningPage extends StatelessWidget {
                     height: 5,
                   ),
                   Text(
-                    "${state.expFinishRoundTime.difference(DateTime.now()).inMinutes.toString()} min",
+                    "${state.roundDuration ~/ 60} min",
                     style: Theme.of(context).textTheme.bodyLarge,
                   ),
                   SizedBox(
