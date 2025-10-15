@@ -48,10 +48,8 @@ class _MainDataPageS extends State<MainDataPage> {
       }),
       appBar: YaruWindowTitleBar(
         onClose: (context) {
-          Future.delayed(Duration(seconds: 2), () async {
-            print("window is closing, who you gonna call ? The BLoC-busters");
-            BlocProvider.of<PomodoroBloc>(context).add(WindowIsClosing());
-          });
+          print("window is closing, who you gonna call ? The BLoC-busters");
+          BlocProvider.of<PomodoroBloc>(context).add(WindowIsClosing());
         },
         title: Text("Data Page"),
         leading: YaruIconButton(

@@ -22,12 +22,14 @@ class GoalsPage extends StatelessWidget {
             if (state.goals == null) {
               return Text("NO GOALS");
             } else {
-              return ListView.builder(
-                  itemCount: state.goals!.length,
-                  itemBuilder: (context, index) {
-                    return SizedBox(
-                        height: 125, child: GoalCard(state.goals![index]));
-                  });
+              return Padding(
+                  padding: EdgeInsetsGeometry.all(8.0),
+                  child: ListView.builder(
+                      itemCount: state.goals!.length,
+                      itemBuilder: (context, index) {
+                        return SizedBox(
+                            height: 150, child: GoalCard(state.goals![index]));
+                      }));
             }
           } else {
             return YaruCircularProgressIndicator();

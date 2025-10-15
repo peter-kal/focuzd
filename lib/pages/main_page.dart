@@ -56,15 +56,12 @@ class _MainPageState extends State<MainPage> with ExtraFunctions {
           ),
           appBar: YaruWindowTitleBar(
             onClose: (context) {
-              Future.delayed(Duration(seconds: 2), () async {
-                print(
-                    "window is closing, who you gonna call ? The BLoC-busters");
-                BlocProvider.of<PomodoroBloc>(context).add(WindowIsClosing());
-              });
+              print("window is closing, who you gonna call ? The BLoC-busters");
+              BlocProvider.of<PomodoroBloc>(context).add(WindowIsClosing());
             },
             actions: [
               YaruIconButton(
-                tooltip: AppLocalizations.of(context)!.settingsPage,
+                tooltip: "Subjects & Goals",
                 icon: const Icon(Icons.subject),
                 onPressed: () {
                   BlocProvider.of<PageNavigationBloc>(context)
