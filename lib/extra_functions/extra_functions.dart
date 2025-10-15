@@ -1,9 +1,12 @@
 import 'package:drift/drift.dart';
 
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:focuzd/blocs/pomodoro_bloc/pomodoro_bloc.dart';
 import 'package:focuzd/data/app_db.dart';
 import 'package:focuzd/data/repo.dart';
 import 'package:intl/intl.dart';
+import 'package:window_manager/window_manager.dart';
 
 mixin class ExtraFunctions {
   Future<void> getThePermanentList(List<SessionVariablePlanning> list,
@@ -164,6 +167,7 @@ class GoalMaking {
       this.type,
       this.startPeriod1,
       this.endPeriod1,
+      this.numberSessionsPeriod1,
       this.startPeriod2,
       this.endPeriod2,
       this.plannedRatio,
@@ -177,13 +181,41 @@ class GoalMaking {
   int? type;
   DateTime? startPeriod1;
   DateTime? endPeriod1;
+  int? numberSessionsPeriod1;
   DateTime? startPeriod2;
   DateTime? endPeriod2;
   int? xSessionsGoal;
   int? xSessionsR;
   double? plannedRatio;
-  int? subjectIdZ;
+  String? subjectIdZ;
+  int? subjectZnominator;
   int? xSessionsZ;
-  int? subjectIdF;
+  String? subjectIdF;
+  double? subjectFdenominator;
   int? xSessionsF;
+}
+
+class Contradiction {
+  final GoalData existingGoal;
+  final String reason;
+  final String suggestedFix;
+
+  Contradiction(this.existingGoal, this.reason, {this.suggestedFix = ""});
+}
+
+bool shouldTestForContradiction(
+    DateTime aStart, DateTime aEnd, DateTime bStart, DateTime bEnd,
+    {double threshold = 0.8}) {
+  final overlapStart = aStart.isAfter(bStart) ? aStart : bStart;
+  final overlapEnd = aEnd.isBefore(bEnd) ? aEnd : bEnd;
+  if (!overlapStart.isBefore(overlapEnd)) return false;
+
+  final overlapDuration = overlapEnd.difference(overlapStart).inSeconds;
+  final aDuration = aEnd.difference(aStart).inSeconds;
+  final bDuration = bEnd.difference(bStart).inSeconds;
+
+  final aRatio = overlapDuration / aDuration;
+  final bRatio = overlapDuration / bDuration;
+
+  return aRatio >= threshold || bRatio >= threshold;
 }

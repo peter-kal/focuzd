@@ -2818,6 +2818,16 @@ class $GoalTable extends Goal with TableInfo<$GoalTable, GoalData> {
   late final GeneratedColumn<int> type = GeneratedColumn<int>(
       'type', aliasedName, false,
       type: DriftSqlType.int, requiredDuringInsert: true);
+  static const VerificationMeta _expiredMeta =
+      const VerificationMeta('expired');
+  @override
+  late final GeneratedColumn<bool> expired = GeneratedColumn<bool>(
+      'expired', aliasedName, false,
+      type: DriftSqlType.bool,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('CHECK ("expired" IN (0, 1))'),
+      defaultValue: const Constant(false));
   static const VerificationMeta _createdAtMeta =
       const VerificationMeta('createdAt');
   @override
@@ -2876,8 +2886,10 @@ class $GoalTable extends Goal with TableInfo<$GoalTable, GoalData> {
       const VerificationMeta('realRatio');
   @override
   late final GeneratedColumn<double> realRatio = GeneratedColumn<double>(
-      'real_ratio', aliasedName, true,
-      type: DriftSqlType.double, requiredDuringInsert: false);
+      'real_ratio', aliasedName, false,
+      type: DriftSqlType.double,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(0.0));
   static const VerificationMeta _xSessionsRMeta =
       const VerificationMeta('xSessionsR');
   @override
@@ -2890,6 +2902,12 @@ class $GoalTable extends Goal with TableInfo<$GoalTable, GoalData> {
   late final GeneratedColumn<String> subjectIdZ = GeneratedColumn<String>(
       'subject_id_z', aliasedName, true,
       type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _subjectZNominatorMeta =
+      const VerificationMeta('subjectZNominator');
+  @override
+  late final GeneratedColumn<int> subjectZNominator = GeneratedColumn<int>(
+      'subject_z_nominator', aliasedName, true,
+      type: DriftSqlType.int, requiredDuringInsert: false);
   static const VerificationMeta _xSessionsZMeta =
       const VerificationMeta('xSessionsZ');
   @override
@@ -2902,6 +2920,12 @@ class $GoalTable extends Goal with TableInfo<$GoalTable, GoalData> {
   late final GeneratedColumn<String> subjectIdF = GeneratedColumn<String>(
       'subject_id_f', aliasedName, true,
       type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _subjectFDenominatorMeta =
+      const VerificationMeta('subjectFDenominator');
+  @override
+  late final GeneratedColumn<double> subjectFDenominator =
+      GeneratedColumn<double>('subject_f_denominator', aliasedName, true,
+          type: DriftSqlType.double, requiredDuringInsert: false);
   static const VerificationMeta _xSessionsFMeta =
       const VerificationMeta('xSessionsF');
   @override
@@ -2921,6 +2945,7 @@ class $GoalTable extends Goal with TableInfo<$GoalTable, GoalData> {
         id,
         codeName,
         type,
+        expired,
         createdAt,
         updatedAt,
         startPeriod1,
@@ -2933,8 +2958,10 @@ class $GoalTable extends Goal with TableInfo<$GoalTable, GoalData> {
         realRatio,
         xSessionsR,
         subjectIdZ,
+        subjectZNominator,
         xSessionsZ,
         subjectIdF,
+        subjectFDenominator,
         xSessionsF,
         successPercentage
       ];
@@ -2962,6 +2989,10 @@ class $GoalTable extends Goal with TableInfo<$GoalTable, GoalData> {
           _typeMeta, type.isAcceptableOrUnknown(data['type']!, _typeMeta));
     } else if (isInserting) {
       context.missing(_typeMeta);
+    }
+    if (data.containsKey('expired')) {
+      context.handle(_expiredMeta,
+          expired.isAcceptableOrUnknown(data['expired']!, _expiredMeta));
     }
     if (data.containsKey('created_at')) {
       context.handle(_createdAtMeta,
@@ -3037,6 +3068,12 @@ class $GoalTable extends Goal with TableInfo<$GoalTable, GoalData> {
           subjectIdZ.isAcceptableOrUnknown(
               data['subject_id_z']!, _subjectIdZMeta));
     }
+    if (data.containsKey('subject_z_nominator')) {
+      context.handle(
+          _subjectZNominatorMeta,
+          subjectZNominator.isAcceptableOrUnknown(
+              data['subject_z_nominator']!, _subjectZNominatorMeta));
+    }
     if (data.containsKey('x_sessions_z')) {
       context.handle(
           _xSessionsZMeta,
@@ -3048,6 +3085,12 @@ class $GoalTable extends Goal with TableInfo<$GoalTable, GoalData> {
           _subjectIdFMeta,
           subjectIdF.isAcceptableOrUnknown(
               data['subject_id_f']!, _subjectIdFMeta));
+    }
+    if (data.containsKey('subject_f_denominator')) {
+      context.handle(
+          _subjectFDenominatorMeta,
+          subjectFDenominator.isAcceptableOrUnknown(
+              data['subject_f_denominator']!, _subjectFDenominatorMeta));
     }
     if (data.containsKey('x_sessions_f')) {
       context.handle(
@@ -3076,6 +3119,8 @@ class $GoalTable extends Goal with TableInfo<$GoalTable, GoalData> {
           .read(DriftSqlType.string, data['${effectivePrefix}code_name'])!,
       type: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}type'])!,
+      expired: attachedDatabase.typeMapping
+          .read(DriftSqlType.bool, data['${effectivePrefix}expired'])!,
       createdAt: attachedDatabase.typeMapping
           .read(DriftSqlType.dateTime, data['${effectivePrefix}created_at'])!,
       updatedAt: attachedDatabase.typeMapping
@@ -3095,15 +3140,19 @@ class $GoalTable extends Goal with TableInfo<$GoalTable, GoalData> {
       plannedRatio: attachedDatabase.typeMapping
           .read(DriftSqlType.double, data['${effectivePrefix}planned_ratio']),
       realRatio: attachedDatabase.typeMapping
-          .read(DriftSqlType.double, data['${effectivePrefix}real_ratio']),
+          .read(DriftSqlType.double, data['${effectivePrefix}real_ratio'])!,
       xSessionsR: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}x_sessions_r']),
       subjectIdZ: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}subject_id_z']),
+      subjectZNominator: attachedDatabase.typeMapping.read(
+          DriftSqlType.int, data['${effectivePrefix}subject_z_nominator']),
       xSessionsZ: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}x_sessions_z']),
       subjectIdF: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}subject_id_f']),
+      subjectFDenominator: attachedDatabase.typeMapping.read(
+          DriftSqlType.double, data['${effectivePrefix}subject_f_denominator']),
       xSessionsF: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}x_sessions_f']),
       successPercentage: attachedDatabase.typeMapping.read(
@@ -3121,6 +3170,7 @@ class GoalData extends DataClass implements Insertable<GoalData> {
   final String id;
   final String codeName;
   final int type;
+  final bool expired;
   final DateTime createdAt;
   final DateTime updatedAt;
   final DateTime? startPeriod1;
@@ -3130,17 +3180,20 @@ class GoalData extends DataClass implements Insertable<GoalData> {
   final int? xSessionsGoal;
   final int? ySessionsDone;
   final double? plannedRatio;
-  final double? realRatio;
+  final double realRatio;
   final int? xSessionsR;
   final String? subjectIdZ;
+  final int? subjectZNominator;
   final int? xSessionsZ;
   final String? subjectIdF;
+  final double? subjectFDenominator;
   final int? xSessionsF;
   final double successPercentage;
   const GoalData(
       {required this.id,
       required this.codeName,
       required this.type,
+      required this.expired,
       required this.createdAt,
       required this.updatedAt,
       this.startPeriod1,
@@ -3150,11 +3203,13 @@ class GoalData extends DataClass implements Insertable<GoalData> {
       this.xSessionsGoal,
       this.ySessionsDone,
       this.plannedRatio,
-      this.realRatio,
+      required this.realRatio,
       this.xSessionsR,
       this.subjectIdZ,
+      this.subjectZNominator,
       this.xSessionsZ,
       this.subjectIdF,
+      this.subjectFDenominator,
       this.xSessionsF,
       required this.successPercentage});
   @override
@@ -3163,6 +3218,7 @@ class GoalData extends DataClass implements Insertable<GoalData> {
     map['id'] = Variable<String>(id);
     map['code_name'] = Variable<String>(codeName);
     map['type'] = Variable<int>(type);
+    map['expired'] = Variable<bool>(expired);
     map['created_at'] = Variable<DateTime>(createdAt);
     map['updated_at'] = Variable<DateTime>(updatedAt);
     if (!nullToAbsent || startPeriod1 != null) {
@@ -3182,20 +3238,24 @@ class GoalData extends DataClass implements Insertable<GoalData> {
     if (!nullToAbsent || plannedRatio != null) {
       map['planned_ratio'] = Variable<double>(plannedRatio);
     }
-    if (!nullToAbsent || realRatio != null) {
-      map['real_ratio'] = Variable<double>(realRatio);
-    }
+    map['real_ratio'] = Variable<double>(realRatio);
     if (!nullToAbsent || xSessionsR != null) {
       map['x_sessions_r'] = Variable<int>(xSessionsR);
     }
     if (!nullToAbsent || subjectIdZ != null) {
       map['subject_id_z'] = Variable<String>(subjectIdZ);
     }
+    if (!nullToAbsent || subjectZNominator != null) {
+      map['subject_z_nominator'] = Variable<int>(subjectZNominator);
+    }
     if (!nullToAbsent || xSessionsZ != null) {
       map['x_sessions_z'] = Variable<int>(xSessionsZ);
     }
     if (!nullToAbsent || subjectIdF != null) {
       map['subject_id_f'] = Variable<String>(subjectIdF);
+    }
+    if (!nullToAbsent || subjectFDenominator != null) {
+      map['subject_f_denominator'] = Variable<double>(subjectFDenominator);
     }
     if (!nullToAbsent || xSessionsF != null) {
       map['x_sessions_f'] = Variable<int>(xSessionsF);
@@ -3209,6 +3269,7 @@ class GoalData extends DataClass implements Insertable<GoalData> {
       id: Value(id),
       codeName: Value(codeName),
       type: Value(type),
+      expired: Value(expired),
       createdAt: Value(createdAt),
       updatedAt: Value(updatedAt),
       startPeriod1: startPeriod1 == null && nullToAbsent
@@ -3228,21 +3289,25 @@ class GoalData extends DataClass implements Insertable<GoalData> {
       plannedRatio: plannedRatio == null && nullToAbsent
           ? const Value.absent()
           : Value(plannedRatio),
-      realRatio: realRatio == null && nullToAbsent
-          ? const Value.absent()
-          : Value(realRatio),
+      realRatio: Value(realRatio),
       xSessionsR: xSessionsR == null && nullToAbsent
           ? const Value.absent()
           : Value(xSessionsR),
       subjectIdZ: subjectIdZ == null && nullToAbsent
           ? const Value.absent()
           : Value(subjectIdZ),
+      subjectZNominator: subjectZNominator == null && nullToAbsent
+          ? const Value.absent()
+          : Value(subjectZNominator),
       xSessionsZ: xSessionsZ == null && nullToAbsent
           ? const Value.absent()
           : Value(xSessionsZ),
       subjectIdF: subjectIdF == null && nullToAbsent
           ? const Value.absent()
           : Value(subjectIdF),
+      subjectFDenominator: subjectFDenominator == null && nullToAbsent
+          ? const Value.absent()
+          : Value(subjectFDenominator),
       xSessionsF: xSessionsF == null && nullToAbsent
           ? const Value.absent()
           : Value(xSessionsF),
@@ -3257,6 +3322,7 @@ class GoalData extends DataClass implements Insertable<GoalData> {
       id: serializer.fromJson<String>(json['id']),
       codeName: serializer.fromJson<String>(json['codeName']),
       type: serializer.fromJson<int>(json['type']),
+      expired: serializer.fromJson<bool>(json['expired']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
       updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
       startPeriod1: serializer.fromJson<DateTime?>(json['startPeriod1']),
@@ -3266,11 +3332,14 @@ class GoalData extends DataClass implements Insertable<GoalData> {
       xSessionsGoal: serializer.fromJson<int?>(json['xSessionsGoal']),
       ySessionsDone: serializer.fromJson<int?>(json['ySessionsDone']),
       plannedRatio: serializer.fromJson<double?>(json['plannedRatio']),
-      realRatio: serializer.fromJson<double?>(json['realRatio']),
+      realRatio: serializer.fromJson<double>(json['realRatio']),
       xSessionsR: serializer.fromJson<int?>(json['xSessionsR']),
       subjectIdZ: serializer.fromJson<String?>(json['subjectIdZ']),
+      subjectZNominator: serializer.fromJson<int?>(json['subjectZNominator']),
       xSessionsZ: serializer.fromJson<int?>(json['xSessionsZ']),
       subjectIdF: serializer.fromJson<String?>(json['subjectIdF']),
+      subjectFDenominator:
+          serializer.fromJson<double?>(json['subjectFDenominator']),
       xSessionsF: serializer.fromJson<int?>(json['xSessionsF']),
       successPercentage: serializer.fromJson<double>(json['successPercentage']),
     );
@@ -3282,6 +3351,7 @@ class GoalData extends DataClass implements Insertable<GoalData> {
       'id': serializer.toJson<String>(id),
       'codeName': serializer.toJson<String>(codeName),
       'type': serializer.toJson<int>(type),
+      'expired': serializer.toJson<bool>(expired),
       'createdAt': serializer.toJson<DateTime>(createdAt),
       'updatedAt': serializer.toJson<DateTime>(updatedAt),
       'startPeriod1': serializer.toJson<DateTime?>(startPeriod1),
@@ -3291,11 +3361,13 @@ class GoalData extends DataClass implements Insertable<GoalData> {
       'xSessionsGoal': serializer.toJson<int?>(xSessionsGoal),
       'ySessionsDone': serializer.toJson<int?>(ySessionsDone),
       'plannedRatio': serializer.toJson<double?>(plannedRatio),
-      'realRatio': serializer.toJson<double?>(realRatio),
+      'realRatio': serializer.toJson<double>(realRatio),
       'xSessionsR': serializer.toJson<int?>(xSessionsR),
       'subjectIdZ': serializer.toJson<String?>(subjectIdZ),
+      'subjectZNominator': serializer.toJson<int?>(subjectZNominator),
       'xSessionsZ': serializer.toJson<int?>(xSessionsZ),
       'subjectIdF': serializer.toJson<String?>(subjectIdF),
+      'subjectFDenominator': serializer.toJson<double?>(subjectFDenominator),
       'xSessionsF': serializer.toJson<int?>(xSessionsF),
       'successPercentage': serializer.toJson<double>(successPercentage),
     };
@@ -3305,6 +3377,7 @@ class GoalData extends DataClass implements Insertable<GoalData> {
           {String? id,
           String? codeName,
           int? type,
+          bool? expired,
           DateTime? createdAt,
           DateTime? updatedAt,
           Value<DateTime?> startPeriod1 = const Value.absent(),
@@ -3314,17 +3387,20 @@ class GoalData extends DataClass implements Insertable<GoalData> {
           Value<int?> xSessionsGoal = const Value.absent(),
           Value<int?> ySessionsDone = const Value.absent(),
           Value<double?> plannedRatio = const Value.absent(),
-          Value<double?> realRatio = const Value.absent(),
+          double? realRatio,
           Value<int?> xSessionsR = const Value.absent(),
           Value<String?> subjectIdZ = const Value.absent(),
+          Value<int?> subjectZNominator = const Value.absent(),
           Value<int?> xSessionsZ = const Value.absent(),
           Value<String?> subjectIdF = const Value.absent(),
+          Value<double?> subjectFDenominator = const Value.absent(),
           Value<int?> xSessionsF = const Value.absent(),
           double? successPercentage}) =>
       GoalData(
         id: id ?? this.id,
         codeName: codeName ?? this.codeName,
         type: type ?? this.type,
+        expired: expired ?? this.expired,
         createdAt: createdAt ?? this.createdAt,
         updatedAt: updatedAt ?? this.updatedAt,
         startPeriod1:
@@ -3338,11 +3414,17 @@ class GoalData extends DataClass implements Insertable<GoalData> {
             ySessionsDone.present ? ySessionsDone.value : this.ySessionsDone,
         plannedRatio:
             plannedRatio.present ? plannedRatio.value : this.plannedRatio,
-        realRatio: realRatio.present ? realRatio.value : this.realRatio,
+        realRatio: realRatio ?? this.realRatio,
         xSessionsR: xSessionsR.present ? xSessionsR.value : this.xSessionsR,
         subjectIdZ: subjectIdZ.present ? subjectIdZ.value : this.subjectIdZ,
+        subjectZNominator: subjectZNominator.present
+            ? subjectZNominator.value
+            : this.subjectZNominator,
         xSessionsZ: xSessionsZ.present ? xSessionsZ.value : this.xSessionsZ,
         subjectIdF: subjectIdF.present ? subjectIdF.value : this.subjectIdF,
+        subjectFDenominator: subjectFDenominator.present
+            ? subjectFDenominator.value
+            : this.subjectFDenominator,
         xSessionsF: xSessionsF.present ? xSessionsF.value : this.xSessionsF,
         successPercentage: successPercentage ?? this.successPercentage,
       );
@@ -3351,6 +3433,7 @@ class GoalData extends DataClass implements Insertable<GoalData> {
       id: data.id.present ? data.id.value : this.id,
       codeName: data.codeName.present ? data.codeName.value : this.codeName,
       type: data.type.present ? data.type.value : this.type,
+      expired: data.expired.present ? data.expired.value : this.expired,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
       startPeriod1: data.startPeriod1.present
@@ -3377,10 +3460,16 @@ class GoalData extends DataClass implements Insertable<GoalData> {
           data.xSessionsR.present ? data.xSessionsR.value : this.xSessionsR,
       subjectIdZ:
           data.subjectIdZ.present ? data.subjectIdZ.value : this.subjectIdZ,
+      subjectZNominator: data.subjectZNominator.present
+          ? data.subjectZNominator.value
+          : this.subjectZNominator,
       xSessionsZ:
           data.xSessionsZ.present ? data.xSessionsZ.value : this.xSessionsZ,
       subjectIdF:
           data.subjectIdF.present ? data.subjectIdF.value : this.subjectIdF,
+      subjectFDenominator: data.subjectFDenominator.present
+          ? data.subjectFDenominator.value
+          : this.subjectFDenominator,
       xSessionsF:
           data.xSessionsF.present ? data.xSessionsF.value : this.xSessionsF,
       successPercentage: data.successPercentage.present
@@ -3395,6 +3484,7 @@ class GoalData extends DataClass implements Insertable<GoalData> {
           ..write('id: $id, ')
           ..write('codeName: $codeName, ')
           ..write('type: $type, ')
+          ..write('expired: $expired, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
           ..write('startPeriod1: $startPeriod1, ')
@@ -3407,8 +3497,10 @@ class GoalData extends DataClass implements Insertable<GoalData> {
           ..write('realRatio: $realRatio, ')
           ..write('xSessionsR: $xSessionsR, ')
           ..write('subjectIdZ: $subjectIdZ, ')
+          ..write('subjectZNominator: $subjectZNominator, ')
           ..write('xSessionsZ: $xSessionsZ, ')
           ..write('subjectIdF: $subjectIdF, ')
+          ..write('subjectFDenominator: $subjectFDenominator, ')
           ..write('xSessionsF: $xSessionsF, ')
           ..write('successPercentage: $successPercentage')
           ..write(')'))
@@ -3416,26 +3508,30 @@ class GoalData extends DataClass implements Insertable<GoalData> {
   }
 
   @override
-  int get hashCode => Object.hash(
-      id,
-      codeName,
-      type,
-      createdAt,
-      updatedAt,
-      startPeriod1,
-      endPeriod1,
-      startPeriod2,
-      endPeriod2,
-      xSessionsGoal,
-      ySessionsDone,
-      plannedRatio,
-      realRatio,
-      xSessionsR,
-      subjectIdZ,
-      xSessionsZ,
-      subjectIdF,
-      xSessionsF,
-      successPercentage);
+  int get hashCode => Object.hashAll([
+        id,
+        codeName,
+        type,
+        expired,
+        createdAt,
+        updatedAt,
+        startPeriod1,
+        endPeriod1,
+        startPeriod2,
+        endPeriod2,
+        xSessionsGoal,
+        ySessionsDone,
+        plannedRatio,
+        realRatio,
+        xSessionsR,
+        subjectIdZ,
+        subjectZNominator,
+        xSessionsZ,
+        subjectIdF,
+        subjectFDenominator,
+        xSessionsF,
+        successPercentage
+      ]);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -3443,6 +3539,7 @@ class GoalData extends DataClass implements Insertable<GoalData> {
           other.id == this.id &&
           other.codeName == this.codeName &&
           other.type == this.type &&
+          other.expired == this.expired &&
           other.createdAt == this.createdAt &&
           other.updatedAt == this.updatedAt &&
           other.startPeriod1 == this.startPeriod1 &&
@@ -3455,8 +3552,10 @@ class GoalData extends DataClass implements Insertable<GoalData> {
           other.realRatio == this.realRatio &&
           other.xSessionsR == this.xSessionsR &&
           other.subjectIdZ == this.subjectIdZ &&
+          other.subjectZNominator == this.subjectZNominator &&
           other.xSessionsZ == this.xSessionsZ &&
           other.subjectIdF == this.subjectIdF &&
+          other.subjectFDenominator == this.subjectFDenominator &&
           other.xSessionsF == this.xSessionsF &&
           other.successPercentage == this.successPercentage);
 }
@@ -3465,6 +3564,7 @@ class GoalCompanion extends UpdateCompanion<GoalData> {
   final Value<String> id;
   final Value<String> codeName;
   final Value<int> type;
+  final Value<bool> expired;
   final Value<DateTime> createdAt;
   final Value<DateTime> updatedAt;
   final Value<DateTime?> startPeriod1;
@@ -3474,11 +3574,13 @@ class GoalCompanion extends UpdateCompanion<GoalData> {
   final Value<int?> xSessionsGoal;
   final Value<int?> ySessionsDone;
   final Value<double?> plannedRatio;
-  final Value<double?> realRatio;
+  final Value<double> realRatio;
   final Value<int?> xSessionsR;
   final Value<String?> subjectIdZ;
+  final Value<int?> subjectZNominator;
   final Value<int?> xSessionsZ;
   final Value<String?> subjectIdF;
+  final Value<double?> subjectFDenominator;
   final Value<int?> xSessionsF;
   final Value<double> successPercentage;
   final Value<int> rowid;
@@ -3486,6 +3588,7 @@ class GoalCompanion extends UpdateCompanion<GoalData> {
     this.id = const Value.absent(),
     this.codeName = const Value.absent(),
     this.type = const Value.absent(),
+    this.expired = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
     this.startPeriod1 = const Value.absent(),
@@ -3498,8 +3601,10 @@ class GoalCompanion extends UpdateCompanion<GoalData> {
     this.realRatio = const Value.absent(),
     this.xSessionsR = const Value.absent(),
     this.subjectIdZ = const Value.absent(),
+    this.subjectZNominator = const Value.absent(),
     this.xSessionsZ = const Value.absent(),
     this.subjectIdF = const Value.absent(),
+    this.subjectFDenominator = const Value.absent(),
     this.xSessionsF = const Value.absent(),
     this.successPercentage = const Value.absent(),
     this.rowid = const Value.absent(),
@@ -3508,6 +3613,7 @@ class GoalCompanion extends UpdateCompanion<GoalData> {
     this.id = const Value.absent(),
     required String codeName,
     required int type,
+    this.expired = const Value.absent(),
     required DateTime createdAt,
     required DateTime updatedAt,
     this.startPeriod1 = const Value.absent(),
@@ -3520,8 +3626,10 @@ class GoalCompanion extends UpdateCompanion<GoalData> {
     this.realRatio = const Value.absent(),
     this.xSessionsR = const Value.absent(),
     this.subjectIdZ = const Value.absent(),
+    this.subjectZNominator = const Value.absent(),
     this.xSessionsZ = const Value.absent(),
     this.subjectIdF = const Value.absent(),
+    this.subjectFDenominator = const Value.absent(),
     this.xSessionsF = const Value.absent(),
     this.successPercentage = const Value.absent(),
     this.rowid = const Value.absent(),
@@ -3535,6 +3643,7 @@ class GoalCompanion extends UpdateCompanion<GoalData> {
     Expression<String>? id,
     Expression<String>? codeName,
     Expression<int>? type,
+    Expression<bool>? expired,
     Expression<DateTime>? createdAt,
     Expression<DateTime>? updatedAt,
     Expression<DateTime>? startPeriod1,
@@ -3547,8 +3656,10 @@ class GoalCompanion extends UpdateCompanion<GoalData> {
     Expression<double>? realRatio,
     Expression<int>? xSessionsR,
     Expression<String>? subjectIdZ,
+    Expression<int>? subjectZNominator,
     Expression<int>? xSessionsZ,
     Expression<String>? subjectIdF,
+    Expression<double>? subjectFDenominator,
     Expression<int>? xSessionsF,
     Expression<double>? successPercentage,
     Expression<int>? rowid,
@@ -3557,6 +3668,7 @@ class GoalCompanion extends UpdateCompanion<GoalData> {
       if (id != null) 'id': id,
       if (codeName != null) 'code_name': codeName,
       if (type != null) 'type': type,
+      if (expired != null) 'expired': expired,
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
       if (startPeriod1 != null) 'start_period1': startPeriod1,
@@ -3569,8 +3681,11 @@ class GoalCompanion extends UpdateCompanion<GoalData> {
       if (realRatio != null) 'real_ratio': realRatio,
       if (xSessionsR != null) 'x_sessions_r': xSessionsR,
       if (subjectIdZ != null) 'subject_id_z': subjectIdZ,
+      if (subjectZNominator != null) 'subject_z_nominator': subjectZNominator,
       if (xSessionsZ != null) 'x_sessions_z': xSessionsZ,
       if (subjectIdF != null) 'subject_id_f': subjectIdF,
+      if (subjectFDenominator != null)
+        'subject_f_denominator': subjectFDenominator,
       if (xSessionsF != null) 'x_sessions_f': xSessionsF,
       if (successPercentage != null) 'success_percentage': successPercentage,
       if (rowid != null) 'rowid': rowid,
@@ -3581,6 +3696,7 @@ class GoalCompanion extends UpdateCompanion<GoalData> {
       {Value<String>? id,
       Value<String>? codeName,
       Value<int>? type,
+      Value<bool>? expired,
       Value<DateTime>? createdAt,
       Value<DateTime>? updatedAt,
       Value<DateTime?>? startPeriod1,
@@ -3590,11 +3706,13 @@ class GoalCompanion extends UpdateCompanion<GoalData> {
       Value<int?>? xSessionsGoal,
       Value<int?>? ySessionsDone,
       Value<double?>? plannedRatio,
-      Value<double?>? realRatio,
+      Value<double>? realRatio,
       Value<int?>? xSessionsR,
       Value<String?>? subjectIdZ,
+      Value<int?>? subjectZNominator,
       Value<int?>? xSessionsZ,
       Value<String?>? subjectIdF,
+      Value<double?>? subjectFDenominator,
       Value<int?>? xSessionsF,
       Value<double>? successPercentage,
       Value<int>? rowid}) {
@@ -3602,6 +3720,7 @@ class GoalCompanion extends UpdateCompanion<GoalData> {
       id: id ?? this.id,
       codeName: codeName ?? this.codeName,
       type: type ?? this.type,
+      expired: expired ?? this.expired,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       startPeriod1: startPeriod1 ?? this.startPeriod1,
@@ -3614,8 +3733,10 @@ class GoalCompanion extends UpdateCompanion<GoalData> {
       realRatio: realRatio ?? this.realRatio,
       xSessionsR: xSessionsR ?? this.xSessionsR,
       subjectIdZ: subjectIdZ ?? this.subjectIdZ,
+      subjectZNominator: subjectZNominator ?? this.subjectZNominator,
       xSessionsZ: xSessionsZ ?? this.xSessionsZ,
       subjectIdF: subjectIdF ?? this.subjectIdF,
+      subjectFDenominator: subjectFDenominator ?? this.subjectFDenominator,
       xSessionsF: xSessionsF ?? this.xSessionsF,
       successPercentage: successPercentage ?? this.successPercentage,
       rowid: rowid ?? this.rowid,
@@ -3633,6 +3754,9 @@ class GoalCompanion extends UpdateCompanion<GoalData> {
     }
     if (type.present) {
       map['type'] = Variable<int>(type.value);
+    }
+    if (expired.present) {
+      map['expired'] = Variable<bool>(expired.value);
     }
     if (createdAt.present) {
       map['created_at'] = Variable<DateTime>(createdAt.value);
@@ -3670,11 +3794,18 @@ class GoalCompanion extends UpdateCompanion<GoalData> {
     if (subjectIdZ.present) {
       map['subject_id_z'] = Variable<String>(subjectIdZ.value);
     }
+    if (subjectZNominator.present) {
+      map['subject_z_nominator'] = Variable<int>(subjectZNominator.value);
+    }
     if (xSessionsZ.present) {
       map['x_sessions_z'] = Variable<int>(xSessionsZ.value);
     }
     if (subjectIdF.present) {
       map['subject_id_f'] = Variable<String>(subjectIdF.value);
+    }
+    if (subjectFDenominator.present) {
+      map['subject_f_denominator'] =
+          Variable<double>(subjectFDenominator.value);
     }
     if (xSessionsF.present) {
       map['x_sessions_f'] = Variable<int>(xSessionsF.value);
@@ -3694,6 +3825,7 @@ class GoalCompanion extends UpdateCompanion<GoalData> {
           ..write('id: $id, ')
           ..write('codeName: $codeName, ')
           ..write('type: $type, ')
+          ..write('expired: $expired, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
           ..write('startPeriod1: $startPeriod1, ')
@@ -3706,10 +3838,593 @@ class GoalCompanion extends UpdateCompanion<GoalData> {
           ..write('realRatio: $realRatio, ')
           ..write('xSessionsR: $xSessionsR, ')
           ..write('subjectIdZ: $subjectIdZ, ')
+          ..write('subjectZNominator: $subjectZNominator, ')
           ..write('xSessionsZ: $xSessionsZ, ')
           ..write('subjectIdF: $subjectIdF, ')
+          ..write('subjectFDenominator: $subjectFDenominator, ')
           ..write('xSessionsF: $xSessionsF, ')
           ..write('successPercentage: $successPercentage, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $GoalGroupTable extends GoalGroup
+    with TableInfo<$GoalGroupTable, GoalGroupData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $GoalGroupTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+      'id', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: false,
+      clientDefault: () => const Uuid().v4());
+  static const VerificationMeta _codeNameMeta =
+      const VerificationMeta('codeName');
+  @override
+  late final GeneratedColumn<String> codeName = GeneratedColumn<String>(
+      'code_name', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _createdAtMeta =
+      const VerificationMeta('createdAt');
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+      'created_at', aliasedName, false,
+      type: DriftSqlType.dateTime, requiredDuringInsert: true);
+  static const VerificationMeta _updatedAtMeta =
+      const VerificationMeta('updatedAt');
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+      'updated_at', aliasedName, false,
+      type: DriftSqlType.dateTime, requiredDuringInsert: true);
+  static const VerificationMeta _goalNumberMeta =
+      const VerificationMeta('goalNumber');
+  @override
+  late final GeneratedColumn<int> goalNumber = GeneratedColumn<int>(
+      'goal_number', aliasedName, false,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(0));
+  @override
+  List<GeneratedColumn> get $columns =>
+      [id, codeName, createdAt, updatedAt, goalNumber];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'goal_group';
+  @override
+  VerificationContext validateIntegrity(Insertable<GoalGroupData> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('code_name')) {
+      context.handle(_codeNameMeta,
+          codeName.isAcceptableOrUnknown(data['code_name']!, _codeNameMeta));
+    } else if (isInserting) {
+      context.missing(_codeNameMeta);
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(_createdAtMeta,
+          createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta));
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(_updatedAtMeta,
+          updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta));
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
+    if (data.containsKey('goal_number')) {
+      context.handle(
+          _goalNumberMeta,
+          goalNumber.isAcceptableOrUnknown(
+              data['goal_number']!, _goalNumberMeta));
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  GoalGroupData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return GoalGroupData(
+      id: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
+      codeName: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}code_name'])!,
+      createdAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}created_at'])!,
+      updatedAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}updated_at'])!,
+      goalNumber: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}goal_number'])!,
+    );
+  }
+
+  @override
+  $GoalGroupTable createAlias(String alias) {
+    return $GoalGroupTable(attachedDatabase, alias);
+  }
+}
+
+class GoalGroupData extends DataClass implements Insertable<GoalGroupData> {
+  final String id;
+  final String codeName;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  final int goalNumber;
+  const GoalGroupData(
+      {required this.id,
+      required this.codeName,
+      required this.createdAt,
+      required this.updatedAt,
+      required this.goalNumber});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['code_name'] = Variable<String>(codeName);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    map['goal_number'] = Variable<int>(goalNumber);
+    return map;
+  }
+
+  GoalGroupCompanion toCompanion(bool nullToAbsent) {
+    return GoalGroupCompanion(
+      id: Value(id),
+      codeName: Value(codeName),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+      goalNumber: Value(goalNumber),
+    );
+  }
+
+  factory GoalGroupData.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return GoalGroupData(
+      id: serializer.fromJson<String>(json['id']),
+      codeName: serializer.fromJson<String>(json['codeName']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      goalNumber: serializer.fromJson<int>(json['goalNumber']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'codeName': serializer.toJson<String>(codeName),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'goalNumber': serializer.toJson<int>(goalNumber),
+    };
+  }
+
+  GoalGroupData copyWith(
+          {String? id,
+          String? codeName,
+          DateTime? createdAt,
+          DateTime? updatedAt,
+          int? goalNumber}) =>
+      GoalGroupData(
+        id: id ?? this.id,
+        codeName: codeName ?? this.codeName,
+        createdAt: createdAt ?? this.createdAt,
+        updatedAt: updatedAt ?? this.updatedAt,
+        goalNumber: goalNumber ?? this.goalNumber,
+      );
+  GoalGroupData copyWithCompanion(GoalGroupCompanion data) {
+    return GoalGroupData(
+      id: data.id.present ? data.id.value : this.id,
+      codeName: data.codeName.present ? data.codeName.value : this.codeName,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      goalNumber:
+          data.goalNumber.present ? data.goalNumber.value : this.goalNumber,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('GoalGroupData(')
+          ..write('id: $id, ')
+          ..write('codeName: $codeName, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('goalNumber: $goalNumber')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(id, codeName, createdAt, updatedAt, goalNumber);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is GoalGroupData &&
+          other.id == this.id &&
+          other.codeName == this.codeName &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt &&
+          other.goalNumber == this.goalNumber);
+}
+
+class GoalGroupCompanion extends UpdateCompanion<GoalGroupData> {
+  final Value<String> id;
+  final Value<String> codeName;
+  final Value<DateTime> createdAt;
+  final Value<DateTime> updatedAt;
+  final Value<int> goalNumber;
+  final Value<int> rowid;
+  const GoalGroupCompanion({
+    this.id = const Value.absent(),
+    this.codeName = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.goalNumber = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  GoalGroupCompanion.insert({
+    this.id = const Value.absent(),
+    required String codeName,
+    required DateTime createdAt,
+    required DateTime updatedAt,
+    this.goalNumber = const Value.absent(),
+    this.rowid = const Value.absent(),
+  })  : codeName = Value(codeName),
+        createdAt = Value(createdAt),
+        updatedAt = Value(updatedAt);
+  static Insertable<GoalGroupData> custom({
+    Expression<String>? id,
+    Expression<String>? codeName,
+    Expression<DateTime>? createdAt,
+    Expression<DateTime>? updatedAt,
+    Expression<int>? goalNumber,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (codeName != null) 'code_name': codeName,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (goalNumber != null) 'goal_number': goalNumber,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  GoalGroupCompanion copyWith(
+      {Value<String>? id,
+      Value<String>? codeName,
+      Value<DateTime>? createdAt,
+      Value<DateTime>? updatedAt,
+      Value<int>? goalNumber,
+      Value<int>? rowid}) {
+    return GoalGroupCompanion(
+      id: id ?? this.id,
+      codeName: codeName ?? this.codeName,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      goalNumber: goalNumber ?? this.goalNumber,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (codeName.present) {
+      map['code_name'] = Variable<String>(codeName.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (goalNumber.present) {
+      map['goal_number'] = Variable<int>(goalNumber.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('GoalGroupCompanion(')
+          ..write('id: $id, ')
+          ..write('codeName: $codeName, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('goalNumber: $goalNumber, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $GroupLinkTable extends GroupLink
+    with TableInfo<$GroupLinkTable, GroupLinkData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $GroupLinkTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+      'id', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: false,
+      clientDefault: () => const Uuid().v4());
+  static const VerificationMeta _createdAtMeta =
+      const VerificationMeta('createdAt');
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+      'created_at', aliasedName, false,
+      type: DriftSqlType.dateTime, requiredDuringInsert: true);
+  static const VerificationMeta _groupIDMeta =
+      const VerificationMeta('groupID');
+  @override
+  late final GeneratedColumn<String> groupID = GeneratedColumn<String>(
+      'group_i_d', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: true,
+      $customConstraints: 'REFERENCES goalgroup(id)');
+  static const VerificationMeta _goalIDMeta = const VerificationMeta('goalID');
+  @override
+  late final GeneratedColumn<String> goalID = GeneratedColumn<String>(
+      'goal_i_d', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: true,
+      $customConstraints: 'REFERENCES goal(id)');
+  @override
+  List<GeneratedColumn> get $columns => [id, createdAt, groupID, goalID];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'group_link';
+  @override
+  VerificationContext validateIntegrity(Insertable<GroupLinkData> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(_createdAtMeta,
+          createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta));
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    if (data.containsKey('group_i_d')) {
+      context.handle(_groupIDMeta,
+          groupID.isAcceptableOrUnknown(data['group_i_d']!, _groupIDMeta));
+    } else if (isInserting) {
+      context.missing(_groupIDMeta);
+    }
+    if (data.containsKey('goal_i_d')) {
+      context.handle(_goalIDMeta,
+          goalID.isAcceptableOrUnknown(data['goal_i_d']!, _goalIDMeta));
+    } else if (isInserting) {
+      context.missing(_goalIDMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  GroupLinkData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return GroupLinkData(
+      id: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
+      createdAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}created_at'])!,
+      groupID: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}group_i_d'])!,
+      goalID: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}goal_i_d'])!,
+    );
+  }
+
+  @override
+  $GroupLinkTable createAlias(String alias) {
+    return $GroupLinkTable(attachedDatabase, alias);
+  }
+}
+
+class GroupLinkData extends DataClass implements Insertable<GroupLinkData> {
+  final String id;
+  final DateTime createdAt;
+  final String groupID;
+  final String goalID;
+  const GroupLinkData(
+      {required this.id,
+      required this.createdAt,
+      required this.groupID,
+      required this.goalID});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    map['group_i_d'] = Variable<String>(groupID);
+    map['goal_i_d'] = Variable<String>(goalID);
+    return map;
+  }
+
+  GroupLinkCompanion toCompanion(bool nullToAbsent) {
+    return GroupLinkCompanion(
+      id: Value(id),
+      createdAt: Value(createdAt),
+      groupID: Value(groupID),
+      goalID: Value(goalID),
+    );
+  }
+
+  factory GroupLinkData.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return GroupLinkData(
+      id: serializer.fromJson<String>(json['id']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      groupID: serializer.fromJson<String>(json['groupID']),
+      goalID: serializer.fromJson<String>(json['goalID']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'groupID': serializer.toJson<String>(groupID),
+      'goalID': serializer.toJson<String>(goalID),
+    };
+  }
+
+  GroupLinkData copyWith(
+          {String? id, DateTime? createdAt, String? groupID, String? goalID}) =>
+      GroupLinkData(
+        id: id ?? this.id,
+        createdAt: createdAt ?? this.createdAt,
+        groupID: groupID ?? this.groupID,
+        goalID: goalID ?? this.goalID,
+      );
+  GroupLinkData copyWithCompanion(GroupLinkCompanion data) {
+    return GroupLinkData(
+      id: data.id.present ? data.id.value : this.id,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      groupID: data.groupID.present ? data.groupID.value : this.groupID,
+      goalID: data.goalID.present ? data.goalID.value : this.goalID,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('GroupLinkData(')
+          ..write('id: $id, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('groupID: $groupID, ')
+          ..write('goalID: $goalID')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, createdAt, groupID, goalID);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is GroupLinkData &&
+          other.id == this.id &&
+          other.createdAt == this.createdAt &&
+          other.groupID == this.groupID &&
+          other.goalID == this.goalID);
+}
+
+class GroupLinkCompanion extends UpdateCompanion<GroupLinkData> {
+  final Value<String> id;
+  final Value<DateTime> createdAt;
+  final Value<String> groupID;
+  final Value<String> goalID;
+  final Value<int> rowid;
+  const GroupLinkCompanion({
+    this.id = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.groupID = const Value.absent(),
+    this.goalID = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  GroupLinkCompanion.insert({
+    this.id = const Value.absent(),
+    required DateTime createdAt,
+    required String groupID,
+    required String goalID,
+    this.rowid = const Value.absent(),
+  })  : createdAt = Value(createdAt),
+        groupID = Value(groupID),
+        goalID = Value(goalID);
+  static Insertable<GroupLinkData> custom({
+    Expression<String>? id,
+    Expression<DateTime>? createdAt,
+    Expression<String>? groupID,
+    Expression<String>? goalID,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (createdAt != null) 'created_at': createdAt,
+      if (groupID != null) 'group_i_d': groupID,
+      if (goalID != null) 'goal_i_d': goalID,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  GroupLinkCompanion copyWith(
+      {Value<String>? id,
+      Value<DateTime>? createdAt,
+      Value<String>? groupID,
+      Value<String>? goalID,
+      Value<int>? rowid}) {
+    return GroupLinkCompanion(
+      id: id ?? this.id,
+      createdAt: createdAt ?? this.createdAt,
+      groupID: groupID ?? this.groupID,
+      goalID: goalID ?? this.goalID,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (groupID.present) {
+      map['group_i_d'] = Variable<String>(groupID.value);
+    }
+    if (goalID.present) {
+      map['goal_i_d'] = Variable<String>(goalID.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('GroupLinkCompanion(')
+          ..write('id: $id, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('groupID: $groupID, ')
+          ..write('goalID: $goalID, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -3728,6 +4443,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $OutPlanningVariableTable outPlanningVariable =
       $OutPlanningVariableTable(this);
   late final $GoalTable goal = $GoalTable(this);
+  late final $GoalGroupTable goalGroup = $GoalGroupTable(this);
+  late final $GroupLinkTable groupLink = $GroupLinkTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -3738,7 +4455,9 @@ abstract class _$AppDatabase extends GeneratedDatabase {
         roundVariable,
         subject,
         outPlanningVariable,
-        goal
+        goal,
+        goalGroup,
+        groupLink
       ];
 }
 
@@ -5231,6 +5950,7 @@ typedef $$GoalTableCreateCompanionBuilder = GoalCompanion Function({
   Value<String> id,
   required String codeName,
   required int type,
+  Value<bool> expired,
   required DateTime createdAt,
   required DateTime updatedAt,
   Value<DateTime?> startPeriod1,
@@ -5240,11 +5960,13 @@ typedef $$GoalTableCreateCompanionBuilder = GoalCompanion Function({
   Value<int?> xSessionsGoal,
   Value<int?> ySessionsDone,
   Value<double?> plannedRatio,
-  Value<double?> realRatio,
+  Value<double> realRatio,
   Value<int?> xSessionsR,
   Value<String?> subjectIdZ,
+  Value<int?> subjectZNominator,
   Value<int?> xSessionsZ,
   Value<String?> subjectIdF,
+  Value<double?> subjectFDenominator,
   Value<int?> xSessionsF,
   Value<double> successPercentage,
   Value<int> rowid,
@@ -5253,6 +5975,7 @@ typedef $$GoalTableUpdateCompanionBuilder = GoalCompanion Function({
   Value<String> id,
   Value<String> codeName,
   Value<int> type,
+  Value<bool> expired,
   Value<DateTime> createdAt,
   Value<DateTime> updatedAt,
   Value<DateTime?> startPeriod1,
@@ -5262,15 +5985,36 @@ typedef $$GoalTableUpdateCompanionBuilder = GoalCompanion Function({
   Value<int?> xSessionsGoal,
   Value<int?> ySessionsDone,
   Value<double?> plannedRatio,
-  Value<double?> realRatio,
+  Value<double> realRatio,
   Value<int?> xSessionsR,
   Value<String?> subjectIdZ,
+  Value<int?> subjectZNominator,
   Value<int?> xSessionsZ,
   Value<String?> subjectIdF,
+  Value<double?> subjectFDenominator,
   Value<int?> xSessionsF,
   Value<double> successPercentage,
   Value<int> rowid,
 });
+
+final class $$GoalTableReferences
+    extends BaseReferences<_$AppDatabase, $GoalTable, GoalData> {
+  $$GoalTableReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static MultiTypedResultKey<$GroupLinkTable, List<GroupLinkData>>
+      _groupLinkRefsTable(_$AppDatabase db) =>
+          MultiTypedResultKey.fromTable(db.groupLink,
+              aliasName: $_aliasNameGenerator(db.goal.id, db.groupLink.goalID));
+
+  $$GroupLinkTableProcessedTableManager get groupLinkRefs {
+    final manager = $$GroupLinkTableTableManager($_db, $_db.groupLink)
+        .filter((f) => f.goalID.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(_groupLinkRefsTable($_db));
+    return ProcessedTableManager(
+        manager.$state.copyWith(prefetchedData: cache));
+  }
+}
 
 class $$GoalTableFilterComposer extends Composer<_$AppDatabase, $GoalTable> {
   $$GoalTableFilterComposer({
@@ -5288,6 +6032,9 @@ class $$GoalTableFilterComposer extends Composer<_$AppDatabase, $GoalTable> {
 
   ColumnFilters<int> get type => $composableBuilder(
       column: $table.type, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<bool> get expired => $composableBuilder(
+      column: $table.expired, builder: (column) => ColumnFilters(column));
 
   ColumnFilters<DateTime> get createdAt => $composableBuilder(
       column: $table.createdAt, builder: (column) => ColumnFilters(column));
@@ -5325,11 +6072,19 @@ class $$GoalTableFilterComposer extends Composer<_$AppDatabase, $GoalTable> {
   ColumnFilters<String> get subjectIdZ => $composableBuilder(
       column: $table.subjectIdZ, builder: (column) => ColumnFilters(column));
 
+  ColumnFilters<int> get subjectZNominator => $composableBuilder(
+      column: $table.subjectZNominator,
+      builder: (column) => ColumnFilters(column));
+
   ColumnFilters<int> get xSessionsZ => $composableBuilder(
       column: $table.xSessionsZ, builder: (column) => ColumnFilters(column));
 
   ColumnFilters<String> get subjectIdF => $composableBuilder(
       column: $table.subjectIdF, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get subjectFDenominator => $composableBuilder(
+      column: $table.subjectFDenominator,
+      builder: (column) => ColumnFilters(column));
 
   ColumnFilters<int> get xSessionsF => $composableBuilder(
       column: $table.xSessionsF, builder: (column) => ColumnFilters(column));
@@ -5337,6 +6092,27 @@ class $$GoalTableFilterComposer extends Composer<_$AppDatabase, $GoalTable> {
   ColumnFilters<double> get successPercentage => $composableBuilder(
       column: $table.successPercentage,
       builder: (column) => ColumnFilters(column));
+
+  Expression<bool> groupLinkRefs(
+      Expression<bool> Function($$GroupLinkTableFilterComposer f) f) {
+    final $$GroupLinkTableFilterComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.id,
+        referencedTable: $db.groupLink,
+        getReferencedColumn: (t) => t.goalID,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$GroupLinkTableFilterComposer(
+              $db: $db,
+              $table: $db.groupLink,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return f(composer);
+  }
 }
 
 class $$GoalTableOrderingComposer extends Composer<_$AppDatabase, $GoalTable> {
@@ -5355,6 +6131,9 @@ class $$GoalTableOrderingComposer extends Composer<_$AppDatabase, $GoalTable> {
 
   ColumnOrderings<int> get type => $composableBuilder(
       column: $table.type, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<bool> get expired => $composableBuilder(
+      column: $table.expired, builder: (column) => ColumnOrderings(column));
 
   ColumnOrderings<DateTime> get createdAt => $composableBuilder(
       column: $table.createdAt, builder: (column) => ColumnOrderings(column));
@@ -5397,11 +6176,19 @@ class $$GoalTableOrderingComposer extends Composer<_$AppDatabase, $GoalTable> {
   ColumnOrderings<String> get subjectIdZ => $composableBuilder(
       column: $table.subjectIdZ, builder: (column) => ColumnOrderings(column));
 
+  ColumnOrderings<int> get subjectZNominator => $composableBuilder(
+      column: $table.subjectZNominator,
+      builder: (column) => ColumnOrderings(column));
+
   ColumnOrderings<int> get xSessionsZ => $composableBuilder(
       column: $table.xSessionsZ, builder: (column) => ColumnOrderings(column));
 
   ColumnOrderings<String> get subjectIdF => $composableBuilder(
       column: $table.subjectIdF, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<double> get subjectFDenominator => $composableBuilder(
+      column: $table.subjectFDenominator,
+      builder: (column) => ColumnOrderings(column));
 
   ColumnOrderings<int> get xSessionsF => $composableBuilder(
       column: $table.xSessionsF, builder: (column) => ColumnOrderings(column));
@@ -5428,6 +6215,9 @@ class $$GoalTableAnnotationComposer
 
   GeneratedColumn<int> get type =>
       $composableBuilder(column: $table.type, builder: (column) => column);
+
+  GeneratedColumn<bool> get expired =>
+      $composableBuilder(column: $table.expired, builder: (column) => column);
 
   GeneratedColumn<DateTime> get createdAt =>
       $composableBuilder(column: $table.createdAt, builder: (column) => column);
@@ -5465,17 +6255,44 @@ class $$GoalTableAnnotationComposer
   GeneratedColumn<String> get subjectIdZ => $composableBuilder(
       column: $table.subjectIdZ, builder: (column) => column);
 
+  GeneratedColumn<int> get subjectZNominator => $composableBuilder(
+      column: $table.subjectZNominator, builder: (column) => column);
+
   GeneratedColumn<int> get xSessionsZ => $composableBuilder(
       column: $table.xSessionsZ, builder: (column) => column);
 
   GeneratedColumn<String> get subjectIdF => $composableBuilder(
       column: $table.subjectIdF, builder: (column) => column);
 
+  GeneratedColumn<double> get subjectFDenominator => $composableBuilder(
+      column: $table.subjectFDenominator, builder: (column) => column);
+
   GeneratedColumn<int> get xSessionsF => $composableBuilder(
       column: $table.xSessionsF, builder: (column) => column);
 
   GeneratedColumn<double> get successPercentage => $composableBuilder(
       column: $table.successPercentage, builder: (column) => column);
+
+  Expression<T> groupLinkRefs<T extends Object>(
+      Expression<T> Function($$GroupLinkTableAnnotationComposer a) f) {
+    final $$GroupLinkTableAnnotationComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.id,
+        referencedTable: $db.groupLink,
+        getReferencedColumn: (t) => t.goalID,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$GroupLinkTableAnnotationComposer(
+              $db: $db,
+              $table: $db.groupLink,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return f(composer);
+  }
 }
 
 class $$GoalTableTableManager extends RootTableManager<
@@ -5487,9 +6304,9 @@ class $$GoalTableTableManager extends RootTableManager<
     $$GoalTableAnnotationComposer,
     $$GoalTableCreateCompanionBuilder,
     $$GoalTableUpdateCompanionBuilder,
-    (GoalData, BaseReferences<_$AppDatabase, $GoalTable, GoalData>),
+    (GoalData, $$GoalTableReferences),
     GoalData,
-    PrefetchHooks Function()> {
+    PrefetchHooks Function({bool groupLinkRefs})> {
   $$GoalTableTableManager(_$AppDatabase db, $GoalTable table)
       : super(TableManagerState(
           db: db,
@@ -5504,6 +6321,7 @@ class $$GoalTableTableManager extends RootTableManager<
             Value<String> id = const Value.absent(),
             Value<String> codeName = const Value.absent(),
             Value<int> type = const Value.absent(),
+            Value<bool> expired = const Value.absent(),
             Value<DateTime> createdAt = const Value.absent(),
             Value<DateTime> updatedAt = const Value.absent(),
             Value<DateTime?> startPeriod1 = const Value.absent(),
@@ -5513,11 +6331,13 @@ class $$GoalTableTableManager extends RootTableManager<
             Value<int?> xSessionsGoal = const Value.absent(),
             Value<int?> ySessionsDone = const Value.absent(),
             Value<double?> plannedRatio = const Value.absent(),
-            Value<double?> realRatio = const Value.absent(),
+            Value<double> realRatio = const Value.absent(),
             Value<int?> xSessionsR = const Value.absent(),
             Value<String?> subjectIdZ = const Value.absent(),
+            Value<int?> subjectZNominator = const Value.absent(),
             Value<int?> xSessionsZ = const Value.absent(),
             Value<String?> subjectIdF = const Value.absent(),
+            Value<double?> subjectFDenominator = const Value.absent(),
             Value<int?> xSessionsF = const Value.absent(),
             Value<double> successPercentage = const Value.absent(),
             Value<int> rowid = const Value.absent(),
@@ -5526,6 +6346,7 @@ class $$GoalTableTableManager extends RootTableManager<
             id: id,
             codeName: codeName,
             type: type,
+            expired: expired,
             createdAt: createdAt,
             updatedAt: updatedAt,
             startPeriod1: startPeriod1,
@@ -5538,8 +6359,10 @@ class $$GoalTableTableManager extends RootTableManager<
             realRatio: realRatio,
             xSessionsR: xSessionsR,
             subjectIdZ: subjectIdZ,
+            subjectZNominator: subjectZNominator,
             xSessionsZ: xSessionsZ,
             subjectIdF: subjectIdF,
+            subjectFDenominator: subjectFDenominator,
             xSessionsF: xSessionsF,
             successPercentage: successPercentage,
             rowid: rowid,
@@ -5548,6 +6371,7 @@ class $$GoalTableTableManager extends RootTableManager<
             Value<String> id = const Value.absent(),
             required String codeName,
             required int type,
+            Value<bool> expired = const Value.absent(),
             required DateTime createdAt,
             required DateTime updatedAt,
             Value<DateTime?> startPeriod1 = const Value.absent(),
@@ -5557,11 +6381,13 @@ class $$GoalTableTableManager extends RootTableManager<
             Value<int?> xSessionsGoal = const Value.absent(),
             Value<int?> ySessionsDone = const Value.absent(),
             Value<double?> plannedRatio = const Value.absent(),
-            Value<double?> realRatio = const Value.absent(),
+            Value<double> realRatio = const Value.absent(),
             Value<int?> xSessionsR = const Value.absent(),
             Value<String?> subjectIdZ = const Value.absent(),
+            Value<int?> subjectZNominator = const Value.absent(),
             Value<int?> xSessionsZ = const Value.absent(),
             Value<String?> subjectIdF = const Value.absent(),
+            Value<double?> subjectFDenominator = const Value.absent(),
             Value<int?> xSessionsF = const Value.absent(),
             Value<double> successPercentage = const Value.absent(),
             Value<int> rowid = const Value.absent(),
@@ -5570,6 +6396,7 @@ class $$GoalTableTableManager extends RootTableManager<
             id: id,
             codeName: codeName,
             type: type,
+            expired: expired,
             createdAt: createdAt,
             updatedAt: updatedAt,
             startPeriod1: startPeriod1,
@@ -5582,16 +6409,41 @@ class $$GoalTableTableManager extends RootTableManager<
             realRatio: realRatio,
             xSessionsR: xSessionsR,
             subjectIdZ: subjectIdZ,
+            subjectZNominator: subjectZNominator,
             xSessionsZ: xSessionsZ,
             subjectIdF: subjectIdF,
+            subjectFDenominator: subjectFDenominator,
             xSessionsF: xSessionsF,
             successPercentage: successPercentage,
             rowid: rowid,
           ),
           withReferenceMapper: (p0) => p0
-              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .map((e) =>
+                  (e.readTable(table), $$GoalTableReferences(db, table, e)))
               .toList(),
-          prefetchHooksCallback: null,
+          prefetchHooksCallback: ({groupLinkRefs = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [if (groupLinkRefs) db.groupLink],
+              addJoins: null,
+              getPrefetchedDataCallback: (items) async {
+                return [
+                  if (groupLinkRefs)
+                    await $_getPrefetchedData<GoalData, $GoalTable,
+                            GroupLinkData>(
+                        currentTable: table,
+                        referencedTable:
+                            $$GoalTableReferences._groupLinkRefsTable(db),
+                        managerFromTypedResult: (p0) =>
+                            $$GoalTableReferences(db, table, p0).groupLinkRefs,
+                        referencedItemsForCurrentItem: (item,
+                                referencedItems) =>
+                            referencedItems.where((e) => e.goalID == item.id),
+                        typedResults: items)
+                ];
+              },
+            );
+          },
         ));
 }
 
@@ -5604,9 +6456,437 @@ typedef $$GoalTableProcessedTableManager = ProcessedTableManager<
     $$GoalTableAnnotationComposer,
     $$GoalTableCreateCompanionBuilder,
     $$GoalTableUpdateCompanionBuilder,
-    (GoalData, BaseReferences<_$AppDatabase, $GoalTable, GoalData>),
+    (GoalData, $$GoalTableReferences),
     GoalData,
+    PrefetchHooks Function({bool groupLinkRefs})>;
+typedef $$GoalGroupTableCreateCompanionBuilder = GoalGroupCompanion Function({
+  Value<String> id,
+  required String codeName,
+  required DateTime createdAt,
+  required DateTime updatedAt,
+  Value<int> goalNumber,
+  Value<int> rowid,
+});
+typedef $$GoalGroupTableUpdateCompanionBuilder = GoalGroupCompanion Function({
+  Value<String> id,
+  Value<String> codeName,
+  Value<DateTime> createdAt,
+  Value<DateTime> updatedAt,
+  Value<int> goalNumber,
+  Value<int> rowid,
+});
+
+class $$GoalGroupTableFilterComposer
+    extends Composer<_$AppDatabase, $GoalGroupTable> {
+  $$GoalGroupTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get codeName => $composableBuilder(
+      column: $table.codeName, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+      column: $table.createdAt, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+      column: $table.updatedAt, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get goalNumber => $composableBuilder(
+      column: $table.goalNumber, builder: (column) => ColumnFilters(column));
+}
+
+class $$GoalGroupTableOrderingComposer
+    extends Composer<_$AppDatabase, $GoalGroupTable> {
+  $$GoalGroupTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get codeName => $composableBuilder(
+      column: $table.codeName, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+      column: $table.createdAt, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+      column: $table.updatedAt, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get goalNumber => $composableBuilder(
+      column: $table.goalNumber, builder: (column) => ColumnOrderings(column));
+}
+
+class $$GoalGroupTableAnnotationComposer
+    extends Composer<_$AppDatabase, $GoalGroupTable> {
+  $$GoalGroupTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get codeName =>
+      $composableBuilder(column: $table.codeName, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  GeneratedColumn<int> get goalNumber => $composableBuilder(
+      column: $table.goalNumber, builder: (column) => column);
+}
+
+class $$GoalGroupTableTableManager extends RootTableManager<
+    _$AppDatabase,
+    $GoalGroupTable,
+    GoalGroupData,
+    $$GoalGroupTableFilterComposer,
+    $$GoalGroupTableOrderingComposer,
+    $$GoalGroupTableAnnotationComposer,
+    $$GoalGroupTableCreateCompanionBuilder,
+    $$GoalGroupTableUpdateCompanionBuilder,
+    (
+      GoalGroupData,
+      BaseReferences<_$AppDatabase, $GoalGroupTable, GoalGroupData>
+    ),
+    GoalGroupData,
+    PrefetchHooks Function()> {
+  $$GoalGroupTableTableManager(_$AppDatabase db, $GoalGroupTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$GoalGroupTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$GoalGroupTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$GoalGroupTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback: ({
+            Value<String> id = const Value.absent(),
+            Value<String> codeName = const Value.absent(),
+            Value<DateTime> createdAt = const Value.absent(),
+            Value<DateTime> updatedAt = const Value.absent(),
+            Value<int> goalNumber = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              GoalGroupCompanion(
+            id: id,
+            codeName: codeName,
+            createdAt: createdAt,
+            updatedAt: updatedAt,
+            goalNumber: goalNumber,
+            rowid: rowid,
+          ),
+          createCompanionCallback: ({
+            Value<String> id = const Value.absent(),
+            required String codeName,
+            required DateTime createdAt,
+            required DateTime updatedAt,
+            Value<int> goalNumber = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              GoalGroupCompanion.insert(
+            id: id,
+            codeName: codeName,
+            createdAt: createdAt,
+            updatedAt: updatedAt,
+            goalNumber: goalNumber,
+            rowid: rowid,
+          ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ));
+}
+
+typedef $$GoalGroupTableProcessedTableManager = ProcessedTableManager<
+    _$AppDatabase,
+    $GoalGroupTable,
+    GoalGroupData,
+    $$GoalGroupTableFilterComposer,
+    $$GoalGroupTableOrderingComposer,
+    $$GoalGroupTableAnnotationComposer,
+    $$GoalGroupTableCreateCompanionBuilder,
+    $$GoalGroupTableUpdateCompanionBuilder,
+    (
+      GoalGroupData,
+      BaseReferences<_$AppDatabase, $GoalGroupTable, GoalGroupData>
+    ),
+    GoalGroupData,
     PrefetchHooks Function()>;
+typedef $$GroupLinkTableCreateCompanionBuilder = GroupLinkCompanion Function({
+  Value<String> id,
+  required DateTime createdAt,
+  required String groupID,
+  required String goalID,
+  Value<int> rowid,
+});
+typedef $$GroupLinkTableUpdateCompanionBuilder = GroupLinkCompanion Function({
+  Value<String> id,
+  Value<DateTime> createdAt,
+  Value<String> groupID,
+  Value<String> goalID,
+  Value<int> rowid,
+});
+
+final class $$GroupLinkTableReferences
+    extends BaseReferences<_$AppDatabase, $GroupLinkTable, GroupLinkData> {
+  $$GroupLinkTableReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static $GoalTable _goalIDTable(_$AppDatabase db) => db.goal
+      .createAlias($_aliasNameGenerator(db.groupLink.goalID, db.goal.id));
+
+  $$GoalTableProcessedTableManager get goalID {
+    final $_column = $_itemColumn<String>('goal_i_d')!;
+
+    final manager = $$GoalTableTableManager($_db, $_db.goal)
+        .filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_goalIDTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+        manager.$state.copyWith(prefetchedData: [item]));
+  }
+}
+
+class $$GroupLinkTableFilterComposer
+    extends Composer<_$AppDatabase, $GroupLinkTable> {
+  $$GroupLinkTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+      column: $table.createdAt, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get groupID => $composableBuilder(
+      column: $table.groupID, builder: (column) => ColumnFilters(column));
+
+  $$GoalTableFilterComposer get goalID {
+    final $$GoalTableFilterComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.goalID,
+        referencedTable: $db.goal,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$GoalTableFilterComposer(
+              $db: $db,
+              $table: $db.goal,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return composer;
+  }
+}
+
+class $$GroupLinkTableOrderingComposer
+    extends Composer<_$AppDatabase, $GroupLinkTable> {
+  $$GroupLinkTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+      column: $table.createdAt, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get groupID => $composableBuilder(
+      column: $table.groupID, builder: (column) => ColumnOrderings(column));
+
+  $$GoalTableOrderingComposer get goalID {
+    final $$GoalTableOrderingComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.goalID,
+        referencedTable: $db.goal,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$GoalTableOrderingComposer(
+              $db: $db,
+              $table: $db.goal,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return composer;
+  }
+}
+
+class $$GroupLinkTableAnnotationComposer
+    extends Composer<_$AppDatabase, $GroupLinkTable> {
+  $$GroupLinkTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<String> get groupID =>
+      $composableBuilder(column: $table.groupID, builder: (column) => column);
+
+  $$GoalTableAnnotationComposer get goalID {
+    final $$GoalTableAnnotationComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.goalID,
+        referencedTable: $db.goal,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$GoalTableAnnotationComposer(
+              $db: $db,
+              $table: $db.goal,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return composer;
+  }
+}
+
+class $$GroupLinkTableTableManager extends RootTableManager<
+    _$AppDatabase,
+    $GroupLinkTable,
+    GroupLinkData,
+    $$GroupLinkTableFilterComposer,
+    $$GroupLinkTableOrderingComposer,
+    $$GroupLinkTableAnnotationComposer,
+    $$GroupLinkTableCreateCompanionBuilder,
+    $$GroupLinkTableUpdateCompanionBuilder,
+    (GroupLinkData, $$GroupLinkTableReferences),
+    GroupLinkData,
+    PrefetchHooks Function({bool goalID})> {
+  $$GroupLinkTableTableManager(_$AppDatabase db, $GroupLinkTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$GroupLinkTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$GroupLinkTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$GroupLinkTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback: ({
+            Value<String> id = const Value.absent(),
+            Value<DateTime> createdAt = const Value.absent(),
+            Value<String> groupID = const Value.absent(),
+            Value<String> goalID = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              GroupLinkCompanion(
+            id: id,
+            createdAt: createdAt,
+            groupID: groupID,
+            goalID: goalID,
+            rowid: rowid,
+          ),
+          createCompanionCallback: ({
+            Value<String> id = const Value.absent(),
+            required DateTime createdAt,
+            required String groupID,
+            required String goalID,
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              GroupLinkCompanion.insert(
+            id: id,
+            createdAt: createdAt,
+            groupID: groupID,
+            goalID: goalID,
+            rowid: rowid,
+          ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (
+                    e.readTable(table),
+                    $$GroupLinkTableReferences(db, table, e)
+                  ))
+              .toList(),
+          prefetchHooksCallback: ({goalID = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [],
+              addJoins: <
+                  T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic>>(state) {
+                if (goalID) {
+                  state = state.withJoin(
+                    currentTable: table,
+                    currentColumn: table.goalID,
+                    referencedTable:
+                        $$GroupLinkTableReferences._goalIDTable(db),
+                    referencedColumn:
+                        $$GroupLinkTableReferences._goalIDTable(db).id,
+                  ) as T;
+                }
+
+                return state;
+              },
+              getPrefetchedDataCallback: (items) async {
+                return [];
+              },
+            );
+          },
+        ));
+}
+
+typedef $$GroupLinkTableProcessedTableManager = ProcessedTableManager<
+    _$AppDatabase,
+    $GroupLinkTable,
+    GroupLinkData,
+    $$GroupLinkTableFilterComposer,
+    $$GroupLinkTableOrderingComposer,
+    $$GroupLinkTableAnnotationComposer,
+    $$GroupLinkTableCreateCompanionBuilder,
+    $$GroupLinkTableUpdateCompanionBuilder,
+    (GroupLinkData, $$GroupLinkTableReferences),
+    GroupLinkData,
+    PrefetchHooks Function({bool goalID})>;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -5623,4 +6903,8 @@ class $AppDatabaseManager {
   $$OutPlanningVariableTableTableManager get outPlanningVariable =>
       $$OutPlanningVariableTableTableManager(_db, _db.outPlanningVariable);
   $$GoalTableTableManager get goal => $$GoalTableTableManager(_db, _db.goal);
+  $$GoalGroupTableTableManager get goalGroup =>
+      $$GoalGroupTableTableManager(_db, _db.goalGroup);
+  $$GroupLinkTableTableManager get groupLink =>
+      $$GroupLinkTableTableManager(_db, _db.groupLink);
 }

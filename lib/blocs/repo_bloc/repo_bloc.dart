@@ -2,7 +2,9 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:drift/drift.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:focuzd/blocs/observer.dart';
 import 'package:focuzd/extra_widgets/subject_tree_node.dart';
 import 'package:focuzd/data/app_db.dart';
 import 'package:focuzd/data/repo.dart';
@@ -79,6 +81,7 @@ class RepoBloc extends Bloc<RepoEvent, RepoState> {
     final roundList = await roundRepo.fetchAllRounds();
     final tree =
         subjectRepo.buildSubjectTree(await subjectRepo.fetchAllSubjects());
+    await goalRepo.updateGoals();
     final goals = await goalRepo.fetchAllGoals();
     List<List<dynamic>> forEverything = [];
 
@@ -156,9 +159,50 @@ class RepoBloc extends Bloc<RepoEvent, RepoState> {
   }
 
   void _onUpdateCreatingGoal(
-      UpdateCreatingGoal event, Emitter<RepoState> emit) {
+      UpdateCreatingGoal event, Emitter<RepoState> emit) async {
     final state = this.state;
     if (state is CreateGoalState) {
+      print("start: ${event.newMakeable.startPeriod1}");
+      print("end: ${event.newMakeable.endPeriod1}");
+      print("subjectIdZ: ${event.newMakeable.subjectIdZ}");
+      if (event.newMakeable.type == 2 &&
+          event.newMakeable.startPeriod1 != null &&
+          event.newMakeable.endPeriod1 != null) {
+        print("let's go");
+        var s = await memoryRepo.getAllMemorySessionXPeriod(
+            event.newMakeable.startPeriod1!, event.newMakeable.endPeriod1!);
+        event.newMakeable.xSessionsR = s.length;
+        if (event.newMakeable.startPeriod2 != null &&
+            event.newMakeable.endPeriod2 != null &&
+            event.newMakeable.xSessionsGoal != null &&
+            event.newMakeable.xSessionsR != null) {
+          print("lets go 2");
+          event.newMakeable.plannedRatio =
+              event.newMakeable.xSessionsGoal! / event.newMakeable.xSessionsR!;
+        }
+      }
+      if (event.newMakeable.type == 5 &&
+          event.newMakeable.startPeriod1 != null &&
+          event.newMakeable.endPeriod1 != null &&
+          event.newMakeable.subjectIdZ != null) {
+        var s = await memoryRepo.getAllMemorySessionXPeriodZ(
+            event.newMakeable.startPeriod1!,
+            event.newMakeable.endPeriod1!,
+            event.newMakeable.subjectIdZ!);
+        event.newMakeable.xSessionsR = s.length;
+        if (event.newMakeable.startPeriod2 != null &&
+            event.newMakeable.endPeriod2 != null &&
+            event.newMakeable.xSessionsGoal != null &&
+            event.newMakeable.xSessionsR != null) {
+          print("lets go 2");
+          event.newMakeable.xSessionsR! > 0
+              ? event.newMakeable.plannedRatio =
+                  event.newMakeable.xSessionsGoal! /
+                      event.newMakeable.xSessionsR!
+              : event.newMakeable.plannedRatio =
+                  event.newMakeable.xSessionsGoal! / 1;
+        }
+      }
       emit(CreateGoalState(
           makeable: event.newMakeable,
           nonContradictory: true,
@@ -175,13 +219,78 @@ class RepoBloc extends Bloc<RepoEvent, RepoState> {
         await goalRepo.insertGoal(GoalCompanion(
             createdAt: Value(DateTime.now()),
             updatedAt: Value(DateTime.now()),
+            expired: Value(false),
             codeName: Value(event.goal.codeName!),
             type: Value(event.goal.type!),
             startPeriod2: Value(DateTime.now()),
             endPeriod2: Value(event.goal.endPeriod2!),
             xSessionsGoal: Value(event.goal.xSessionsGoal),
             ySessionsDone: Value(0)));
+      } else if (event.goal.type == 2) {
+        await goalRepo.insertGoal(GoalCompanion(
+            createdAt: Value(DateTime.now()),
+            updatedAt: Value(DateTime.now()),
+            expired: Value(false),
+            codeName: Value(event.goal.codeName!),
+            type: Value(event.goal.type!),
+            startPeriod1: Value(event.goal.startPeriod1),
+            endPeriod1: Value(event.goal.endPeriod1),
+            startPeriod2: Value(event.goal.startPeriod2!),
+            endPeriod2: Value(event.goal.endPeriod2!),
+            xSessionsGoal: Value(event.goal.xSessionsGoal),
+            xSessionsR: Value(event.goal.xSessionsR),
+            plannedRatio: Value(event.goal.plannedRatio),
+            realRatio: Value(0.0),
+            ySessionsDone: Value(0)));
+      } else if (event.goal.type == 3) {
+        await goalRepo.insertGoal(GoalCompanion(
+            createdAt: Value(DateTime.now()),
+            updatedAt: Value(DateTime.now()),
+            expired: Value(false),
+            codeName: Value(event.goal.codeName!),
+            type: Value(event.goal.type!),
+            startPeriod2: Value(DateTime.now()),
+            endPeriod2: Value(event.goal.endPeriod2!),
+            subjectIdZ: Value(event.goal.subjectIdZ),
+            xSessionsZ: Value(0),
+            xSessionsGoal: Value(event.goal.xSessionsGoal),
+            ySessionsDone: Value(0)));
+      } else if (event.goal.type == 4) {
+        await goalRepo.insertGoal(GoalCompanion(
+            expired: Value(false),
+            createdAt: Value(DateTime.now()),
+            updatedAt: Value(DateTime.now()),
+            ySessionsDone: Value(0),
+            codeName: Value(event.goal.codeName!),
+            type: Value(event.goal.type!),
+            startPeriod2: Value(event.goal.startPeriod2!),
+            endPeriod2: Value(event.goal.endPeriod2!),
+            subjectIdF: Value(event.goal.subjectIdF),
+            subjectIdZ: Value(event.goal.subjectIdZ),
+            plannedRatio:
+                Value(1 / event.goal.subjectFdenominator!), // 1 to 1.1
+            subjectFDenominator: Value(event.goal.subjectFdenominator),
+            subjectZNominator: Value(1),
+            realRatio: Value(0.0)));
+      } else if (event.goal.type == 5) {
+        await goalRepo.insertGoal(GoalCompanion(
+          expired: Value(false),
+          createdAt: Value(DateTime.now()),
+          updatedAt: Value(DateTime.now()),
+          ySessionsDone: Value(0),
+          codeName: Value(event.goal.codeName!),
+          type: Value(event.goal.type!),
+          startPeriod1: Value(event.goal.startPeriod1),
+          endPeriod1: Value(event.goal.endPeriod1),
+          startPeriod2: Value(event.goal.startPeriod2!),
+          endPeriod2: Value(event.goal.endPeriod2!),
+          xSessionsGoal: Value(event.goal.xSessionsGoal),
+          xSessionsR: Value(event.goal.xSessionsR),
+          subjectIdZ: Value(event.goal.subjectIdZ),
+          plannedRatio: Value(event.goal.plannedRatio), // 1 to 1.1
+        ));
       }
+      add(EmitStateWithDBVars());
     }
   }
 

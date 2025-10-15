@@ -1,13 +1,203 @@
 import 'package:drift/drift.dart';
 import 'package:focuzd/extra_widgets/subject_tree_node.dart';
+import 'package:focuzd/extra_functions/extra_functions.dart';
 
 import 'app_db.dart';
 
 class GoalRepository {
   final AppDatabase _db;
   GoalRepository(this._db);
+
+  Future<void> updateGoal(String id, GoalCompanion updatedGoal) async {
+    await (_db.update(_db.goal)..where((tbl) => tbl.id.equals(id)))
+        .write(updatedGoal);
+  }
+
   Future<void> insertGoal(GoalCompanion goal) async {
     await _db.into(_db.goal).insert(goal);
+  }
+
+  List<Contradiction> detectContradictions(
+      GoalMaking making, List<GoalData> existingGoals) {
+    final contradictions = <Contradiction>[];
+
+    for (final goal in existingGoals) {
+      if (!shouldTestForContradiction(making.startPeriod2!, making.endPeriod2!,
+          goal.startPeriod2, goal.endPeriod2)) continue;
+
+      // Rule: t1 ↔ t2 (static vs dialectic total)
+      if ((goal.type == 1 && making.type == 2) ||
+          (goal.type == 2 && making.type == 1)) {
+        if ((goal.xSessionsGoal ?? 0) != (making.xSessionsGoal ?? 0)) {
+          contradictions
+              .add(Contradiction(goal, "Static vs dialectic total mismatch"));
+        }
+      }
+
+      // Rule: t1/t2 ↔ t3 (subject overload)
+      if ((goal.type == 1 || goal.type == 2) &&
+          making.type == 3 &&
+          goal.subjectIdZ == making.subjectIdZ) {
+        if ((making.xSessionsZ ?? 0) > (goal.xSessionsGoal ?? 0)) {
+          contradictions.add(
+              Contradiction(goal, "Subject goal exceeds total session limit"));
+        }
+      }
+
+      // Rule: t3 ↔ t3 (duplicate subject)
+      if (goal.type == 3 &&
+          making.type == 3 &&
+          goal.subjectIdZ == making.subjectIdZ) {
+        contradictions
+            .add(Contradiction(goal, "Duplicate subject goal in same period"));
+      }
+
+      if ((goal.type == 3 && making.type == 4) ||
+          (goal.type == 4 && making.type == 3)) {
+        if (goal.type == 3) {
+          final t3zSessions = goal.xSessionsZ ?? 0;
+          final t4Ratio = making.subjectFdenominator ?? 1.0;
+          final t4fSessions = making.xSessionsF ?? 0;
+          final t3fSessions = t3zSessions / t4Ratio;
+
+          if ((t3fSessions.round() - t4fSessions).abs() > 2) {
+            contradictions.add(Contradiction(
+                goal, "Subject ratio mismatch between t3 and t4"));
+          }
+        } else {
+          final t3zSessions = making.xSessionsZ ?? 0;
+          final t4Ratio = goal.subjectFDenominator ?? 1.0;
+          final t4fSessions = goal.xSessionsF ?? 0;
+          final t3fSessions = t3zSessions / t4Ratio;
+
+          if ((t3fSessions.round() - t4fSessions).abs() > 2) {
+            contradictions.add(Contradiction(
+                goal, "Subject ratio mismatch between t3 and t4"));
+          }
+        }
+      }
+
+      // Rule: t4 ↔ t4 (reciprocal contradiction)
+      if (goal.type == 4 &&
+          making.type == 4 &&
+          goal.subjectIdZ == making.subjectIdF &&
+          goal.subjectIdF == making.subjectIdZ) {
+        final product = (goal.subjectFDenominator ?? 1.0) *
+            (making.subjectFdenominator ?? 1.0);
+        if ((product - 1.0).abs() > 0.05) {
+          contradictions
+              .add(Contradiction(goal, "Reciprocal ratio contradiction"));
+        }
+      }
+
+      // Rule: t3z + t3f derived from t4 exceeds t1/t2
+      if (making.type == 4) {
+        final t3z = existingGoals
+            .where((g) => g.type == 3 && g.subjectIdZ == making.subjectIdZ)
+            .firstOrNull;
+        final t3f = existingGoals
+            .where((g) => g.type == 3 && g.subjectIdZ == making.subjectIdF)
+            .firstOrNull;
+        final total = (t3z?.xSessionsZ ?? 0) + (t3f?.xSessionsZ ?? 0);
+        final t1t2 = existingGoals
+            .where((g) => g.type == 1 || g.type == 2)
+            .map((g) => g.xSessionsGoal ?? 0)
+            .fold(0, (a, b) => a + b);
+        if (total > t1t2) {
+          contradictions.add(Contradiction(
+              goal, "Derived subject sessions exceed total goal limit"));
+        }
+      }
+
+      // Additional rules (e.g., t5 ↔ t3, t5 ↔ t4) can be added similarly
+    }
+
+    return contradictions;
+  }
+
+  Future<void> updateGoals() async {
+    var goals = await fetchAllGoals();
+    for (var goal in goals) {
+      if (goal.type == 1) {
+        var focuses = await MemorySessionRepository(_db)
+            .getAllMemorySessionXPeriod(goal.startPeriod2, goal.endPeriod2);
+        await updateGoal(
+            goal.id,
+            GoalCompanion(
+                updatedAt: Value(DateTime.now()),
+                expired: Value(
+                    goal.endPeriod2.isBefore(DateTime.now()) ? true : false),
+                ySessionsDone: Value(focuses.length),
+                successPercentage:
+                    Value((focuses.length / goal.xSessionsGoal!) * 100)));
+      }
+      if (goal.type == 2) {
+        var focuses = await MemorySessionRepository(_db)
+            .getAllMemorySessionXPeriod(goal.startPeriod2, goal.endPeriod2);
+        await updateGoal(
+            goal.id,
+            GoalCompanion(
+                updatedAt: Value(DateTime.now()),
+                expired: Value(
+                    goal.endPeriod2.isBefore(DateTime.now()) ? true : false),
+                ySessionsDone: Value(focuses.length),
+                realRatio: Value(focuses.length / goal.xSessionsR!),
+                successPercentage:
+                    Value((focuses.length / goal.xSessionsGoal!) * 100)));
+      } else if (goal.type == 3) {
+        var focuses = await MemorySessionRepository(_db)
+            .getAllMemorySessionXPeriodZ(
+                goal.startPeriod2, goal.endPeriod2, goal.subjectIdZ!);
+
+        await updateGoal(
+            goal.id,
+            GoalCompanion(
+                updatedAt: Value(DateTime.now()),
+                expired: Value(
+                    goal.endPeriod2.isBefore(DateTime.now()) ? true : false),
+                ySessionsDone: Value(focuses.length),
+                xSessionsZ: Value(focuses.length),
+                successPercentage:
+                    Value((focuses.length / goal.xSessionsGoal!) * 100)));
+      } else if (goal.type == 4) {
+        var focuses = await MemorySessionRepository(_db)
+            .getAllMemorySessionXPeriodZ(
+                goal.startPeriod2, goal.endPeriod2, goal.subjectIdZ!);
+        var ffocuses = await MemorySessionRepository(_db)
+            .getAllMemorySessionXPeriodZ(
+                goal.startPeriod2, goal.endPeriod2, goal.subjectIdF!);
+        await updateGoal(
+            goal.id,
+            GoalCompanion(
+              updatedAt: Value(DateTime.now()),
+              expired: Value(
+                  goal.endPeriod2.isBefore(DateTime.now()) ? true : false),
+              ySessionsDone: Value(focuses.length + ffocuses.length),
+              xSessionsZ: Value(focuses.length),
+              xSessionsF: Value(ffocuses.length),
+              realRatio: Value((focuses.length / ffocuses.length).isNaN == true
+                  ? 1 / 1
+                  : (focuses.length / ffocuses.length)),
+            ));
+      } else if (goal.type == 5) {
+        var focuses = await MemorySessionRepository(_db)
+            .getAllMemorySessionXPeriodZ(
+                goal.startPeriod2, goal.endPeriod2, goal.subjectIdZ!);
+        await updateGoal(
+            goal.id,
+            GoalCompanion(
+                updatedAt: Value(DateTime.now()),
+                expired: Value(
+                    goal.endPeriod2.isBefore(DateTime.now()) ? true : false),
+                ySessionsDone: Value(focuses.length),
+                xSessionsZ: Value(focuses.length),
+                realRatio: Value(goal.xSessionsR != 0
+                    ? focuses.length / (goal.xSessionsR ?? 1)
+                    : focuses.length / 1),
+                successPercentage:
+                    Value((focuses.length / goal.xSessionsGoal!) * 100)));
+      }
+    }
   }
 
   Future<List<GoalData>> fetchAllGoals() async {
@@ -294,6 +484,27 @@ class MemorySessionRepository {
   // Fetch all memory sessions
   Future<List<MemoryCountdownVariableData>> fetchAllMemorySessions() async {
     return await _db.select(_db.memoryCountdownVariable).get();
+  }
+
+  Future<List<MemoryCountdownVariableData?>> getAllMemorySessionXPeriod(
+      DateTime a, DateTime b) async {
+    return await (_db.select(_db.memoryCountdownVariable)
+          ..where((tbl) => tbl.completed.equals(true))
+          ..where((tbl) => tbl.finishTime.isBiggerThanValue(a))
+          ..where((tbl) => tbl.type.equals("focus"))
+          ..where((tbl) => tbl.finishTime.isSmallerThanValue(b)))
+        .get();
+  }
+
+  Future<List<MemoryCountdownVariableData?>> getAllMemorySessionXPeriodZ(
+      DateTime a, DateTime b, String z) async {
+    return await (_db.select(_db.memoryCountdownVariable)
+          ..where((tbl) => tbl.completed.equals(true))
+          ..where((tbl) => tbl.finishTime.isBiggerThanValue(a))
+          ..where((tbl) => tbl.type.equals("focus"))
+          ..where((tbl) => tbl.subject.equals(z))
+          ..where((tbl) => tbl.finishTime.isSmallerThanValue(b)))
+        .get();
   }
 
   Future<MemoryCountdownVariableData?> getNextSession(

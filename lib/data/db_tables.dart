@@ -91,10 +91,33 @@ class Subject extends Table {
   Set<Column> get primaryKey => {id};
 }
 
+class GroupLink extends Table {
+  TextColumn get id => text().clientDefault(() => const Uuid().v4())();
+  DateTimeColumn get createdAt => dateTime()();
+  TextColumn get groupID =>
+      text().customConstraint('REFERENCES goalgroup(id)')();
+  TextColumn get goalID => text().customConstraint('REFERENCES goal(id)')();
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
+class GoalGroup extends Table {
+  TextColumn get id => text().clientDefault(() => const Uuid().v4())();
+  TextColumn get codeName => text()();
+  DateTimeColumn get createdAt => dateTime()();
+  DateTimeColumn get updatedAt => dateTime()();
+  IntColumn get goalNumber => integer().withDefault(const Constant(0))();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
 class Goal extends Table {
   TextColumn get id => text().clientDefault(() => const Uuid().v4())();
   TextColumn get codeName => text()();
-  IntColumn get type => integer()(); //1,2,3,4,5
+  IntColumn get type => integer()(); //1,2,3,4,5, 6 for super-goal/multi-goal
+  BoolColumn get expired => boolean()
+      .withDefault(const Constant(false))(); // true if on time period y
   DateTimeColumn get createdAt => dateTime()();
   DateTimeColumn get updatedAt => dateTime()();
   // two periods of time(days, weeks, months, years)
@@ -113,16 +136,18 @@ class Goal extends Table {
   // Type 2, 4, 5 only
   RealColumn get plannedRatio =>
       real().nullable()(); // ratio always in comparison to 1(ex. 1.1 to )
-  RealColumn get realRatio => real().nullable()();
+  RealColumn get realRatio => real().withDefault(const Constant(0.0))();
   IntColumn get xSessionsR =>
       integer().nullable()(); // r period of time +- y type 2,5
   // sybject types
   // Only one subject for type 3, 5
   TextColumn get subjectIdZ => text().nullable()();
+  IntColumn get subjectZNominator => integer().nullable()();
   IntColumn get xSessionsZ =>
       integer().nullable()(); // when 5 will become a duplicate
   // For type 4 we need two
   TextColumn get subjectIdF => text().nullable()();
+  RealColumn get subjectFDenominator => real().nullable()();
   IntColumn get xSessionsF => integer().nullable()();
   // determined after the deadline of a goal and continiuously updated during the entire life of the goal
   RealColumn get successPercentage => real().withDefault(const Constant(00))();

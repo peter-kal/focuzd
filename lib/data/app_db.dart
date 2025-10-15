@@ -12,7 +12,9 @@ part 'app_db.g.dart';
   RoundVariable,
   Subject,
   OutPlanningVariable,
-  Goal
+  Goal,
+  GoalGroup,
+  GroupLink
 ])
 class AppDatabase extends _$AppDatabase {
   static final AppDatabase instance = AppDatabase._internal();
@@ -30,6 +32,7 @@ class AppDatabase extends _$AppDatabase {
         await into(goal).insert(GoalCompanion(
           codeName: Value("writing18000"),
           type: Value(1),
+          expired: Value(false),
           createdAt: Value(DateTime.now()),
           updatedAt: Value(DateTime.now()),
           xSessionsGoal: Value(180),
