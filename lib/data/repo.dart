@@ -17,101 +17,100 @@ class GoalRepository {
     await _db.into(_db.goal).insert(goal);
   }
 
-  List<Contradiction> detectContradictions(
-      GoalMaking making, List<GoalData> existingGoals) {
+  Future<List<Contradiction>> detectContradictions(
+      GoalMaking making, List<GoalData> existingGoals) async {
     final contradictions = <Contradiction>[];
-
+    List<GoalData> existingGoals = await GoalRepository(_db).fetchAllGoals();
     for (final goal in existingGoals) {
       if (!shouldTestForContradiction(making.startPeriod2!, making.endPeriod2!,
-          goal.startPeriod2, goal.endPeriod2)) continue;
-
-      // Rule: t1 ↔ t2 (static vs dialectic total)
-      if ((goal.type == 1 && making.type == 2) ||
-          (goal.type == 2 && making.type == 1)) {
-        if ((goal.xSessionsGoal ?? 0) != (making.xSessionsGoal ?? 0)) {
-          contradictions
-              .add(Contradiction(goal, "Static vs dialectic total mismatch"));
+          goal.startPeriod2, goal.endPeriod2)) {
+        // Rule: t1 ↔ t2 (static vs dialectic total)
+        if ((goal.type == 1 && making.type == 2) ||
+            (goal.type == 2 && making.type == 1)) {
+          if ((goal.xSessionsGoal ?? 0) != (making.xSessionsGoal ?? 0)) {
+            contradictions
+                .add(Contradiction(goal, "t1Xy vs t2Xy total mismatch"));
+          }
         }
-      }
 
-      // Rule: t1/t2 ↔ t3 (subject overload)
-      if ((goal.type == 1 || goal.type == 2) &&
-          making.type == 3 &&
-          goal.subjectIdZ == making.subjectIdZ) {
-        if ((making.xSessionsZ ?? 0) > (goal.xSessionsGoal ?? 0)) {
+        // rule: t1Xy/t2Xy <-> t1Xy/t2Xy
+        if ((goal.type == 1 || goal.type == 2) &&
+            (making.type == 1 || making.type == 2)) {
           contradictions.add(
-              Contradiction(goal, "Subject goal exceeds total session limit"));
+              Contradiction(goal, "duplicate ${making.type} ${goal.type}"));
         }
-      }
 
-      // Rule: t3 ↔ t3 (duplicate subject)
-      if (goal.type == 3 &&
-          making.type == 3 &&
-          goal.subjectIdZ == making.subjectIdZ) {
-        contradictions
-            .add(Contradiction(goal, "Duplicate subject goal in same period"));
-      }
-
-      if ((goal.type == 3 && making.type == 4) ||
-          (goal.type == 4 && making.type == 3)) {
-        if (goal.type == 3) {
-          final t3zSessions = goal.xSessionsZ ?? 0;
-          final t4Ratio = making.subjectFdenominator ?? 1.0;
-          final t4fSessions = making.xSessionsF ?? 0;
-          final t3fSessions = t3zSessions / t4Ratio;
-
-          if ((t3fSessions.round() - t4fSessions).abs() > 2) {
-            contradictions.add(Contradiction(
-                goal, "Subject ratio mismatch between t3 and t4"));
-          }
-        } else {
-          final t3zSessions = making.xSessionsZ ?? 0;
-          final t4Ratio = goal.subjectFDenominator ?? 1.0;
-          final t4fSessions = goal.xSessionsF ?? 0;
-          final t3fSessions = t3zSessions / t4Ratio;
-
-          if ((t3fSessions.round() - t4fSessions).abs() > 2) {
-            contradictions.add(Contradiction(
-                goal, "Subject ratio mismatch between t3 and t4"));
+        // Rule: t1/t2 ↔ t3 (subject overload)
+        if ((goal.type == 1 || goal.type == 2) &&
+            (making.type == 3 || making.type == 5)) {
+          if ((making.xSessionsZ ?? 0) > (goal.xSessionsGoal ?? 0)) {
+            contradictions.add(
+                Contradiction(goal, "Subject goal exceeds total session goal"));
           }
         }
-      }
 
-      // Rule: t4 ↔ t4 (reciprocal contradiction)
-      if (goal.type == 4 &&
-          making.type == 4 &&
-          goal.subjectIdZ == making.subjectIdF &&
-          goal.subjectIdF == making.subjectIdZ) {
-        final product = (goal.subjectFDenominator ?? 1.0) *
-            (making.subjectFdenominator ?? 1.0);
-        if ((product - 1.0).abs() > 0.05) {
+        // Rule: t3 ↔ t3 (duplicate subject)
+        if (goal.type == 3 &&
+            making.type == 3 &&
+            goal.subjectIdZ == making.subjectIdZ) {
+          contradictions.add(
+              Contradiction(goal, "Duplicate subject goal in same period"));
+        }
+
+        // Rule: t5 ↔ t5 (duplicate subject)
+        if (goal.type == 5 &&
+            making.type == 5 &&
+            goal.subjectIdZ == making.subjectIdZ) {
+          contradictions.add(
+              Contradiction(goal, "Duplicate subject goal t5 in same period"));
+        }
+
+        // Rule: t4 ↔ t4 (reciprocal contradiction)
+        if (goal.type == 4 &&
+            making.type == 4 &&
+            goal.subjectIdZ == making.subjectIdF &&
+            goal.subjectIdF == making.subjectIdZ) {
           contradictions
-              .add(Contradiction(goal, "Reciprocal ratio contradiction"));
+              .add(Contradiction(goal, "Duplicate ratio contradiction"));
+        }
+        // Rule: t5zXy <-> t3zXy
+        if ((making.type == 3 && goal.type == 5) ||
+            (making.type == 5 && goal.type == 3)) {
+          if ((goal.xSessionsGoal ?? 0) != (making.xSessionsGoal ?? 0)) {
+            contradictions.add(Contradiction(
+                goal, "${goal.type} vs ${making.type} total mismatch"));
+          }
+        }
+        // Rule: t3/5z + t3/5f derived from t4 exceeds t1/t2
+        if (making.type == 4) {
+          final t3t5z = existingGoals
+              .where((g) =>
+                  (g.type == 3 || g.type == 5) &&
+                  g.subjectIdZ == making.subjectIdZ &&
+                  shouldTestForContradiction(g.startPeriod2, g.endPeriod2,
+                      making.startPeriod2!, making.endPeriod2!))
+              .firstOrNull;
+          final t3t5f = existingGoals
+              .where((g) =>
+                  (g.type == 3 || g.type == 5) &&
+                  g.subjectIdZ == making.subjectIdF)
+              .firstOrNull;
+          final total = (t3t5z?.xSessionsZ ?? 0) + (t3t5f?.xSessionsZ ?? 0);
+          final t1t2 = existingGoals
+              .where((g) =>
+                  (g.type == 1 || g.type == 2) &&
+                  shouldTestForContradiction(goal.startPeriod2, goal.endPeriod2,
+                          making.startPeriod2!, making.endPeriod2!) ==
+                      true)
+              .map((g) => g.xSessionsGoal ?? 0)
+              .fold(0, (a, b) => a + b);
+          if (total > t1t2) {
+            contradictions.add(Contradiction(
+                goal, "Derived subject sessions exceed t1Xy/t2Xy"));
+          }
         }
       }
-
-      // Rule: t3z + t3f derived from t4 exceeds t1/t2
-      if (making.type == 4) {
-        final t3z = existingGoals
-            .where((g) => g.type == 3 && g.subjectIdZ == making.subjectIdZ)
-            .firstOrNull;
-        final t3f = existingGoals
-            .where((g) => g.type == 3 && g.subjectIdZ == making.subjectIdF)
-            .firstOrNull;
-        final total = (t3z?.xSessionsZ ?? 0) + (t3f?.xSessionsZ ?? 0);
-        final t1t2 = existingGoals
-            .where((g) => g.type == 1 || g.type == 2)
-            .map((g) => g.xSessionsGoal ?? 0)
-            .fold(0, (a, b) => a + b);
-        if (total > t1t2) {
-          contradictions.add(Contradiction(
-              goal, "Derived subject sessions exceed total goal limit"));
-        }
-      }
-
-      // Additional rules (e.g., t5 ↔ t3, t5 ↔ t4) can be added similarly
     }
-
     return contradictions;
   }
 
