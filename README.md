@@ -53,28 +53,53 @@ A new pomodoro app, built with Flutter, the goal is to make a feature-equivalent
   - [x] thus clean and improve the db
   - [x] make the db file app specific, better breaking db compatibility now than later, maybe think of a migration strategy
 
-  - [ ] create the history & statistics page
-
-    - [ ] See total work(focus break) time
-    - [ ] See charts for week / month / year
-    - [ ] See about each topic \*, and quality view in general(all subjects)
-
-  \*:
-
+  - [x] create the history page, following the round-centric model
+  - [ ] Handle the DB in unexpected shutdown
+      - [x] Enabled for closing the window from YaruWindowTitleBars on some examples
+      - [ ] Make it Universal
+  - [ ] Have the ability to remove the last break of the round. 
+  - [ ] Round finish time displayed in main page not updating    
+  - [ ] Pause State is not being emitted, and times ain't updated.
   - [ ] Add Subject/topic support
 
     - [x] Each Subject should have sub-subjects, and super-subjects, ex: School -> Sciences -> Mathematics -> Algrebra & Geometry etc.
     - [x] The working subject should be visible on the main page
     - [x] Subject should be optional, and the UI shouldn't be invasive
-    - [ ] Make a subject page, for creating, linking, subjects.
-
-    - [ ] Together with Subjects, Goals should be implemented.
-      - [ ] Goals should be **quantity-only** as well as **quantity-quality**, so you have to be able to set a goal of _6 sessions / week_, and a goal of _6 sessions of Mathematics(/Algrebra) / week_. Another idea is having a **quality-relation** type of goal, example: 2 sessions of Mathematics/_Algebra_ / 1 session of Mathematics/_Geometry_, as well as a **quantity-quality-relation**, example 2 sessions of Mathematics/Algebra this.week / 1 session of Mathematics/Algebra last.week, and a **quantity-relation**, example: 2 session this week / 1 session last week.
-        > Goals should be well imoplemented for both incremental changes +20% Mathematics this week/month/year
-        > But also for decreasing goals -20% Maths, even a decreasing/increasing relational goal, for instance :
-        > -20% Maths/Algebra -> +20% Maths/Geometry, this week(s)/month(s)/year(s)
+    - [x] Make a create page for subjects.
+    - [ ] Make a subject page
+      - [ ] Have the ability to re-link/link with other subject.
+      - [ ] List all the sub-subjects.
+      - [ ] See history from sessions.
+   - [ ] Together with Subjects, Goals should be implemented.
+      - Types of goals:
+          - Type1: Static goal of x sessions for a y period of time.
+          - Type2: Dialectic goal of x sessions for y against x' sessions of r past period of time.
+          - Type3: Static goal of x sessions with z subject per y
+          - Type4: Relational static goal of x with z per x' with f, on same y
+          - Type5: Dialectic goal of x with zon y for x' with z, on r.
+      - [ ] Goal Creation Page
+        - [x] Implement all types
+        - [ ] Integrate with Contradiction Detection Mechanism
+      - [ ] Handle contradictions that might occur. One goal should not condition the under-completion of another goal.(CDM)
+      - [ ] Ability to delete a goal
+      - [ ] Create Goal Groups
+          - [x] Create the SQL tables(Group and GroupLink)
+          - [ ] Implement it in the code.  
       - [ ] Send notifications when a goal is completed
+  
 
   (more to come)
 
   - [ ] migrate snap to core24
+
+ ### Switched for 2.x releases or 3.0
+
+- [ ] Statistics page
+    - [ ] See total work(focus break) time
+    - [ ] See charts for week / month / year
+    - [ ] See about each topic \*, and quality view in general(all subjects)
+
+### Release 3.0
+
+- [ ] Add mobile support
+- [ ] Add ability for two or more focuzds DBs to synchronise(added UUID to IDs from 2.0). 
