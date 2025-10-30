@@ -78,6 +78,7 @@ class Subject extends Table {
       text().nullable().customConstraint('REFERENCES subject(id)')();
   DateTimeColumn get createdAt => dateTime()();
   DateTimeColumn get updatedAt => dateTime()();
+  IntColumn get sessions => integer().withDefault(const Constant(0))();
   IntColumn get subSubjects => integer().withDefault(const Constant(0))();
   TextColumn get lastFocuzdOnSessionID =>
       text().nullable().references(MemoryCountdownVariable, #id)();
@@ -94,9 +95,9 @@ class Subject extends Table {
 class GroupLink extends Table {
   TextColumn get id => text().clientDefault(() => const Uuid().v4())();
   DateTimeColumn get createdAt => dateTime()();
-  TextColumn get groupID =>
-      text().customConstraint('REFERENCES goalgroup(id)')();
-  TextColumn get goalID => text().customConstraint('REFERENCES goal(id)')();
+  TextColumn get groupID => text()();
+  TextColumn get goalID =>
+      text().customConstraint('REFERENCES goal(id) NOT NULL')();
   @override
   Set<Column> get primaryKey => {id};
 }

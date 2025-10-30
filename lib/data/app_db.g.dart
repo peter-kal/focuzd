@@ -1794,6 +1794,14 @@ class $SubjectTable extends Subject with TableInfo<$SubjectTable, SubjectData> {
   late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
       'updated_at', aliasedName, false,
       type: DriftSqlType.dateTime, requiredDuringInsert: true);
+  static const VerificationMeta _sessionsMeta =
+      const VerificationMeta('sessions');
+  @override
+  late final GeneratedColumn<int> sessions = GeneratedColumn<int>(
+      'sessions', aliasedName, false,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(0));
   static const VerificationMeta _subSubjectsMeta =
       const VerificationMeta('subSubjects');
   @override
@@ -1847,6 +1855,7 @@ class $SubjectTable extends Subject with TableInfo<$SubjectTable, SubjectData> {
         superSubjectID,
         createdAt,
         updatedAt,
+        sessions,
         subSubjects,
         lastFocuzdOnSessionID,
         linkSub,
@@ -1896,6 +1905,10 @@ class $SubjectTable extends Subject with TableInfo<$SubjectTable, SubjectData> {
           updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta));
     } else if (isInserting) {
       context.missing(_updatedAtMeta);
+    }
+    if (data.containsKey('sessions')) {
+      context.handle(_sessionsMeta,
+          sessions.isAcceptableOrUnknown(data['sessions']!, _sessionsMeta));
     }
     if (data.containsKey('sub_subjects')) {
       context.handle(
@@ -1952,6 +1965,8 @@ class $SubjectTable extends Subject with TableInfo<$SubjectTable, SubjectData> {
           .read(DriftSqlType.dateTime, data['${effectivePrefix}created_at'])!,
       updatedAt: attachedDatabase.typeMapping
           .read(DriftSqlType.dateTime, data['${effectivePrefix}updated_at'])!,
+      sessions: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}sessions'])!,
       subSubjects: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}sub_subjects'])!,
       lastFocuzdOnSessionID: attachedDatabase.typeMapping.read(
@@ -1981,6 +1996,7 @@ class SubjectData extends DataClass implements Insertable<SubjectData> {
   final String? superSubjectID;
   final DateTime createdAt;
   final DateTime updatedAt;
+  final int sessions;
   final int subSubjects;
   final String? lastFocuzdOnSessionID;
   final String? linkSub;
@@ -1994,6 +2010,7 @@ class SubjectData extends DataClass implements Insertable<SubjectData> {
       this.superSubjectID,
       required this.createdAt,
       required this.updatedAt,
+      required this.sessions,
       required this.subSubjects,
       this.lastFocuzdOnSessionID,
       this.linkSub,
@@ -2011,6 +2028,7 @@ class SubjectData extends DataClass implements Insertable<SubjectData> {
     }
     map['created_at'] = Variable<DateTime>(createdAt);
     map['updated_at'] = Variable<DateTime>(updatedAt);
+    map['sessions'] = Variable<int>(sessions);
     map['sub_subjects'] = Variable<int>(subSubjects);
     if (!nullToAbsent || lastFocuzdOnSessionID != null) {
       map['last_focuzd_on_session_i_d'] =
@@ -2039,6 +2057,7 @@ class SubjectData extends DataClass implements Insertable<SubjectData> {
           : Value(superSubjectID),
       createdAt: Value(createdAt),
       updatedAt: Value(updatedAt),
+      sessions: Value(sessions),
       subSubjects: Value(subSubjects),
       lastFocuzdOnSessionID: lastFocuzdOnSessionID == null && nullToAbsent
           ? const Value.absent()
@@ -2066,6 +2085,7 @@ class SubjectData extends DataClass implements Insertable<SubjectData> {
       superSubjectID: serializer.fromJson<String?>(json['superSubjectID']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
       updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      sessions: serializer.fromJson<int>(json['sessions']),
       subSubjects: serializer.fromJson<int>(json['subSubjects']),
       lastFocuzdOnSessionID:
           serializer.fromJson<String?>(json['lastFocuzdOnSessionID']),
@@ -2085,6 +2105,7 @@ class SubjectData extends DataClass implements Insertable<SubjectData> {
       'superSubjectID': serializer.toJson<String?>(superSubjectID),
       'createdAt': serializer.toJson<DateTime>(createdAt),
       'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'sessions': serializer.toJson<int>(sessions),
       'subSubjects': serializer.toJson<int>(subSubjects),
       'lastFocuzdOnSessionID':
           serializer.toJson<String?>(lastFocuzdOnSessionID),
@@ -2102,6 +2123,7 @@ class SubjectData extends DataClass implements Insertable<SubjectData> {
           Value<String?> superSubjectID = const Value.absent(),
           DateTime? createdAt,
           DateTime? updatedAt,
+          int? sessions,
           int? subSubjects,
           Value<String?> lastFocuzdOnSessionID = const Value.absent(),
           Value<String?> linkSub = const Value.absent(),
@@ -2116,6 +2138,7 @@ class SubjectData extends DataClass implements Insertable<SubjectData> {
             superSubjectID.present ? superSubjectID.value : this.superSubjectID,
         createdAt: createdAt ?? this.createdAt,
         updatedAt: updatedAt ?? this.updatedAt,
+        sessions: sessions ?? this.sessions,
         subSubjects: subSubjects ?? this.subSubjects,
         lastFocuzdOnSessionID: lastFocuzdOnSessionID.present
             ? lastFocuzdOnSessionID.value
@@ -2139,6 +2162,7 @@ class SubjectData extends DataClass implements Insertable<SubjectData> {
           : this.superSubjectID,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      sessions: data.sessions.present ? data.sessions.value : this.sessions,
       subSubjects:
           data.subSubjects.present ? data.subSubjects.value : this.subSubjects,
       lastFocuzdOnSessionID: data.lastFocuzdOnSessionID.present
@@ -2166,6 +2190,7 @@ class SubjectData extends DataClass implements Insertable<SubjectData> {
           ..write('superSubjectID: $superSubjectID, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
+          ..write('sessions: $sessions, ')
           ..write('subSubjects: $subSubjects, ')
           ..write('lastFocuzdOnSessionID: $lastFocuzdOnSessionID, ')
           ..write('linkSub: $linkSub, ')
@@ -2184,6 +2209,7 @@ class SubjectData extends DataClass implements Insertable<SubjectData> {
       superSubjectID,
       createdAt,
       updatedAt,
+      sessions,
       subSubjects,
       lastFocuzdOnSessionID,
       linkSub,
@@ -2200,6 +2226,7 @@ class SubjectData extends DataClass implements Insertable<SubjectData> {
           other.superSubjectID == this.superSubjectID &&
           other.createdAt == this.createdAt &&
           other.updatedAt == this.updatedAt &&
+          other.sessions == this.sessions &&
           other.subSubjects == this.subSubjects &&
           other.lastFocuzdOnSessionID == this.lastFocuzdOnSessionID &&
           other.linkSub == this.linkSub &&
@@ -2215,6 +2242,7 @@ class SubjectCompanion extends UpdateCompanion<SubjectData> {
   final Value<String?> superSubjectID;
   final Value<DateTime> createdAt;
   final Value<DateTime> updatedAt;
+  final Value<int> sessions;
   final Value<int> subSubjects;
   final Value<String?> lastFocuzdOnSessionID;
   final Value<String?> linkSub;
@@ -2229,6 +2257,7 @@ class SubjectCompanion extends UpdateCompanion<SubjectData> {
     this.superSubjectID = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
+    this.sessions = const Value.absent(),
     this.subSubjects = const Value.absent(),
     this.lastFocuzdOnSessionID = const Value.absent(),
     this.linkSub = const Value.absent(),
@@ -2244,6 +2273,7 @@ class SubjectCompanion extends UpdateCompanion<SubjectData> {
     this.superSubjectID = const Value.absent(),
     required DateTime createdAt,
     required DateTime updatedAt,
+    this.sessions = const Value.absent(),
     this.subSubjects = const Value.absent(),
     this.lastFocuzdOnSessionID = const Value.absent(),
     this.linkSub = const Value.absent(),
@@ -2262,6 +2292,7 @@ class SubjectCompanion extends UpdateCompanion<SubjectData> {
     Expression<String>? superSubjectID,
     Expression<DateTime>? createdAt,
     Expression<DateTime>? updatedAt,
+    Expression<int>? sessions,
     Expression<int>? subSubjects,
     Expression<String>? lastFocuzdOnSessionID,
     Expression<String>? linkSub,
@@ -2277,6 +2308,7 @@ class SubjectCompanion extends UpdateCompanion<SubjectData> {
       if (superSubjectID != null) 'super_subject_i_d': superSubjectID,
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
+      if (sessions != null) 'sessions': sessions,
       if (subSubjects != null) 'sub_subjects': subSubjects,
       if (lastFocuzdOnSessionID != null)
         'last_focuzd_on_session_i_d': lastFocuzdOnSessionID,
@@ -2295,6 +2327,7 @@ class SubjectCompanion extends UpdateCompanion<SubjectData> {
       Value<String?>? superSubjectID,
       Value<DateTime>? createdAt,
       Value<DateTime>? updatedAt,
+      Value<int>? sessions,
       Value<int>? subSubjects,
       Value<String?>? lastFocuzdOnSessionID,
       Value<String?>? linkSub,
@@ -2309,6 +2342,7 @@ class SubjectCompanion extends UpdateCompanion<SubjectData> {
       superSubjectID: superSubjectID ?? this.superSubjectID,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
+      sessions: sessions ?? this.sessions,
       subSubjects: subSubjects ?? this.subSubjects,
       lastFocuzdOnSessionID:
           lastFocuzdOnSessionID ?? this.lastFocuzdOnSessionID,
@@ -2340,6 +2374,9 @@ class SubjectCompanion extends UpdateCompanion<SubjectData> {
     }
     if (updatedAt.present) {
       map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (sessions.present) {
+      map['sessions'] = Variable<int>(sessions.value);
     }
     if (subSubjects.present) {
       map['sub_subjects'] = Variable<int>(subSubjects.value);
@@ -2375,6 +2412,7 @@ class SubjectCompanion extends UpdateCompanion<SubjectData> {
           ..write('superSubjectID: $superSubjectID, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
+          ..write('sessions: $sessions, ')
           ..write('subSubjects: $subSubjects, ')
           ..write('lastFocuzdOnSessionID: $lastFocuzdOnSessionID, ')
           ..write('linkSub: $linkSub, ')
@@ -4185,16 +4223,14 @@ class $GroupLinkTable extends GroupLink
   @override
   late final GeneratedColumn<String> groupID = GeneratedColumn<String>(
       'group_i_d', aliasedName, false,
-      type: DriftSqlType.string,
-      requiredDuringInsert: true,
-      $customConstraints: 'REFERENCES goalgroup(id)');
+      type: DriftSqlType.string, requiredDuringInsert: true);
   static const VerificationMeta _goalIDMeta = const VerificationMeta('goalID');
   @override
   late final GeneratedColumn<String> goalID = GeneratedColumn<String>(
       'goal_i_d', aliasedName, false,
       type: DriftSqlType.string,
       requiredDuringInsert: true,
-      $customConstraints: 'REFERENCES goal(id)');
+      $customConstraints: 'REFERENCES goal(id) NOT NULL');
   @override
   List<GeneratedColumn> get $columns => [id, createdAt, groupID, goalID];
   @override
@@ -5350,6 +5386,7 @@ typedef $$SubjectTableCreateCompanionBuilder = SubjectCompanion Function({
   Value<String?> superSubjectID,
   required DateTime createdAt,
   required DateTime updatedAt,
+  Value<int> sessions,
   Value<int> subSubjects,
   Value<String?> lastFocuzdOnSessionID,
   Value<String?> linkSub,
@@ -5365,6 +5402,7 @@ typedef $$SubjectTableUpdateCompanionBuilder = SubjectCompanion Function({
   Value<String?> superSubjectID,
   Value<DateTime> createdAt,
   Value<DateTime> updatedAt,
+  Value<int> sessions,
   Value<int> subSubjects,
   Value<String?> lastFocuzdOnSessionID,
   Value<String?> linkSub,
@@ -5425,6 +5463,9 @@ class $$SubjectTableFilterComposer
 
   ColumnFilters<DateTime> get updatedAt => $composableBuilder(
       column: $table.updatedAt, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get sessions => $composableBuilder(
+      column: $table.sessions, builder: (column) => ColumnFilters(column));
 
   ColumnFilters<int> get subSubjects => $composableBuilder(
       column: $table.subSubjects, builder: (column) => ColumnFilters(column));
@@ -5494,6 +5535,9 @@ class $$SubjectTableOrderingComposer
   ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
       column: $table.updatedAt, builder: (column) => ColumnOrderings(column));
 
+  ColumnOrderings<int> get sessions => $composableBuilder(
+      column: $table.sessions, builder: (column) => ColumnOrderings(column));
+
   ColumnOrderings<int> get subSubjects => $composableBuilder(
       column: $table.subSubjects, builder: (column) => ColumnOrderings(column));
 
@@ -5561,6 +5605,9 @@ class $$SubjectTableAnnotationComposer
   GeneratedColumn<DateTime> get updatedAt =>
       $composableBuilder(column: $table.updatedAt, builder: (column) => column);
 
+  GeneratedColumn<int> get sessions =>
+      $composableBuilder(column: $table.sessions, builder: (column) => column);
+
   GeneratedColumn<int> get subSubjects => $composableBuilder(
       column: $table.subSubjects, builder: (column) => column);
 
@@ -5627,6 +5674,7 @@ class $$SubjectTableTableManager extends RootTableManager<
             Value<String?> superSubjectID = const Value.absent(),
             Value<DateTime> createdAt = const Value.absent(),
             Value<DateTime> updatedAt = const Value.absent(),
+            Value<int> sessions = const Value.absent(),
             Value<int> subSubjects = const Value.absent(),
             Value<String?> lastFocuzdOnSessionID = const Value.absent(),
             Value<String?> linkSub = const Value.absent(),
@@ -5642,6 +5690,7 @@ class $$SubjectTableTableManager extends RootTableManager<
             superSubjectID: superSubjectID,
             createdAt: createdAt,
             updatedAt: updatedAt,
+            sessions: sessions,
             subSubjects: subSubjects,
             lastFocuzdOnSessionID: lastFocuzdOnSessionID,
             linkSub: linkSub,
@@ -5657,6 +5706,7 @@ class $$SubjectTableTableManager extends RootTableManager<
             Value<String?> superSubjectID = const Value.absent(),
             required DateTime createdAt,
             required DateTime updatedAt,
+            Value<int> sessions = const Value.absent(),
             Value<int> subSubjects = const Value.absent(),
             Value<String?> lastFocuzdOnSessionID = const Value.absent(),
             Value<String?> linkSub = const Value.absent(),
@@ -5672,6 +5722,7 @@ class $$SubjectTableTableManager extends RootTableManager<
             superSubjectID: superSubjectID,
             createdAt: createdAt,
             updatedAt: updatedAt,
+            sessions: sessions,
             subSubjects: subSubjects,
             lastFocuzdOnSessionID: lastFocuzdOnSessionID,
             linkSub: linkSub,

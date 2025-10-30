@@ -9,6 +9,7 @@ class SubjectTreeNode {
     required this.totalTimeSpent,
     required this.updatedAt,
     required this.subject,
+    required this.sessions,
     this.optionalFocusTime,
     this.optionalBreakTime,
     this.lastFocuzdOnSessionID = 0,
@@ -24,6 +25,7 @@ class SubjectTreeNode {
   final int totalTimeSpent;
   final int? optionalFocusTime;
   final int? optionalBreakTime;
+  final int sessions;
   final SubjectData subject;
   final List<SubjectTreeNode> children;
 }

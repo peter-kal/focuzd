@@ -17,13 +17,19 @@ class GoalRepository {
     await _db.into(_db.goal).insert(goal);
   }
 
-  Future<List<Contradiction>> detectContradictions(
-      GoalMaking making, List<GoalData> existingGoals) async {
+  Future<List<Contradiction>> detectContradictions(GoalMaking making) async {
     final contradictions = <Contradiction>[];
     List<GoalData> existingGoals = await GoalRepository(_db).fetchAllGoals();
     for (final goal in existingGoals) {
-      if (!shouldTestForContradiction(making.startPeriod2!, making.endPeriod2!,
+      print(
+          "shouldTest: ${shouldTestForContradiction(making.startPeriod2!, making.endPeriod2!, goal.startPeriod2, goal.endPeriod2)}");
+      print(
+          "overlap: ${overlapBetweenGoals(making.startPeriod2!, making.endPeriod2!, goal.startPeriod2, goal.endPeriod2)}");
+      print(
+          "xStart ${making.startPeriod2}, xend: ${making.endPeriod2}, yStart:${goal.startPeriod2}, yend:${goal.endPeriod2}");
+      if (shouldTestForContradiction(making.startPeriod2!, making.endPeriod2!,
           goal.startPeriod2, goal.endPeriod2)) {
+        print("entered");
         // Rule: t1 ↔ t2 (static vs dialectic total)
         if ((goal.type == 1 && making.type == 2) ||
             (goal.type == 2 && making.type == 1)) {
@@ -40,12 +46,17 @@ class GoalRepository {
               Contradiction(goal, "duplicate ${making.type} ${goal.type}"));
         }
 
-        // Rule: t1/t2 ↔ t3 (subject overload)
+        // Rule: t1/t2 ↔ t3,t5 (subject overload)
         if ((goal.type == 1 || goal.type == 2) &&
             (making.type == 3 || making.type == 5)) {
-          if ((making.xSessionsZ ?? 0) > (goal.xSessionsGoal ?? 0)) {
-            contradictions.add(
-                Contradiction(goal, "Subject goal exceeds total session goal"));
+          print("entered in repo");
+          print(making.xSessionsGoal);
+          print(goal.xSessionsGoal);
+          if ((making.xSessionsGoal ?? 0) > (goal.xSessionsGoal ?? 0)) {
+            contradictions.add(Contradiction(
+                goal, "Subject goal exceeds total session goal",
+                suggestedFix:
+                    "Make the X goal be less or equal to ${goal.xSessionsGoal}"));
           }
         }
 
@@ -81,32 +92,35 @@ class GoalRepository {
                 goal, "${goal.type} vs ${making.type} total mismatch"));
           }
         }
-        // Rule: t3/5z + t3/5f derived from t4 exceeds t1/t2
         if (making.type == 4) {
-          final t3t5z = existingGoals
+          print("entered t4");
+
+          double sumForSubject(String? subjectId) => existingGoals
               .where((g) =>
                   (g.type == 3 || g.type == 5) &&
-                  g.subjectIdZ == making.subjectIdZ &&
+                  g.subjectIdZ == subjectId &&
                   shouldTestForContradiction(g.startPeriod2, g.endPeriod2,
                       making.startPeriod2!, making.endPeriod2!))
-              .firstOrNull;
-          final t3t5f = existingGoals
-              .where((g) =>
-                  (g.type == 3 || g.type == 5) &&
-                  g.subjectIdZ == making.subjectIdF)
-              .firstOrNull;
-          final total = (t3t5z?.xSessionsZ ?? 0) + (t3t5f?.xSessionsZ ?? 0);
-          final t1t2 = existingGoals
+              .map((g) => g.xSessionsGoal ?? 0)
+              .fold(0.0, (a, b) => a + b);
+
+          final totalDerived = sumForSubject(making.subjectIdZ) +
+              sumForSubject(making.subjectIdF);
+
+          final totalBase = existingGoals
               .where((g) =>
                   (g.type == 1 || g.type == 2) &&
-                  shouldTestForContradiction(goal.startPeriod2, goal.endPeriod2,
-                          making.startPeriod2!, making.endPeriod2!) ==
-                      true)
+                  (g.subjectIdZ == making.subjectIdZ ||
+                      g.subjectIdZ == making.subjectIdF) &&
+                  shouldTestForContradiction(g.startPeriod2, g.endPeriod2,
+                      making.startPeriod2!, making.endPeriod2!))
               .map((g) => g.xSessionsGoal ?? 0)
-              .fold(0, (a, b) => a + b);
-          if (total > t1t2) {
-            contradictions.add(Contradiction(
-                goal, "Derived subject sessions exceed t1Xy/t2Xy"));
+              .fold(0.0, (a, b) => a + b);
+
+          if (totalDerived > totalBase) {
+            contradictions.add(Contradiction(goal,
+                "Derived subject sessions exceed t1/t2 total : $totalBase, $totalDerived",
+                suggestedFix: "de"));
           }
         }
       }
@@ -222,6 +236,7 @@ class SubjectRepository {
         id: subject.id,
         subSubjects: subject.subSubjects,
         subject: subject,
+        sessions: subject.sessions,
         superId:
             subject.superSubjectID, // Add this to your SubjectTreeNode class
         totalTimeSpent: subject.totalTimeSpent,
@@ -355,6 +370,26 @@ class SubjectRepository {
     if (subject!.superSubjectID != null) {
       decreaseSubjectTime(
         reducedTime: reducedTime,
+        id: subject.superSubjectID!,
+      );
+    }
+  }
+
+  Future<void> increaseSessionCount(
+      // tree structure
+      {
+    required String id,
+  }) async {
+    var subject = await fetchSubjectByID(id);
+    print("start");
+    int sessions = subject!.sessions;
+    await editSubjectWrite(
+        id,
+        SubjectCompanion(
+            sessions: Value(sessions + 1), updatedAt: Value(DateTime.now())));
+    if (subject.superSubjectID != null) {
+      print("will repeat");
+      increaseSessionCount(
         id: subject.superSubjectID!,
       );
     }

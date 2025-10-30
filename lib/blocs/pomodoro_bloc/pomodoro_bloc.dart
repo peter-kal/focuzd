@@ -468,7 +468,6 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
             ));
         if (state.subject != null) {
           var sub = await subjectRepo.fetchSubjectByID(state.subject!.id);
-          int? totalTimeSpent = sub?.totalTimeSpent;
           await subjectRepo.editSubjectWrite(
             state.subject!.id,
             SubjectCompanion(
@@ -480,6 +479,7 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
               addedTime: (state.selectedDuration - state.duration),
               id: state.subject!.id,
               sessionId: state.currentMemorySessionID);
+          await subjectRepo.increaseSessionCount(id: state.subject!.id);
         }
         add(TimerInit());
       } else if ((state.runTimes + 1) < state.sessions.length) {
@@ -488,7 +488,6 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
         int? actuallyDoneRound = roundid!.actuallyDoneDuration;
         if (state.subject != null) {
           var sub = await subjectRepo.fetchSubjectByID(state.subject!.id);
-          int? totalTimeSpent = sub?.totalTimeSpent;
           await subjectRepo.editSubjectWrite(
             state.subject!.id,
             SubjectCompanion(
@@ -500,6 +499,7 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
               addedTime: (state.selectedDuration - state.duration),
               id: state.subject!.id,
               sessionId: state.currentMemorySessionID);
+          await subjectRepo.increaseSessionCount(id: state.subject!.id);
         }
         await memorySessionRepo.updateMemorySessionWrite(
             state.currentMemorySessionID,

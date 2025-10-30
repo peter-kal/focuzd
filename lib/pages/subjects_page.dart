@@ -1,4 +1,3 @@
-import 'package:cart_stepper/cart_stepper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_fancy_tree_view2/flutter_fancy_tree_view2.dart';
@@ -126,7 +125,7 @@ class _SubjectsPageState extends State<SubjectsPage> with ExtraFunctions {
                                                   BorderRadiusGeometry.circular(
                                                       8)),
                                           child: Text(
-                                            ("${(entry.node.totalTimeSpent / 60).round().toString()} min"),
+                                            ("${(entry.node.totalTimeSpent / 60).round().toString()} min ${entry.node.sessions} sessions"),
                                           ),
                                         )
                                       ],
