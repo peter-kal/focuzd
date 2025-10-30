@@ -20,11 +20,16 @@ class CreateGoalState extends RepoState {
       {required this.goals,
       required this.makeable,
       required this.subjects,
-      required this.nonContradictory});
+      required this.nonContradictory,
+      this.contradictions});
   final List<GoalData?> goals;
   final GoalMaking makeable;
   final List<SubjectData?> subjects;
   final bool nonContradictory;
+  final List<Contradiction>? contradictions;
+  @override
+  String toString() =>
+      "empty: ${contradictions!.isEmpty} length: ${contradictions!.length} noncon: $nonContradictory";
 }
 
 class RepoVariablesGivenState extends RepoState {
