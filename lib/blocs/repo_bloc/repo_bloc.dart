@@ -2,9 +2,7 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:drift/drift.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:focuzd/blocs/observer.dart';
 import 'package:focuzd/extra_widgets/subject_tree_node.dart';
 import 'package:focuzd/data/app_db.dart';
 import 'package:focuzd/data/repo.dart';
@@ -155,20 +153,17 @@ class RepoBloc extends Bloc<RepoEvent, RepoState> {
         goals: await goalRepo.fetchAllGoals(),
         subjects: await subjectRepo.fetchAllSubjects(),
         nonContradictory: true,
-        makeable: sub));
+        makeable: sub,
+        contradictions: []));
   }
 
   void _onUpdateCreatingGoal(
       UpdateCreatingGoal event, Emitter<RepoState> emit) async {
     final state = this.state;
     if (state is CreateGoalState) {
-      print("start: ${event.newMakeable.startPeriod1}");
-      print("end: ${event.newMakeable.endPeriod1}");
-      print("subjectIdZ: ${event.newMakeable.subjectIdZ}");
       if (event.newMakeable.type == 2 &&
           event.newMakeable.startPeriod1 != null &&
           event.newMakeable.endPeriod1 != null) {
-        print("let's go");
         var s = await memoryRepo.getAllMemorySessionXPeriod(
             event.newMakeable.startPeriod1!, event.newMakeable.endPeriod1!);
         event.newMakeable.xSessionsR = s.length;
@@ -176,7 +171,6 @@ class RepoBloc extends Bloc<RepoEvent, RepoState> {
             event.newMakeable.endPeriod2 != null &&
             event.newMakeable.xSessionsGoal != null &&
             event.newMakeable.xSessionsR != null) {
-          print("lets go 2");
           event.newMakeable.plannedRatio =
               event.newMakeable.xSessionsGoal! / event.newMakeable.xSessionsR!;
         }
@@ -194,7 +188,6 @@ class RepoBloc extends Bloc<RepoEvent, RepoState> {
             event.newMakeable.endPeriod2 != null &&
             event.newMakeable.xSessionsGoal != null &&
             event.newMakeable.xSessionsR != null) {
-          print("lets go 2");
           event.newMakeable.xSessionsR! > 0
               ? event.newMakeable.plannedRatio =
                   event.newMakeable.xSessionsGoal! /
@@ -203,11 +196,99 @@ class RepoBloc extends Bloc<RepoEvent, RepoState> {
                   event.newMakeable.xSessionsGoal! / 1;
         }
       }
-      emit(CreateGoalState(
-          makeable: event.newMakeable,
-          nonContradictory: true,
-          goals: state.goals,
-          subjects: state.subjects));
+      print("type: ${event.newMakeable.type}");
+      print("start2: ${event.newMakeable.startPeriod2}");
+      print("end2: ${event.newMakeable.endPeriod2}");
+      print("codename: ${event.newMakeable.codeName}");
+      if (event.newMakeable.type != null &&
+          event.newMakeable.startPeriod2 != null &&
+          event.newMakeable.endPeriod2 != null &&
+          event.newMakeable.codeName != null) {
+        print("entered first stage of testing cons");
+        if (event.newMakeable.type == 1 &&
+            event.newMakeable.xSessionsGoal != null) {
+          print("search contradictions from t1");
+          List<Contradiction> cons =
+              await goalRepo.detectContradictions(event.newMakeable);
+          bool isNotContradictory = cons.isEmpty;
+          emit(CreateGoalState(
+              goals: state.goals,
+              nonContradictory: isNotContradictory,
+              makeable: event.newMakeable,
+              subjects: state.subjects,
+              contradictions: cons));
+        } // type 1
+        if (event.newMakeable.type == 2 &&
+            event.newMakeable.startPeriod1 != null &&
+            event.newMakeable.endPeriod1 != null &&
+            event.newMakeable.xSessionsGoal != null) {
+          goalRepo.detectContradictions(event.newMakeable);
+          print("search contradictions from t2");
+          List<Contradiction> cons =
+              await goalRepo.detectContradictions(event.newMakeable);
+          bool isNotContradictory = cons.isEmpty;
+          emit(CreateGoalState(
+              goals: state.goals,
+              nonContradictory: isNotContradictory,
+              makeable: event.newMakeable,
+              subjects: state.subjects,
+              contradictions: cons));
+        } // type 2
+        if (event.newMakeable.type == 3 &&
+            event.newMakeable.xSessionsGoal != null &&
+            event.newMakeable.subjectIdZ != null) {
+          print("search contradictions from t3");
+          List<Contradiction> cons =
+              await goalRepo.detectContradictions(event.newMakeable);
+          bool isNotContradictory = cons.isEmpty;
+          emit(CreateGoalState(
+              goals: state.goals,
+              nonContradictory: isNotContradictory,
+              makeable: event.newMakeable,
+              subjects: state.subjects,
+              contradictions: cons));
+        } // type 3
+        if (event.newMakeable.type == 4 &&
+            event.newMakeable.subjectIdZ != null &&
+            event.newMakeable.subjectIdF != null &&
+            event.newMakeable.subjectFdenominator != null) {
+          goalRepo.detectContradictions(event.newMakeable);
+          print("search contradictions from t4");
+          List<Contradiction> cons =
+              await goalRepo.detectContradictions(event.newMakeable);
+          bool isNotContradictory = cons.isEmpty;
+          emit(CreateGoalState(
+              goals: state.goals,
+              nonContradictory: isNotContradictory,
+              makeable: event.newMakeable,
+              subjects: state.subjects,
+              contradictions: cons));
+        } // type 4
+        if (event.newMakeable.type == 5 &&
+            event.newMakeable.subjectIdZ != null &&
+            event.newMakeable.startPeriod1 != null &&
+            event.newMakeable.endPeriod1 != null &&
+            event.newMakeable.xSessionsGoal != null) {
+          goalRepo.detectContradictions(event.newMakeable);
+          print("search contradictions from t5");
+          List<Contradiction> cons =
+              await goalRepo.detectContradictions(event.newMakeable);
+          bool isNotContradictory = cons.isEmpty;
+          emit(CreateGoalState(
+              goals: state.goals,
+              nonContradictory: isNotContradictory,
+              makeable: event.newMakeable,
+              subjects: state.subjects,
+              contradictions: cons));
+        } //type 5
+      } else {
+        emit(CreateGoalState(
+            makeable: event.newMakeable,
+            nonContradictory: true,
+            goals: state.goals,
+            subjects: state.subjects,
+            contradictions: []));
+      }
     }
   }
 

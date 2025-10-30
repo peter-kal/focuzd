@@ -1,7 +1,6 @@
 import 'package:cart_stepper/cart_stepper.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinbox/flutter_spinbox.dart';
 import 'package:focuzd/blocs/blocs.dart';
@@ -57,7 +56,14 @@ class _GoalCreatePageState extends State<GoalCreatePage> {
                         null;
                       }
                     },
-                  )
+                  ),
+                  SizedBox.shrink(),
+                  if (state.contradictions != null &&
+                      state.contradictions!.isNotEmpty == true)
+                    Column(children: [
+                      Text(state.contradictions!.first.reason),
+                      Text(state.contradictions!.first.suggestedFix),
+                    ]),
                 ],
               ),
             ),
@@ -160,7 +166,20 @@ class _GoalCreatePageState extends State<GoalCreatePage> {
                         padding: const EdgeInsets.all(8.0),
                         child: YaruSection(
                             child: Column(children: [
-                          Text("From: Now"),
+                          YaruDateTimeEntry(
+                              force24HourFormat: true,
+                              initialDateTime:
+                                  state.makeable.startPeriod2 ?? DateTime.now(),
+                              firstDateTime: DateTime.now(),
+                              lastDateTime:
+                                  DateTime.now().add(Duration(days: 2000)),
+                              onChanged: (change) {
+                                var newmakeable = state.makeable;
+                                newmakeable.startPeriod2 = change;
+                                BlocProvider.of<RepoBloc>(context).add(
+                                    UpdateCreatingGoal(
+                                        newMakeable: newmakeable));
+                              }),
                           YaruDateTimeEntry(
                               force24HourFormat: true,
                               initialDateTime:
@@ -296,7 +315,20 @@ class _GoalCreatePageState extends State<GoalCreatePage> {
                         padding: const EdgeInsets.all(8.0),
                         child: YaruSection(
                             child: Column(children: [
-                          Text("From: Now"),
+                          YaruDateTimeEntry(
+                              force24HourFormat: true,
+                              initialDateTime:
+                                  state.makeable.startPeriod2 ?? DateTime.now(),
+                              firstDateTime: DateTime.now(),
+                              lastDateTime:
+                                  DateTime.now().add(Duration(days: 2000)),
+                              onChanged: (change) {
+                                var newmakeable = state.makeable;
+                                newmakeable.startPeriod2 = change;
+                                BlocProvider.of<RepoBloc>(context).add(
+                                    UpdateCreatingGoal(
+                                        newMakeable: newmakeable));
+                              }),
                           YaruDateTimeEntry(
                               force24HourFormat: true,
                               initialDateTime:

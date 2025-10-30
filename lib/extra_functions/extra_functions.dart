@@ -1,7 +1,5 @@
 import 'package:drift/drift.dart';
 
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:focuzd/blocs/pomodoro_bloc/pomodoro_bloc.dart';
 import 'package:focuzd/data/app_db.dart';
 import 'package:focuzd/data/repo.dart';
@@ -204,18 +202,47 @@ class Contradiction {
 }
 
 bool shouldTestForContradiction(
-    DateTime aStart, DateTime aEnd, DateTime bStart, DateTime bEnd,
+    DateTime xStart, DateTime xEnd, DateTime yStart, DateTime yEnd,
     {double threshold = 0.8}) {
-  final overlapStart = aStart.isAfter(bStart) ? aStart : bStart;
-  final overlapEnd = aEnd.isBefore(bEnd) ? aEnd : bEnd;
-  if (!overlapStart.isBefore(overlapEnd)) return false;
+  if (overlapBetweenGoals(xStart, xEnd, yStart, yEnd) > 0.85) {
+    return true;
+  } else {
+    return false;
+  }
+}
 
-  final overlapDuration = overlapEnd.difference(overlapStart).inSeconds;
-  final aDuration = aEnd.difference(aStart).inSeconds;
-  final bDuration = bEnd.difference(bStart).inSeconds;
+double overlapBetweenGoals(
+  DateTime xStart,
+  DateTime xEnd,
+  DateTime yStart,
+  DateTime yEnd, {
+  double threshold = 0.8,
+}) {
+  // Convert all to local to avoid timezone mismatches
+  xStart = xStart.toLocal();
+  xEnd = xEnd.toLocal();
+  yStart = yStart.toLocal();
+  yEnd = yEnd.toLocal();
 
-  final aRatio = overlapDuration / aDuration;
-  final bRatio = overlapDuration / bDuration;
+  // Sanity check
+  if (xEnd.isBefore(xStart) || yEnd.isBefore(yStart)) {
+    throw ArgumentError('End must be after start');
+  }
 
-  return aRatio >= threshold || bRatio >= threshold;
+  final overlapStart = xStart.isAfter(yStart) ? xStart : yStart;
+  final overlapEnd = xEnd.isBefore(yEnd) ? xEnd : yEnd;
+
+  final overlap = overlapEnd.difference(overlapStart);
+
+  if (overlap.isNegative || overlap.inSeconds == 0) {
+    return 0.0;
+  }
+
+  final xDur = xEnd.difference(xStart);
+  final yDur = yEnd.difference(yStart);
+  final baseDur = xDur > yDur ? xDur : yDur; // ← compare to larger one
+
+  final overlapPercent = overlap.inSeconds / baseDur.inSeconds;
+
+  return overlapPercent.clamp(0.0, 1.0);
 }
