@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 // Replace with your actual model imports
 import 'package:focuzd/data/app_db.dart';
 import 'package:focuzd/data/repo.dart';
-import 'package:focuzd/extra_widgets/countdown_interface.dart';
 import 'package:yaru/yaru.dart';
 
 class SessionBlock {
@@ -46,8 +45,8 @@ class HistoryRoundCard extends StatelessWidget {
               o.startingTime != null &&
               o.finishTime != null &&
               first.startingTime != null &&
-              o.startingTime!.isBefore(
-                  first.startingTime!));
+              o.startingTime!.isBefore(first.startingTime!))
+          .toList();
 
       final between = givenList
           .whereType<OutPlanningVariableData>()
