@@ -20,15 +20,17 @@ class GoalRepository {
   Future<List<Contradiction>> detectContradictions(GoalMaking making) async {
     final contradictions = <Contradiction>[];
     List<GoalData> existingGoals = await GoalRepository(_db).fetchAllGoals();
+    final settings = await SettingsRepository(_db).fetchSettings();
+    double threshold = settings!.overlapPercentageCDM;
     for (final goal in existingGoals) {
       print(
-          "shouldTest: ${shouldTestForContradiction(making.startPeriod2!, making.endPeriod2!, goal.startPeriod2, goal.endPeriod2)}");
+          "shouldTest: ${shouldTestForContradiction(making.startPeriod2!, making.endPeriod2!, goal.startPeriod2, goal.endPeriod2, threshold)}");
       print(
           "overlap: ${overlapBetweenGoals(making.startPeriod2!, making.endPeriod2!, goal.startPeriod2, goal.endPeriod2)}");
       print(
           "xStart ${making.startPeriod2}, xend: ${making.endPeriod2}, yStart:${goal.startPeriod2}, yend:${goal.endPeriod2}");
       if (shouldTestForContradiction(making.startPeriod2!, making.endPeriod2!,
-          goal.startPeriod2, goal.endPeriod2)) {
+          goal.startPeriod2, goal.endPeriod2, threshold)) {
         print("entered");
         // Rule: t1 ↔ t2 (static vs dialectic total)
         if ((goal.type == 1 && making.type == 2) ||
@@ -100,7 +102,7 @@ class GoalRepository {
                   (g.type == 3 || g.type == 5) &&
                   g.subjectIdZ == subjectId &&
                   shouldTestForContradiction(g.startPeriod2, g.endPeriod2,
-                      making.startPeriod2!, making.endPeriod2!))
+                      making.startPeriod2!, making.endPeriod2!, threshold))
               .map((g) => g.xSessionsGoal ?? 0)
               .fold(0.0, (a, b) => a + b);
 
@@ -113,7 +115,7 @@ class GoalRepository {
                   (g.subjectIdZ == making.subjectIdZ ||
                       g.subjectIdZ == making.subjectIdF) &&
                   shouldTestForContradiction(g.startPeriod2, g.endPeriod2,
-                      making.startPeriod2!, making.endPeriod2!))
+                      making.startPeriod2!, making.endPeriod2!, threshold))
               .map((g) => g.xSessionsGoal ?? 0)
               .fold(0.0, (a, b) => a + b);
 

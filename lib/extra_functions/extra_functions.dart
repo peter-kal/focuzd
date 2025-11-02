@@ -201,10 +201,9 @@ class Contradiction {
   Contradiction(this.existingGoal, this.reason, {this.suggestedFix = ""});
 }
 
-bool shouldTestForContradiction(
-    DateTime xStart, DateTime xEnd, DateTime yStart, DateTime yEnd,
-    {double threshold = 0.8}) {
-  if (overlapBetweenGoals(xStart, xEnd, yStart, yEnd) > 0.85) {
+bool shouldTestForContradiction(DateTime xStart, DateTime xEnd, DateTime yStart,
+    DateTime yEnd, double threshold) {
+  if (overlapBetweenGoals(xStart, xEnd, yStart, yEnd) > threshold) {
     return true;
   } else {
     return false;

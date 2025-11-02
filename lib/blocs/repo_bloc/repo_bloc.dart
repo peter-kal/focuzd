@@ -43,27 +43,35 @@ class RepoBloc extends Bloc<RepoEvent, RepoState> {
         await settingsRepo.updateSetting(
             settings!.id,
             SettingsVariablesCompanion(
-                requestedNumberOfSessions: Value(event.changedVar)));
+                defaultNumberOfSessionsPerRound: Value(event.changedVar)));
         break;
       case 3:
         await settingsRepo.updateSetting(
             settings!.id,
             SettingsVariablesCompanion(
-                selectedBreakDurationStored: Value(event.changedVar)));
+                defaultBreakDurationStored: Value(event.changedVar)));
         break;
       case 4:
         await settingsRepo.updateSetting(
             settings!.id,
             SettingsVariablesCompanion(
-                selectedFocusDurationStored: Value(event.changedVar)));
+                defaultFocusDurationStored: Value(event.changedVar)));
         break;
       case 5:
         await settingsRepo.updateSetting(
             settings!.id,
             SettingsVariablesCompanion(
-                selectedLongBreakDurationStored: Value(event.changedVar)));
+                defaultLongBreakDurationStored: Value(event.changedVar)));
         break;
-
+      case 6:
+        await settingsRepo.updateSetting(
+            settings!.id,
+            SettingsVariablesCompanion(
+                overlapPercentageCDM: Value(event.changedVar)));
+        break;
+      case 7:
+        await settingsRepo.updateSetting(settings!.id,
+            SettingsVariablesCompanion(atWillStart: Value(event.changedVar)));
       default:
     }
 
@@ -117,11 +125,13 @@ class RepoBloc extends Bloc<RepoEvent, RepoState> {
     });
 
     emit(RepoVariablesGivenState(
-      requestedNumberOfSessions: has.requestedNumberOfSessions,
-      selectedBreakDurationStored: has.selectedBreakDurationStored,
-      selectedLongBreakDuration: has.selectedLongBreakDurationStored,
-      selectedFocusDurationStored: has.selectedFocusDurationStored,
+      defaultNumberOfSessionsPerRound: has.defaultNumberOfSessionsPerRound,
+      defaultBreakDurationStored: has.defaultBreakDurationStored,
+      defaultLongBreakDuration: has.defaultLongBreakDurationStored,
+      defaultFocusDurationStored: has.defaultFocusDurationStored,
       windowOnTop: has.windowOnTop,
+      overlapCDM: has.overlapPercentageCDM,
+      atWillStart: has.atWillStart,
       subjectTree: tree,
       subjects: subjectList,
       roundsandsessions: forEverything,
@@ -136,10 +146,12 @@ class RepoBloc extends Bloc<RepoEvent, RepoState> {
         settings!.id,
         SettingsVariablesCompanion(
           windowOnTop: Value(false),
-          requestedNumberOfSessions: Value(4),
-          selectedBreakDurationStored: Value(5),
-          selectedLongBreakDurationStored: Value(15),
-          selectedFocusDurationStored: Value(25),
+          atWillStart: Value(false),
+          overlapPercentageCDM: Value(0.85),
+          defaultNumberOfSessionsPerRound: Value(4),
+          defaultBreakDurationStored: Value(5),
+          defaultLongBreakDurationStored: Value(15),
+          defaultFocusDurationStored: Value(25),
         ));
     add(EmitStateWithDBVars());
   }

@@ -35,19 +35,23 @@ class CreateGoalState extends RepoState {
 class RepoVariablesGivenState extends RepoState {
   const RepoVariablesGivenState(
       {required this.windowOnTop,
-      required this.requestedNumberOfSessions,
-      required this.selectedBreakDurationStored,
-      required this.selectedFocusDurationStored,
-      required this.selectedLongBreakDuration,
+      required this.defaultNumberOfSessionsPerRound,
+      required this.defaultBreakDurationStored,
+      required this.defaultFocusDurationStored,
+      required this.defaultLongBreakDuration,
+      required this.overlapCDM,
+      required this.atWillStart,
       this.subjectTree,
       this.subjects,
       this.roundsandsessions,
       this.goals});
   final bool windowOnTop;
-  final int requestedNumberOfSessions;
-  final int selectedBreakDurationStored;
-  final int selectedFocusDurationStored;
-  final int selectedLongBreakDuration;
+  final int defaultNumberOfSessionsPerRound;
+  final int defaultBreakDurationStored;
+  final int defaultFocusDurationStored;
+  final int defaultLongBreakDuration;
+  final double overlapCDM;
+  final bool atWillStart;
   final List<SubjectData>? subjects;
   final List<SubjectTreeNode>? subjectTree;
   final List<List<dynamic>>? roundsandsessions;

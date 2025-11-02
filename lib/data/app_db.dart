@@ -51,10 +51,10 @@ class AppDatabase extends _$AppDatabase {
             updatedAt: Value(DateTime.now())));
         await into(settingsVariables).insert(SettingsVariablesCompanion(
             windowOnTop: Value(false),
-            requestedNumberOfSessions: Value(4),
-            selectedBreakDurationStored: Value(5),
-            selectedLongBreakDurationStored: Value(15),
-            selectedFocusDurationStored: Value(25)));
+            defaultNumberOfSessionsPerRound: Value(4),
+            defaultBreakDurationStored: Value(5),
+            defaultLongBreakDurationStored: Value(15),
+            defaultFocusDurationStored: Value(25)));
       },
       onUpgrade: (Migrator m, int from, int to) async {
         if (from < 2) {}

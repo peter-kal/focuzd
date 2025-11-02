@@ -4,12 +4,13 @@ import 'package:uuid/uuid.dart';
 class SettingsVariables extends Table {
   TextColumn get id => text().clientDefault(() => const Uuid().v4())();
   BoolColumn get windowOnTop => boolean()();
-  IntColumn get requestedNumberOfSessions => integer()();
-  IntColumn get selectedBreakDurationStored => integer()();
-  IntColumn get selectedFocusDurationStored => integer()();
-  IntColumn get selectedLongBreakDurationStored => integer()();
-  BoolColumn get roundPlanningByDefault =>
-      boolean().withDefault(Constant(true))();
+  IntColumn get defaultNumberOfSessionsPerRound => integer()();
+  IntColumn get defaultBreakDurationStored => integer()();
+  IntColumn get defaultFocusDurationStored => integer()();
+  IntColumn get defaultLongBreakDurationStored => integer()();
+  RealColumn get overlapPercentageCDM => real().withDefault(const Constant(
+      0.85))(); // by default >85% overlap is a condition for CDM checking
+  BoolColumn get atWillStart => boolean().withDefault(const Constant(false))();
   @override
   Set<Column> get primaryKey => {id};
 }

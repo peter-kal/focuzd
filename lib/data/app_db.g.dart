@@ -25,50 +25,60 @@ class $SettingsVariablesTable extends SettingsVariables
       requiredDuringInsert: true,
       defaultConstraints: GeneratedColumn.constraintIsAlways(
           'CHECK ("window_on_top" IN (0, 1))'));
-  static const VerificationMeta _requestedNumberOfSessionsMeta =
-      const VerificationMeta('requestedNumberOfSessions');
+  static const VerificationMeta _defaultNumberOfSessionsPerRoundMeta =
+      const VerificationMeta('defaultNumberOfSessionsPerRound');
   @override
-  late final GeneratedColumn<int> requestedNumberOfSessions =
-      GeneratedColumn<int>('requested_number_of_sessions', aliasedName, false,
-          type: DriftSqlType.int, requiredDuringInsert: true);
-  static const VerificationMeta _selectedBreakDurationStoredMeta =
-      const VerificationMeta('selectedBreakDurationStored');
-  @override
-  late final GeneratedColumn<int> selectedBreakDurationStored =
-      GeneratedColumn<int>('selected_break_duration_stored', aliasedName, false,
-          type: DriftSqlType.int, requiredDuringInsert: true);
-  static const VerificationMeta _selectedFocusDurationStoredMeta =
-      const VerificationMeta('selectedFocusDurationStored');
-  @override
-  late final GeneratedColumn<int> selectedFocusDurationStored =
-      GeneratedColumn<int>('selected_focus_duration_stored', aliasedName, false,
-          type: DriftSqlType.int, requiredDuringInsert: true);
-  static const VerificationMeta _selectedLongBreakDurationStoredMeta =
-      const VerificationMeta('selectedLongBreakDurationStored');
-  @override
-  late final GeneratedColumn<int> selectedLongBreakDurationStored =
+  late final GeneratedColumn<int> defaultNumberOfSessionsPerRound =
       GeneratedColumn<int>(
-          'selected_long_break_duration_stored', aliasedName, false,
+          'default_number_of_sessions_per_round', aliasedName, false,
           type: DriftSqlType.int, requiredDuringInsert: true);
-  static const VerificationMeta _roundPlanningByDefaultMeta =
-      const VerificationMeta('roundPlanningByDefault');
+  static const VerificationMeta _defaultBreakDurationStoredMeta =
+      const VerificationMeta('defaultBreakDurationStored');
   @override
-  late final GeneratedColumn<bool> roundPlanningByDefault =
-      GeneratedColumn<bool>('round_planning_by_default', aliasedName, false,
-          type: DriftSqlType.bool,
+  late final GeneratedColumn<int> defaultBreakDurationStored =
+      GeneratedColumn<int>('default_break_duration_stored', aliasedName, false,
+          type: DriftSqlType.int, requiredDuringInsert: true);
+  static const VerificationMeta _defaultFocusDurationStoredMeta =
+      const VerificationMeta('defaultFocusDurationStored');
+  @override
+  late final GeneratedColumn<int> defaultFocusDurationStored =
+      GeneratedColumn<int>('default_focus_duration_stored', aliasedName, false,
+          type: DriftSqlType.int, requiredDuringInsert: true);
+  static const VerificationMeta _defaultLongBreakDurationStoredMeta =
+      const VerificationMeta('defaultLongBreakDurationStored');
+  @override
+  late final GeneratedColumn<int> defaultLongBreakDurationStored =
+      GeneratedColumn<int>(
+          'default_long_break_duration_stored', aliasedName, false,
+          type: DriftSqlType.int, requiredDuringInsert: true);
+  static const VerificationMeta _overlapPercentageCDMMeta =
+      const VerificationMeta('overlapPercentageCDM');
+  @override
+  late final GeneratedColumn<double> overlapPercentageCDM =
+      GeneratedColumn<double>('overlap_percentage_c_d_m', aliasedName, false,
+          type: DriftSqlType.double,
           requiredDuringInsert: false,
-          defaultConstraints: GeneratedColumn.constraintIsAlways(
-              'CHECK ("round_planning_by_default" IN (0, 1))'),
-          defaultValue: Constant(true));
+          defaultValue: const Constant(0.85));
+  static const VerificationMeta _atWillStartMeta =
+      const VerificationMeta('atWillStart');
+  @override
+  late final GeneratedColumn<bool> atWillStart = GeneratedColumn<bool>(
+      'at_will_start', aliasedName, false,
+      type: DriftSqlType.bool,
+      requiredDuringInsert: false,
+      defaultConstraints: GeneratedColumn.constraintIsAlways(
+          'CHECK ("at_will_start" IN (0, 1))'),
+      defaultValue: const Constant(false));
   @override
   List<GeneratedColumn> get $columns => [
         id,
         windowOnTop,
-        requestedNumberOfSessions,
-        selectedBreakDurationStored,
-        selectedFocusDurationStored,
-        selectedLongBreakDurationStored,
-        roundPlanningByDefault
+        defaultNumberOfSessionsPerRound,
+        defaultBreakDurationStored,
+        defaultFocusDurationStored,
+        defaultLongBreakDurationStored,
+        overlapPercentageCDM,
+        atWillStart
       ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -91,47 +101,53 @@ class $SettingsVariablesTable extends SettingsVariables
     } else if (isInserting) {
       context.missing(_windowOnTopMeta);
     }
-    if (data.containsKey('requested_number_of_sessions')) {
+    if (data.containsKey('default_number_of_sessions_per_round')) {
       context.handle(
-          _requestedNumberOfSessionsMeta,
-          requestedNumberOfSessions.isAcceptableOrUnknown(
-              data['requested_number_of_sessions']!,
-              _requestedNumberOfSessionsMeta));
+          _defaultNumberOfSessionsPerRoundMeta,
+          defaultNumberOfSessionsPerRound.isAcceptableOrUnknown(
+              data['default_number_of_sessions_per_round']!,
+              _defaultNumberOfSessionsPerRoundMeta));
     } else if (isInserting) {
-      context.missing(_requestedNumberOfSessionsMeta);
+      context.missing(_defaultNumberOfSessionsPerRoundMeta);
     }
-    if (data.containsKey('selected_break_duration_stored')) {
+    if (data.containsKey('default_break_duration_stored')) {
       context.handle(
-          _selectedBreakDurationStoredMeta,
-          selectedBreakDurationStored.isAcceptableOrUnknown(
-              data['selected_break_duration_stored']!,
-              _selectedBreakDurationStoredMeta));
+          _defaultBreakDurationStoredMeta,
+          defaultBreakDurationStored.isAcceptableOrUnknown(
+              data['default_break_duration_stored']!,
+              _defaultBreakDurationStoredMeta));
     } else if (isInserting) {
-      context.missing(_selectedBreakDurationStoredMeta);
+      context.missing(_defaultBreakDurationStoredMeta);
     }
-    if (data.containsKey('selected_focus_duration_stored')) {
+    if (data.containsKey('default_focus_duration_stored')) {
       context.handle(
-          _selectedFocusDurationStoredMeta,
-          selectedFocusDurationStored.isAcceptableOrUnknown(
-              data['selected_focus_duration_stored']!,
-              _selectedFocusDurationStoredMeta));
+          _defaultFocusDurationStoredMeta,
+          defaultFocusDurationStored.isAcceptableOrUnknown(
+              data['default_focus_duration_stored']!,
+              _defaultFocusDurationStoredMeta));
     } else if (isInserting) {
-      context.missing(_selectedFocusDurationStoredMeta);
+      context.missing(_defaultFocusDurationStoredMeta);
     }
-    if (data.containsKey('selected_long_break_duration_stored')) {
+    if (data.containsKey('default_long_break_duration_stored')) {
       context.handle(
-          _selectedLongBreakDurationStoredMeta,
-          selectedLongBreakDurationStored.isAcceptableOrUnknown(
-              data['selected_long_break_duration_stored']!,
-              _selectedLongBreakDurationStoredMeta));
+          _defaultLongBreakDurationStoredMeta,
+          defaultLongBreakDurationStored.isAcceptableOrUnknown(
+              data['default_long_break_duration_stored']!,
+              _defaultLongBreakDurationStoredMeta));
     } else if (isInserting) {
-      context.missing(_selectedLongBreakDurationStoredMeta);
+      context.missing(_defaultLongBreakDurationStoredMeta);
     }
-    if (data.containsKey('round_planning_by_default')) {
+    if (data.containsKey('overlap_percentage_c_d_m')) {
       context.handle(
-          _roundPlanningByDefaultMeta,
-          roundPlanningByDefault.isAcceptableOrUnknown(
-              data['round_planning_by_default']!, _roundPlanningByDefaultMeta));
+          _overlapPercentageCDMMeta,
+          overlapPercentageCDM.isAcceptableOrUnknown(
+              data['overlap_percentage_c_d_m']!, _overlapPercentageCDMMeta));
+    }
+    if (data.containsKey('at_will_start')) {
+      context.handle(
+          _atWillStartMeta,
+          atWillStart.isAcceptableOrUnknown(
+              data['at_will_start']!, _atWillStartMeta));
     }
     return context;
   }
@@ -146,21 +162,23 @@ class $SettingsVariablesTable extends SettingsVariables
           .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
       windowOnTop: attachedDatabase.typeMapping
           .read(DriftSqlType.bool, data['${effectivePrefix}window_on_top'])!,
-      requestedNumberOfSessions: attachedDatabase.typeMapping.read(
+      defaultNumberOfSessionsPerRound: attachedDatabase.typeMapping.read(
           DriftSqlType.int,
-          data['${effectivePrefix}requested_number_of_sessions'])!,
-      selectedBreakDurationStored: attachedDatabase.typeMapping.read(
+          data['${effectivePrefix}default_number_of_sessions_per_round'])!,
+      defaultBreakDurationStored: attachedDatabase.typeMapping.read(
           DriftSqlType.int,
-          data['${effectivePrefix}selected_break_duration_stored'])!,
-      selectedFocusDurationStored: attachedDatabase.typeMapping.read(
+          data['${effectivePrefix}default_break_duration_stored'])!,
+      defaultFocusDurationStored: attachedDatabase.typeMapping.read(
           DriftSqlType.int,
-          data['${effectivePrefix}selected_focus_duration_stored'])!,
-      selectedLongBreakDurationStored: attachedDatabase.typeMapping.read(
+          data['${effectivePrefix}default_focus_duration_stored'])!,
+      defaultLongBreakDurationStored: attachedDatabase.typeMapping.read(
           DriftSqlType.int,
-          data['${effectivePrefix}selected_long_break_duration_stored'])!,
-      roundPlanningByDefault: attachedDatabase.typeMapping.read(
-          DriftSqlType.bool,
-          data['${effectivePrefix}round_planning_by_default'])!,
+          data['${effectivePrefix}default_long_break_duration_stored'])!,
+      overlapPercentageCDM: attachedDatabase.typeMapping.read(
+          DriftSqlType.double,
+          data['${effectivePrefix}overlap_percentage_c_d_m'])!,
+      atWillStart: attachedDatabase.typeMapping
+          .read(DriftSqlType.bool, data['${effectivePrefix}at_will_start'])!,
     );
   }
 
@@ -174,33 +192,36 @@ class SettingsVariable extends DataClass
     implements Insertable<SettingsVariable> {
   final String id;
   final bool windowOnTop;
-  final int requestedNumberOfSessions;
-  final int selectedBreakDurationStored;
-  final int selectedFocusDurationStored;
-  final int selectedLongBreakDurationStored;
-  final bool roundPlanningByDefault;
+  final int defaultNumberOfSessionsPerRound;
+  final int defaultBreakDurationStored;
+  final int defaultFocusDurationStored;
+  final int defaultLongBreakDurationStored;
+  final double overlapPercentageCDM;
+  final bool atWillStart;
   const SettingsVariable(
       {required this.id,
       required this.windowOnTop,
-      required this.requestedNumberOfSessions,
-      required this.selectedBreakDurationStored,
-      required this.selectedFocusDurationStored,
-      required this.selectedLongBreakDurationStored,
-      required this.roundPlanningByDefault});
+      required this.defaultNumberOfSessionsPerRound,
+      required this.defaultBreakDurationStored,
+      required this.defaultFocusDurationStored,
+      required this.defaultLongBreakDurationStored,
+      required this.overlapPercentageCDM,
+      required this.atWillStart});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<String>(id);
     map['window_on_top'] = Variable<bool>(windowOnTop);
-    map['requested_number_of_sessions'] =
-        Variable<int>(requestedNumberOfSessions);
-    map['selected_break_duration_stored'] =
-        Variable<int>(selectedBreakDurationStored);
-    map['selected_focus_duration_stored'] =
-        Variable<int>(selectedFocusDurationStored);
-    map['selected_long_break_duration_stored'] =
-        Variable<int>(selectedLongBreakDurationStored);
-    map['round_planning_by_default'] = Variable<bool>(roundPlanningByDefault);
+    map['default_number_of_sessions_per_round'] =
+        Variable<int>(defaultNumberOfSessionsPerRound);
+    map['default_break_duration_stored'] =
+        Variable<int>(defaultBreakDurationStored);
+    map['default_focus_duration_stored'] =
+        Variable<int>(defaultFocusDurationStored);
+    map['default_long_break_duration_stored'] =
+        Variable<int>(defaultLongBreakDurationStored);
+    map['overlap_percentage_c_d_m'] = Variable<double>(overlapPercentageCDM);
+    map['at_will_start'] = Variable<bool>(atWillStart);
     return map;
   }
 
@@ -208,11 +229,12 @@ class SettingsVariable extends DataClass
     return SettingsVariablesCompanion(
       id: Value(id),
       windowOnTop: Value(windowOnTop),
-      requestedNumberOfSessions: Value(requestedNumberOfSessions),
-      selectedBreakDurationStored: Value(selectedBreakDurationStored),
-      selectedFocusDurationStored: Value(selectedFocusDurationStored),
-      selectedLongBreakDurationStored: Value(selectedLongBreakDurationStored),
-      roundPlanningByDefault: Value(roundPlanningByDefault),
+      defaultNumberOfSessionsPerRound: Value(defaultNumberOfSessionsPerRound),
+      defaultBreakDurationStored: Value(defaultBreakDurationStored),
+      defaultFocusDurationStored: Value(defaultFocusDurationStored),
+      defaultLongBreakDurationStored: Value(defaultLongBreakDurationStored),
+      overlapPercentageCDM: Value(overlapPercentageCDM),
+      atWillStart: Value(atWillStart),
     );
   }
 
@@ -222,16 +244,17 @@ class SettingsVariable extends DataClass
     return SettingsVariable(
       id: serializer.fromJson<String>(json['id']),
       windowOnTop: serializer.fromJson<bool>(json['windowOnTop']),
-      requestedNumberOfSessions:
-          serializer.fromJson<int>(json['requestedNumberOfSessions']),
-      selectedBreakDurationStored:
-          serializer.fromJson<int>(json['selectedBreakDurationStored']),
-      selectedFocusDurationStored:
-          serializer.fromJson<int>(json['selectedFocusDurationStored']),
-      selectedLongBreakDurationStored:
-          serializer.fromJson<int>(json['selectedLongBreakDurationStored']),
-      roundPlanningByDefault:
-          serializer.fromJson<bool>(json['roundPlanningByDefault']),
+      defaultNumberOfSessionsPerRound:
+          serializer.fromJson<int>(json['defaultNumberOfSessionsPerRound']),
+      defaultBreakDurationStored:
+          serializer.fromJson<int>(json['defaultBreakDurationStored']),
+      defaultFocusDurationStored:
+          serializer.fromJson<int>(json['defaultFocusDurationStored']),
+      defaultLongBreakDurationStored:
+          serializer.fromJson<int>(json['defaultLongBreakDurationStored']),
+      overlapPercentageCDM:
+          serializer.fromJson<double>(json['overlapPercentageCDM']),
+      atWillStart: serializer.fromJson<bool>(json['atWillStart']),
     );
   }
   @override
@@ -240,61 +263,66 @@ class SettingsVariable extends DataClass
     return <String, dynamic>{
       'id': serializer.toJson<String>(id),
       'windowOnTop': serializer.toJson<bool>(windowOnTop),
-      'requestedNumberOfSessions':
-          serializer.toJson<int>(requestedNumberOfSessions),
-      'selectedBreakDurationStored':
-          serializer.toJson<int>(selectedBreakDurationStored),
-      'selectedFocusDurationStored':
-          serializer.toJson<int>(selectedFocusDurationStored),
-      'selectedLongBreakDurationStored':
-          serializer.toJson<int>(selectedLongBreakDurationStored),
-      'roundPlanningByDefault': serializer.toJson<bool>(roundPlanningByDefault),
+      'defaultNumberOfSessionsPerRound':
+          serializer.toJson<int>(defaultNumberOfSessionsPerRound),
+      'defaultBreakDurationStored':
+          serializer.toJson<int>(defaultBreakDurationStored),
+      'defaultFocusDurationStored':
+          serializer.toJson<int>(defaultFocusDurationStored),
+      'defaultLongBreakDurationStored':
+          serializer.toJson<int>(defaultLongBreakDurationStored),
+      'overlapPercentageCDM': serializer.toJson<double>(overlapPercentageCDM),
+      'atWillStart': serializer.toJson<bool>(atWillStart),
     };
   }
 
   SettingsVariable copyWith(
           {String? id,
           bool? windowOnTop,
-          int? requestedNumberOfSessions,
-          int? selectedBreakDurationStored,
-          int? selectedFocusDurationStored,
-          int? selectedLongBreakDurationStored,
-          bool? roundPlanningByDefault}) =>
+          int? defaultNumberOfSessionsPerRound,
+          int? defaultBreakDurationStored,
+          int? defaultFocusDurationStored,
+          int? defaultLongBreakDurationStored,
+          double? overlapPercentageCDM,
+          bool? atWillStart}) =>
       SettingsVariable(
         id: id ?? this.id,
         windowOnTop: windowOnTop ?? this.windowOnTop,
-        requestedNumberOfSessions:
-            requestedNumberOfSessions ?? this.requestedNumberOfSessions,
-        selectedBreakDurationStored:
-            selectedBreakDurationStored ?? this.selectedBreakDurationStored,
-        selectedFocusDurationStored:
-            selectedFocusDurationStored ?? this.selectedFocusDurationStored,
-        selectedLongBreakDurationStored: selectedLongBreakDurationStored ??
-            this.selectedLongBreakDurationStored,
-        roundPlanningByDefault:
-            roundPlanningByDefault ?? this.roundPlanningByDefault,
+        defaultNumberOfSessionsPerRound: defaultNumberOfSessionsPerRound ??
+            this.defaultNumberOfSessionsPerRound,
+        defaultBreakDurationStored:
+            defaultBreakDurationStored ?? this.defaultBreakDurationStored,
+        defaultFocusDurationStored:
+            defaultFocusDurationStored ?? this.defaultFocusDurationStored,
+        defaultLongBreakDurationStored: defaultLongBreakDurationStored ??
+            this.defaultLongBreakDurationStored,
+        overlapPercentageCDM: overlapPercentageCDM ?? this.overlapPercentageCDM,
+        atWillStart: atWillStart ?? this.atWillStart,
       );
   SettingsVariable copyWithCompanion(SettingsVariablesCompanion data) {
     return SettingsVariable(
       id: data.id.present ? data.id.value : this.id,
       windowOnTop:
           data.windowOnTop.present ? data.windowOnTop.value : this.windowOnTop,
-      requestedNumberOfSessions: data.requestedNumberOfSessions.present
-          ? data.requestedNumberOfSessions.value
-          : this.requestedNumberOfSessions,
-      selectedBreakDurationStored: data.selectedBreakDurationStored.present
-          ? data.selectedBreakDurationStored.value
-          : this.selectedBreakDurationStored,
-      selectedFocusDurationStored: data.selectedFocusDurationStored.present
-          ? data.selectedFocusDurationStored.value
-          : this.selectedFocusDurationStored,
-      selectedLongBreakDurationStored:
-          data.selectedLongBreakDurationStored.present
-              ? data.selectedLongBreakDurationStored.value
-              : this.selectedLongBreakDurationStored,
-      roundPlanningByDefault: data.roundPlanningByDefault.present
-          ? data.roundPlanningByDefault.value
-          : this.roundPlanningByDefault,
+      defaultNumberOfSessionsPerRound:
+          data.defaultNumberOfSessionsPerRound.present
+              ? data.defaultNumberOfSessionsPerRound.value
+              : this.defaultNumberOfSessionsPerRound,
+      defaultBreakDurationStored: data.defaultBreakDurationStored.present
+          ? data.defaultBreakDurationStored.value
+          : this.defaultBreakDurationStored,
+      defaultFocusDurationStored: data.defaultFocusDurationStored.present
+          ? data.defaultFocusDurationStored.value
+          : this.defaultFocusDurationStored,
+      defaultLongBreakDurationStored:
+          data.defaultLongBreakDurationStored.present
+              ? data.defaultLongBreakDurationStored.value
+              : this.defaultLongBreakDurationStored,
+      overlapPercentageCDM: data.overlapPercentageCDM.present
+          ? data.overlapPercentageCDM.value
+          : this.overlapPercentageCDM,
+      atWillStart:
+          data.atWillStart.present ? data.atWillStart.value : this.atWillStart,
     );
   }
 
@@ -303,12 +331,14 @@ class SettingsVariable extends DataClass
     return (StringBuffer('SettingsVariable(')
           ..write('id: $id, ')
           ..write('windowOnTop: $windowOnTop, ')
-          ..write('requestedNumberOfSessions: $requestedNumberOfSessions, ')
-          ..write('selectedBreakDurationStored: $selectedBreakDurationStored, ')
-          ..write('selectedFocusDurationStored: $selectedFocusDurationStored, ')
           ..write(
-              'selectedLongBreakDurationStored: $selectedLongBreakDurationStored, ')
-          ..write('roundPlanningByDefault: $roundPlanningByDefault')
+              'defaultNumberOfSessionsPerRound: $defaultNumberOfSessionsPerRound, ')
+          ..write('defaultBreakDurationStored: $defaultBreakDurationStored, ')
+          ..write('defaultFocusDurationStored: $defaultFocusDurationStored, ')
+          ..write(
+              'defaultLongBreakDurationStored: $defaultLongBreakDurationStored, ')
+          ..write('overlapPercentageCDM: $overlapPercentageCDM, ')
+          ..write('atWillStart: $atWillStart')
           ..write(')'))
         .toString();
   }
@@ -317,84 +347,90 @@ class SettingsVariable extends DataClass
   int get hashCode => Object.hash(
       id,
       windowOnTop,
-      requestedNumberOfSessions,
-      selectedBreakDurationStored,
-      selectedFocusDurationStored,
-      selectedLongBreakDurationStored,
-      roundPlanningByDefault);
+      defaultNumberOfSessionsPerRound,
+      defaultBreakDurationStored,
+      defaultFocusDurationStored,
+      defaultLongBreakDurationStored,
+      overlapPercentageCDM,
+      atWillStart);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is SettingsVariable &&
           other.id == this.id &&
           other.windowOnTop == this.windowOnTop &&
-          other.requestedNumberOfSessions == this.requestedNumberOfSessions &&
-          other.selectedBreakDurationStored ==
-              this.selectedBreakDurationStored &&
-          other.selectedFocusDurationStored ==
-              this.selectedFocusDurationStored &&
-          other.selectedLongBreakDurationStored ==
-              this.selectedLongBreakDurationStored &&
-          other.roundPlanningByDefault == this.roundPlanningByDefault);
+          other.defaultNumberOfSessionsPerRound ==
+              this.defaultNumberOfSessionsPerRound &&
+          other.defaultBreakDurationStored == this.defaultBreakDurationStored &&
+          other.defaultFocusDurationStored == this.defaultFocusDurationStored &&
+          other.defaultLongBreakDurationStored ==
+              this.defaultLongBreakDurationStored &&
+          other.overlapPercentageCDM == this.overlapPercentageCDM &&
+          other.atWillStart == this.atWillStart);
 }
 
 class SettingsVariablesCompanion extends UpdateCompanion<SettingsVariable> {
   final Value<String> id;
   final Value<bool> windowOnTop;
-  final Value<int> requestedNumberOfSessions;
-  final Value<int> selectedBreakDurationStored;
-  final Value<int> selectedFocusDurationStored;
-  final Value<int> selectedLongBreakDurationStored;
-  final Value<bool> roundPlanningByDefault;
+  final Value<int> defaultNumberOfSessionsPerRound;
+  final Value<int> defaultBreakDurationStored;
+  final Value<int> defaultFocusDurationStored;
+  final Value<int> defaultLongBreakDurationStored;
+  final Value<double> overlapPercentageCDM;
+  final Value<bool> atWillStart;
   final Value<int> rowid;
   const SettingsVariablesCompanion({
     this.id = const Value.absent(),
     this.windowOnTop = const Value.absent(),
-    this.requestedNumberOfSessions = const Value.absent(),
-    this.selectedBreakDurationStored = const Value.absent(),
-    this.selectedFocusDurationStored = const Value.absent(),
-    this.selectedLongBreakDurationStored = const Value.absent(),
-    this.roundPlanningByDefault = const Value.absent(),
+    this.defaultNumberOfSessionsPerRound = const Value.absent(),
+    this.defaultBreakDurationStored = const Value.absent(),
+    this.defaultFocusDurationStored = const Value.absent(),
+    this.defaultLongBreakDurationStored = const Value.absent(),
+    this.overlapPercentageCDM = const Value.absent(),
+    this.atWillStart = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   SettingsVariablesCompanion.insert({
     this.id = const Value.absent(),
     required bool windowOnTop,
-    required int requestedNumberOfSessions,
-    required int selectedBreakDurationStored,
-    required int selectedFocusDurationStored,
-    required int selectedLongBreakDurationStored,
-    this.roundPlanningByDefault = const Value.absent(),
+    required int defaultNumberOfSessionsPerRound,
+    required int defaultBreakDurationStored,
+    required int defaultFocusDurationStored,
+    required int defaultLongBreakDurationStored,
+    this.overlapPercentageCDM = const Value.absent(),
+    this.atWillStart = const Value.absent(),
     this.rowid = const Value.absent(),
   })  : windowOnTop = Value(windowOnTop),
-        requestedNumberOfSessions = Value(requestedNumberOfSessions),
-        selectedBreakDurationStored = Value(selectedBreakDurationStored),
-        selectedFocusDurationStored = Value(selectedFocusDurationStored),
-        selectedLongBreakDurationStored =
-            Value(selectedLongBreakDurationStored);
+        defaultNumberOfSessionsPerRound =
+            Value(defaultNumberOfSessionsPerRound),
+        defaultBreakDurationStored = Value(defaultBreakDurationStored),
+        defaultFocusDurationStored = Value(defaultFocusDurationStored),
+        defaultLongBreakDurationStored = Value(defaultLongBreakDurationStored);
   static Insertable<SettingsVariable> custom({
     Expression<String>? id,
     Expression<bool>? windowOnTop,
-    Expression<int>? requestedNumberOfSessions,
-    Expression<int>? selectedBreakDurationStored,
-    Expression<int>? selectedFocusDurationStored,
-    Expression<int>? selectedLongBreakDurationStored,
-    Expression<bool>? roundPlanningByDefault,
+    Expression<int>? defaultNumberOfSessionsPerRound,
+    Expression<int>? defaultBreakDurationStored,
+    Expression<int>? defaultFocusDurationStored,
+    Expression<int>? defaultLongBreakDurationStored,
+    Expression<double>? overlapPercentageCDM,
+    Expression<bool>? atWillStart,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (windowOnTop != null) 'window_on_top': windowOnTop,
-      if (requestedNumberOfSessions != null)
-        'requested_number_of_sessions': requestedNumberOfSessions,
-      if (selectedBreakDurationStored != null)
-        'selected_break_duration_stored': selectedBreakDurationStored,
-      if (selectedFocusDurationStored != null)
-        'selected_focus_duration_stored': selectedFocusDurationStored,
-      if (selectedLongBreakDurationStored != null)
-        'selected_long_break_duration_stored': selectedLongBreakDurationStored,
-      if (roundPlanningByDefault != null)
-        'round_planning_by_default': roundPlanningByDefault,
+      if (defaultNumberOfSessionsPerRound != null)
+        'default_number_of_sessions_per_round': defaultNumberOfSessionsPerRound,
+      if (defaultBreakDurationStored != null)
+        'default_break_duration_stored': defaultBreakDurationStored,
+      if (defaultFocusDurationStored != null)
+        'default_focus_duration_stored': defaultFocusDurationStored,
+      if (defaultLongBreakDurationStored != null)
+        'default_long_break_duration_stored': defaultLongBreakDurationStored,
+      if (overlapPercentageCDM != null)
+        'overlap_percentage_c_d_m': overlapPercentageCDM,
+      if (atWillStart != null) 'at_will_start': atWillStart,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -402,25 +438,26 @@ class SettingsVariablesCompanion extends UpdateCompanion<SettingsVariable> {
   SettingsVariablesCompanion copyWith(
       {Value<String>? id,
       Value<bool>? windowOnTop,
-      Value<int>? requestedNumberOfSessions,
-      Value<int>? selectedBreakDurationStored,
-      Value<int>? selectedFocusDurationStored,
-      Value<int>? selectedLongBreakDurationStored,
-      Value<bool>? roundPlanningByDefault,
+      Value<int>? defaultNumberOfSessionsPerRound,
+      Value<int>? defaultBreakDurationStored,
+      Value<int>? defaultFocusDurationStored,
+      Value<int>? defaultLongBreakDurationStored,
+      Value<double>? overlapPercentageCDM,
+      Value<bool>? atWillStart,
       Value<int>? rowid}) {
     return SettingsVariablesCompanion(
       id: id ?? this.id,
       windowOnTop: windowOnTop ?? this.windowOnTop,
-      requestedNumberOfSessions:
-          requestedNumberOfSessions ?? this.requestedNumberOfSessions,
-      selectedBreakDurationStored:
-          selectedBreakDurationStored ?? this.selectedBreakDurationStored,
-      selectedFocusDurationStored:
-          selectedFocusDurationStored ?? this.selectedFocusDurationStored,
-      selectedLongBreakDurationStored: selectedLongBreakDurationStored ??
-          this.selectedLongBreakDurationStored,
-      roundPlanningByDefault:
-          roundPlanningByDefault ?? this.roundPlanningByDefault,
+      defaultNumberOfSessionsPerRound: defaultNumberOfSessionsPerRound ??
+          this.defaultNumberOfSessionsPerRound,
+      defaultBreakDurationStored:
+          defaultBreakDurationStored ?? this.defaultBreakDurationStored,
+      defaultFocusDurationStored:
+          defaultFocusDurationStored ?? this.defaultFocusDurationStored,
+      defaultLongBreakDurationStored:
+          defaultLongBreakDurationStored ?? this.defaultLongBreakDurationStored,
+      overlapPercentageCDM: overlapPercentageCDM ?? this.overlapPercentageCDM,
+      atWillStart: atWillStart ?? this.atWillStart,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -434,25 +471,28 @@ class SettingsVariablesCompanion extends UpdateCompanion<SettingsVariable> {
     if (windowOnTop.present) {
       map['window_on_top'] = Variable<bool>(windowOnTop.value);
     }
-    if (requestedNumberOfSessions.present) {
-      map['requested_number_of_sessions'] =
-          Variable<int>(requestedNumberOfSessions.value);
+    if (defaultNumberOfSessionsPerRound.present) {
+      map['default_number_of_sessions_per_round'] =
+          Variable<int>(defaultNumberOfSessionsPerRound.value);
     }
-    if (selectedBreakDurationStored.present) {
-      map['selected_break_duration_stored'] =
-          Variable<int>(selectedBreakDurationStored.value);
+    if (defaultBreakDurationStored.present) {
+      map['default_break_duration_stored'] =
+          Variable<int>(defaultBreakDurationStored.value);
     }
-    if (selectedFocusDurationStored.present) {
-      map['selected_focus_duration_stored'] =
-          Variable<int>(selectedFocusDurationStored.value);
+    if (defaultFocusDurationStored.present) {
+      map['default_focus_duration_stored'] =
+          Variable<int>(defaultFocusDurationStored.value);
     }
-    if (selectedLongBreakDurationStored.present) {
-      map['selected_long_break_duration_stored'] =
-          Variable<int>(selectedLongBreakDurationStored.value);
+    if (defaultLongBreakDurationStored.present) {
+      map['default_long_break_duration_stored'] =
+          Variable<int>(defaultLongBreakDurationStored.value);
     }
-    if (roundPlanningByDefault.present) {
-      map['round_planning_by_default'] =
-          Variable<bool>(roundPlanningByDefault.value);
+    if (overlapPercentageCDM.present) {
+      map['overlap_percentage_c_d_m'] =
+          Variable<double>(overlapPercentageCDM.value);
+    }
+    if (atWillStart.present) {
+      map['at_will_start'] = Variable<bool>(atWillStart.value);
     }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
@@ -465,12 +505,14 @@ class SettingsVariablesCompanion extends UpdateCompanion<SettingsVariable> {
     return (StringBuffer('SettingsVariablesCompanion(')
           ..write('id: $id, ')
           ..write('windowOnTop: $windowOnTop, ')
-          ..write('requestedNumberOfSessions: $requestedNumberOfSessions, ')
-          ..write('selectedBreakDurationStored: $selectedBreakDurationStored, ')
-          ..write('selectedFocusDurationStored: $selectedFocusDurationStored, ')
           ..write(
-              'selectedLongBreakDurationStored: $selectedLongBreakDurationStored, ')
-          ..write('roundPlanningByDefault: $roundPlanningByDefault, ')
+              'defaultNumberOfSessionsPerRound: $defaultNumberOfSessionsPerRound, ')
+          ..write('defaultBreakDurationStored: $defaultBreakDurationStored, ')
+          ..write('defaultFocusDurationStored: $defaultFocusDurationStored, ')
+          ..write(
+              'defaultLongBreakDurationStored: $defaultLongBreakDurationStored, ')
+          ..write('overlapPercentageCDM: $overlapPercentageCDM, ')
+          ..write('atWillStart: $atWillStart, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -4501,22 +4543,24 @@ typedef $$SettingsVariablesTableCreateCompanionBuilder
     = SettingsVariablesCompanion Function({
   Value<String> id,
   required bool windowOnTop,
-  required int requestedNumberOfSessions,
-  required int selectedBreakDurationStored,
-  required int selectedFocusDurationStored,
-  required int selectedLongBreakDurationStored,
-  Value<bool> roundPlanningByDefault,
+  required int defaultNumberOfSessionsPerRound,
+  required int defaultBreakDurationStored,
+  required int defaultFocusDurationStored,
+  required int defaultLongBreakDurationStored,
+  Value<double> overlapPercentageCDM,
+  Value<bool> atWillStart,
   Value<int> rowid,
 });
 typedef $$SettingsVariablesTableUpdateCompanionBuilder
     = SettingsVariablesCompanion Function({
   Value<String> id,
   Value<bool> windowOnTop,
-  Value<int> requestedNumberOfSessions,
-  Value<int> selectedBreakDurationStored,
-  Value<int> selectedFocusDurationStored,
-  Value<int> selectedLongBreakDurationStored,
-  Value<bool> roundPlanningByDefault,
+  Value<int> defaultNumberOfSessionsPerRound,
+  Value<int> defaultBreakDurationStored,
+  Value<int> defaultFocusDurationStored,
+  Value<int> defaultLongBreakDurationStored,
+  Value<double> overlapPercentageCDM,
+  Value<bool> atWillStart,
   Value<int> rowid,
 });
 
@@ -4535,25 +4579,28 @@ class $$SettingsVariablesTableFilterComposer
   ColumnFilters<bool> get windowOnTop => $composableBuilder(
       column: $table.windowOnTop, builder: (column) => ColumnFilters(column));
 
-  ColumnFilters<int> get requestedNumberOfSessions => $composableBuilder(
-      column: $table.requestedNumberOfSessions,
+  ColumnFilters<int> get defaultNumberOfSessionsPerRound => $composableBuilder(
+      column: $table.defaultNumberOfSessionsPerRound,
       builder: (column) => ColumnFilters(column));
 
-  ColumnFilters<int> get selectedBreakDurationStored => $composableBuilder(
-      column: $table.selectedBreakDurationStored,
+  ColumnFilters<int> get defaultBreakDurationStored => $composableBuilder(
+      column: $table.defaultBreakDurationStored,
       builder: (column) => ColumnFilters(column));
 
-  ColumnFilters<int> get selectedFocusDurationStored => $composableBuilder(
-      column: $table.selectedFocusDurationStored,
+  ColumnFilters<int> get defaultFocusDurationStored => $composableBuilder(
+      column: $table.defaultFocusDurationStored,
       builder: (column) => ColumnFilters(column));
 
-  ColumnFilters<int> get selectedLongBreakDurationStored => $composableBuilder(
-      column: $table.selectedLongBreakDurationStored,
+  ColumnFilters<int> get defaultLongBreakDurationStored => $composableBuilder(
+      column: $table.defaultLongBreakDurationStored,
       builder: (column) => ColumnFilters(column));
 
-  ColumnFilters<bool> get roundPlanningByDefault => $composableBuilder(
-      column: $table.roundPlanningByDefault,
+  ColumnFilters<double> get overlapPercentageCDM => $composableBuilder(
+      column: $table.overlapPercentageCDM,
       builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<bool> get atWillStart => $composableBuilder(
+      column: $table.atWillStart, builder: (column) => ColumnFilters(column));
 }
 
 class $$SettingsVariablesTableOrderingComposer
@@ -4571,26 +4618,29 @@ class $$SettingsVariablesTableOrderingComposer
   ColumnOrderings<bool> get windowOnTop => $composableBuilder(
       column: $table.windowOnTop, builder: (column) => ColumnOrderings(column));
 
-  ColumnOrderings<int> get requestedNumberOfSessions => $composableBuilder(
-      column: $table.requestedNumberOfSessions,
-      builder: (column) => ColumnOrderings(column));
-
-  ColumnOrderings<int> get selectedBreakDurationStored => $composableBuilder(
-      column: $table.selectedBreakDurationStored,
-      builder: (column) => ColumnOrderings(column));
-
-  ColumnOrderings<int> get selectedFocusDurationStored => $composableBuilder(
-      column: $table.selectedFocusDurationStored,
-      builder: (column) => ColumnOrderings(column));
-
-  ColumnOrderings<int> get selectedLongBreakDurationStored =>
+  ColumnOrderings<int> get defaultNumberOfSessionsPerRound =>
       $composableBuilder(
-          column: $table.selectedLongBreakDurationStored,
+          column: $table.defaultNumberOfSessionsPerRound,
           builder: (column) => ColumnOrderings(column));
 
-  ColumnOrderings<bool> get roundPlanningByDefault => $composableBuilder(
-      column: $table.roundPlanningByDefault,
+  ColumnOrderings<int> get defaultBreakDurationStored => $composableBuilder(
+      column: $table.defaultBreakDurationStored,
       builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get defaultFocusDurationStored => $composableBuilder(
+      column: $table.defaultFocusDurationStored,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get defaultLongBreakDurationStored => $composableBuilder(
+      column: $table.defaultLongBreakDurationStored,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<double> get overlapPercentageCDM => $composableBuilder(
+      column: $table.overlapPercentageCDM,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<bool> get atWillStart => $composableBuilder(
+      column: $table.atWillStart, builder: (column) => ColumnOrderings(column));
 }
 
 class $$SettingsVariablesTableAnnotationComposer
@@ -4608,22 +4658,26 @@ class $$SettingsVariablesTableAnnotationComposer
   GeneratedColumn<bool> get windowOnTop => $composableBuilder(
       column: $table.windowOnTop, builder: (column) => column);
 
-  GeneratedColumn<int> get requestedNumberOfSessions => $composableBuilder(
-      column: $table.requestedNumberOfSessions, builder: (column) => column);
-
-  GeneratedColumn<int> get selectedBreakDurationStored => $composableBuilder(
-      column: $table.selectedBreakDurationStored, builder: (column) => column);
-
-  GeneratedColumn<int> get selectedFocusDurationStored => $composableBuilder(
-      column: $table.selectedFocusDurationStored, builder: (column) => column);
-
-  GeneratedColumn<int> get selectedLongBreakDurationStored =>
+  GeneratedColumn<int> get defaultNumberOfSessionsPerRound =>
       $composableBuilder(
-          column: $table.selectedLongBreakDurationStored,
+          column: $table.defaultNumberOfSessionsPerRound,
           builder: (column) => column);
 
-  GeneratedColumn<bool> get roundPlanningByDefault => $composableBuilder(
-      column: $table.roundPlanningByDefault, builder: (column) => column);
+  GeneratedColumn<int> get defaultBreakDurationStored => $composableBuilder(
+      column: $table.defaultBreakDurationStored, builder: (column) => column);
+
+  GeneratedColumn<int> get defaultFocusDurationStored => $composableBuilder(
+      column: $table.defaultFocusDurationStored, builder: (column) => column);
+
+  GeneratedColumn<int> get defaultLongBreakDurationStored => $composableBuilder(
+      column: $table.defaultLongBreakDurationStored,
+      builder: (column) => column);
+
+  GeneratedColumn<double> get overlapPercentageCDM => $composableBuilder(
+      column: $table.overlapPercentageCDM, builder: (column) => column);
+
+  GeneratedColumn<bool> get atWillStart => $composableBuilder(
+      column: $table.atWillStart, builder: (column) => column);
 }
 
 class $$SettingsVariablesTableTableManager extends RootTableManager<
@@ -4656,41 +4710,45 @@ class $$SettingsVariablesTableTableManager extends RootTableManager<
           updateCompanionCallback: ({
             Value<String> id = const Value.absent(),
             Value<bool> windowOnTop = const Value.absent(),
-            Value<int> requestedNumberOfSessions = const Value.absent(),
-            Value<int> selectedBreakDurationStored = const Value.absent(),
-            Value<int> selectedFocusDurationStored = const Value.absent(),
-            Value<int> selectedLongBreakDurationStored = const Value.absent(),
-            Value<bool> roundPlanningByDefault = const Value.absent(),
+            Value<int> defaultNumberOfSessionsPerRound = const Value.absent(),
+            Value<int> defaultBreakDurationStored = const Value.absent(),
+            Value<int> defaultFocusDurationStored = const Value.absent(),
+            Value<int> defaultLongBreakDurationStored = const Value.absent(),
+            Value<double> overlapPercentageCDM = const Value.absent(),
+            Value<bool> atWillStart = const Value.absent(),
             Value<int> rowid = const Value.absent(),
           }) =>
               SettingsVariablesCompanion(
             id: id,
             windowOnTop: windowOnTop,
-            requestedNumberOfSessions: requestedNumberOfSessions,
-            selectedBreakDurationStored: selectedBreakDurationStored,
-            selectedFocusDurationStored: selectedFocusDurationStored,
-            selectedLongBreakDurationStored: selectedLongBreakDurationStored,
-            roundPlanningByDefault: roundPlanningByDefault,
+            defaultNumberOfSessionsPerRound: defaultNumberOfSessionsPerRound,
+            defaultBreakDurationStored: defaultBreakDurationStored,
+            defaultFocusDurationStored: defaultFocusDurationStored,
+            defaultLongBreakDurationStored: defaultLongBreakDurationStored,
+            overlapPercentageCDM: overlapPercentageCDM,
+            atWillStart: atWillStart,
             rowid: rowid,
           ),
           createCompanionCallback: ({
             Value<String> id = const Value.absent(),
             required bool windowOnTop,
-            required int requestedNumberOfSessions,
-            required int selectedBreakDurationStored,
-            required int selectedFocusDurationStored,
-            required int selectedLongBreakDurationStored,
-            Value<bool> roundPlanningByDefault = const Value.absent(),
+            required int defaultNumberOfSessionsPerRound,
+            required int defaultBreakDurationStored,
+            required int defaultFocusDurationStored,
+            required int defaultLongBreakDurationStored,
+            Value<double> overlapPercentageCDM = const Value.absent(),
+            Value<bool> atWillStart = const Value.absent(),
             Value<int> rowid = const Value.absent(),
           }) =>
               SettingsVariablesCompanion.insert(
             id: id,
             windowOnTop: windowOnTop,
-            requestedNumberOfSessions: requestedNumberOfSessions,
-            selectedBreakDurationStored: selectedBreakDurationStored,
-            selectedFocusDurationStored: selectedFocusDurationStored,
-            selectedLongBreakDurationStored: selectedLongBreakDurationStored,
-            roundPlanningByDefault: roundPlanningByDefault,
+            defaultNumberOfSessionsPerRound: defaultNumberOfSessionsPerRound,
+            defaultBreakDurationStored: defaultBreakDurationStored,
+            defaultFocusDurationStored: defaultFocusDurationStored,
+            defaultLongBreakDurationStored: defaultLongBreakDurationStored,
+            overlapPercentageCDM: overlapPercentageCDM,
+            atWillStart: atWillStart,
             rowid: rowid,
           ),
           withReferenceMapper: (p0) => p0

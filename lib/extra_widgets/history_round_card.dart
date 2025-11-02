@@ -44,9 +44,10 @@ class HistoryRoundCard extends StatelessWidget {
           .where((o) =>
               o.memoryCountdownID == first.id &&
               o.startingTime != null &&
+              o.finishTime != null &&
               first.startingTime != null &&
-              o.startingTime!.isBefore(first.startingTime!))
-          .toList();
+              o.startingTime!.isBefore(
+                  first.startingTime!));
 
       final between = givenList
           .whereType<OutPlanningVariableData>()
@@ -163,8 +164,17 @@ class HistoryRoundCard extends StatelessWidget {
 
   Widget _buildOutplanningRow(OutPlanningVariableData o) {
     final isPause = (o.type ?? '').toLowerCase() == 'pause';
-    final label = isPause ? 'Paused' : 'Reset';
-    final icon = isPause ? Icons.pause_circle_filled : Icons.restart_alt;
+    final isAtWillStart = (o.type ?? '').toLowerCase() == 'atwillstart';
+    final label = isPause
+        ? 'Paused'
+        : isAtWillStart
+            ? 'Waited to Start'
+            : 'Reset';
+    final icon = isPause
+        ? Icons.pause_circle_filled
+        : isAtWillStart
+            ? YaruIcons.clock
+            : Icons.restore;
 
     // Calculate duration
     String durationText = '';
