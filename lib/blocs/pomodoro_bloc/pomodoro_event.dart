@@ -29,7 +29,8 @@ final class StartRound extends PomodoroTimerEvent {
 }
 
 final class TimerPaused extends PomodoroTimerEvent {
-  const TimerPaused();
+  const TimerPaused({required this.model});
+  final int model;
 }
 
 final class TimerResumed extends PomodoroTimerEvent {

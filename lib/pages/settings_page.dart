@@ -40,25 +40,50 @@ class _SettingsPageState extends State<SettingsPage> {
                     kind: l10n.AppLocalizations.of(context)!.minutes,
                     label: l10n.AppLocalizations.of(context)!.focusTimeLabel,
                     changeable: 4,
-                    value: state.selectedFocusDurationStored),
+                    value: state.defaultFocusDurationStored),
                 SettingsCardSpinBox(
                     kind: l10n.AppLocalizations.of(context)!.minutes,
                     label: l10n.AppLocalizations.of(context)!.breakTimeLabel,
                     changeable: 3,
-                    value: state.selectedBreakDurationStored),
+                    value: state.defaultBreakDurationStored),
                 SettingsCardSpinBox(
                     kind: l10n.AppLocalizations.of(context)!.minutes,
                     label:
                         l10n.AppLocalizations.of(context)!.longBreakTimeLabel,
                     changeable: 5,
-                    value: state.selectedLongBreakDuration),
+                    value: state.defaultLongBreakDuration),
                 SettingsCardSpinBox(
                     kind:
                         l10n.AppLocalizations.of(context)!.numberLabelSettings,
                     label:
                         l10n.AppLocalizations.of(context)!.roundsLabelSettings,
                     changeable: 2,
-                    value: state.requestedNumberOfSessions),
+                    value: state.defaultNumberOfSessionsPerRound),
+                Padding(
+                    padding: EdgeInsetsGeometry.all(10),
+                    child: YaruSwitchListTile(
+                      title: Text("At Will Start"),
+                      subtitle: Text(
+                          "If enabled focus countdowns will start manually. Breaks automatically."),
+                      value: state.atWillStart,
+                      onChanged: (value) {
+                        BlocProvider.of<RepoBloc>(context).add(
+                            UpdateSettingVariables(
+                                selectedToChange: 7, changedVar: value));
+                      },
+                    )),
+                Padding(
+                    padding: EdgeInsetsGeometry.all(10.0),
+                    child: Slider(
+                      divisions: 20,
+                      value: state.overlapCDM,
+                      onChanged: (value) {
+                        BlocProvider.of<RepoBloc>(context).add(
+                            UpdateSettingVariables(
+                                selectedToChange: 6, changedVar: value));
+                      },
+                    )),
+                Text((state.overlapCDM * 100).toInt().toString()),
                 Padding(
                   padding: const EdgeInsets.all(10),
                   child: OutlinedButton.icon(
