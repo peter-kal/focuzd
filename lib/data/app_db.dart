@@ -29,16 +29,6 @@ class AppDatabase extends _$AppDatabase {
     return MigrationStrategy(
       onCreate: (Migrator m) async {
         await m.createAll();
-        await into(goal).insert(GoalCompanion(
-          codeName: Value("writing18000"),
-          type: Value(1),
-          expired: Value(false),
-          createdAt: Value(DateTime.now()),
-          updatedAt: Value(DateTime.now()),
-          xSessionsGoal: Value(180),
-          startPeriod2: Value(DateTime(2025, 9, 5, 15)),
-          endPeriod2: Value(DateTime(2026, 5, 30, 15)),
-        ));
         await into(subject).insert(SubjectCompanion(
             name: Value("Mathematics"),
             address: Value("> Mathematics"),

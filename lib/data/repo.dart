@@ -437,6 +437,30 @@ class SubjectRepository {
         .write(updatedSubject);
   }
 
+  Future<List<String>> fetchAllSubSubjectsIDs(String id) async {
+    final sql = '''
+    WITH RECURSIVE SubjectHierarchy(id) AS (
+      -- ANCHOR: Start with the target subject ID 'z'
+      SELECT id FROM subject WHERE id = ?
+      UNION ALL
+      -- RECURSION: Join the 'subject' table (s) with the current hierarchy results (sh)
+      -- to find the next level of children (where s.superSubjectID matches sh.id)
+      SELECT s.id
+      FROM subject s
+      JOIN SubjectHierarchy sh ON s.super_subject_i_d = sh.id
+    )
+    -- FINAL SELECT: Return all accumulated IDs from the hierarchy
+    SELECT id FROM SubjectHierarchy
+  ''';
+
+    final result = await _db.customSelect(
+      sql,
+      variables: [Variable.withString(id)],
+    ).get();
+
+    return result.map((row) => row.read<String>('id')).toList();
+  }
+
   Future<List<SubjectData>> fetchAllSubjects() async {
     return await (_db.select(_db.subject)
           ..orderBy([(s) => OrderingTerm.desc(s.totalTimeSpent)])
@@ -534,11 +558,12 @@ class MemorySessionRepository {
 
   Future<List<MemoryCountdownVariableData?>> getAllMemorySessionXPeriodZ(
       DateTime a, DateTime b, String z) async {
+    final subjects = await SubjectRepository(_db).fetchAllSubSubjectsIDs(z);
     return await (_db.select(_db.memoryCountdownVariable)
-          ..where((tbl) => tbl.completed.equals(true))
+          ..where((tbl) => tbl.completed.isValue(true))
           ..where((tbl) => tbl.finishTime.isBiggerThanValue(a))
           ..where((tbl) => tbl.type.equals("focus"))
-          ..where((tbl) => tbl.subject.equals(z))
+          ..where((tbl) => tbl.subject.isIn(subjects))
           ..where((tbl) => tbl.finishTime.isSmallerThanValue(b)))
         .get();
   }
