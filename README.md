@@ -100,11 +100,9 @@ A new pomodoro app, built with Flutter, the goal is to make a feature-equivalent
 - [x] display finish time
 
 ### for release 2.0(still thinking)
-
-- [ ] add statistics and history
-
-- [ ] add optional decimal time support
-
-- [ ] add full windows support(without breaking linux window settings)
-
-- [ ] migrate snap to core24
+ (Code was reverted to a previous stage of the development 19.6.2026)
+- [ ] add the ability to wait after a break
+- [ ] make the long break happen after four work sessions and not in the last one 
+- [ ] also make the rythm changeable with the 4 as the default 
+- [ ] update the flutter version
+- [ ] update the snap core version 
