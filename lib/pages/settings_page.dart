@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:focuzd/blocs/blocs.dart';
 import 'package:focuzd/extra_widgets/settings_widgets.dart';
 import 'package:yaru/yaru.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart' as l10n;
+import 'package:focuzd/l10n/app_localizations.dart' as l10n;
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -95,7 +94,7 @@ class _SettingsPageState extends State<SettingsPage> {
               ],
             ),
             appBar: YaruWindowTitleBar(
-              title: Text(AppLocalizations.of(context)!.settingsPage),
+              title: Text(l10n.AppLocalizations.of(context)!.settingsPage),
               leading: YaruIconButton(
                 tooltip: l10n.AppLocalizations.of(context)!.backArrowTooltip,
                 icon: const Icon(Icons.arrow_back),

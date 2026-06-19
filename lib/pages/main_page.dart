@@ -6,7 +6,7 @@ import 'package:focuzd/extra_widgets/bottom_appBar_interface.dart';
 import 'package:focuzd/extra_widgets/countdown_interface.dart';
 
 import 'package:yaru/yaru.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:';
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
