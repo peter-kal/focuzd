@@ -74,19 +74,6 @@ class _SettingsPageState extends State<SettingsPage> {
                         ],
                       )),
                 ),
-                const Padding(
-                  padding: EdgeInsets.all(8),
-                  child: SizedBox(
-                    height: 50,
-                    child: Card(
-                      child: Center(
-                          child: Text(
-                        "Free Palestine ",
-                        style: TextStyle(fontSize: 15),
-                      )),
-                    ),
-                  ),
-                ),
                 const Divider(),
                 SizedBox(
                   height: MediaQuery.of(context).size.height / 40,
