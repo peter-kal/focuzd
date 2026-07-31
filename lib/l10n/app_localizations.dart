@@ -94,8 +94,8 @@ abstract class AppLocalizations {
 
   /// A list of this localizations delegate's supported locales.
   static const List<Locale> supportedLocales = <Locale>[
-    Locale('en'),
-    Locale('el')
+    Locale('el'),
+    Locale('en')
   ];
 
   /// No description provided for @mainPage.
@@ -199,6 +199,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Number of Sessions'**
   String get roundsLabelSettings;
+
+  /// No description provided for @periodLB.
+  ///
+  /// In en, this message translates to:
+  /// **'Frequency of LongBreak'**
+  String get periodLB;
 }
 
 class _AppLocalizationsDelegate

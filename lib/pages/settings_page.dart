@@ -59,6 +59,13 @@ class _SettingsPageState extends State<SettingsPage> {
                         l10n.AppLocalizations.of(context)!.roundsLabelSettings,
                     changeable: 2,
                     value: state.requestedNumberOfSessions),
+                SettingsCardSpinBox(
+                    kind:
+                        l10n.AppLocalizations.of(context)!.roundsLabelSettings,
+                    label:
+                        l10n.AppLocalizations.of(context)!.periodLB,
+                    changeable: 7,
+                    value: state.selectedLBperiod),
                 Padding(
                   padding: const EdgeInsets.all(8),
                   child: OutlinedButton.icon(

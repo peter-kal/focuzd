@@ -102,7 +102,9 @@ A new pomodoro app, built with Flutter, the goal is to make a feature-equivalent
 ### for release 2.0(still thinking)
  (Code was reverted to a previous stage of the development 19.6.2026)
 - [ ] add the ability to wait after a break
-- [ ] make the long break happen after four work sessions and not in the last one 
+- [x] make the long break happen after selected number of sessions and not in the last one 
+- [ ] make the time changes in settings be instantly applied to the countdown 
+- [ ] add spanish language support
 - [ ] also make the rythm changeable with the 4 as the default 
-- [ ] update the flutter version
+- [x] update the flutter version
 - [ ] update the snap core version 

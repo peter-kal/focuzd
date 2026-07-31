@@ -59,4 +59,7 @@ class AppLocalizationsEl extends AppLocalizations {
 
   @override
   String get roundsLabelSettings => 'Αριθμός Session';
+
+  @override
+  String get periodLB => 'Συχνότητα Μεγάλου Διάλειμματος';
 }

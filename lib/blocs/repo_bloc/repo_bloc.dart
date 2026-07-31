@@ -1,11 +1,8 @@
-import 'dart:ui';
-
 import 'package:bloc/bloc.dart';
 import 'package:drift/drift.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:focuzd/data/repo.dart';
-import 'package:focuzd/data/settings_storage/settings_vars.dart';
 
 import 'package:focuzd/data/settings_storage/db_settings.dart';
 import 'package:window_manager/window_manager.dart';
@@ -57,6 +54,12 @@ class RepoBloc extends Bloc<RepoEvent, RepoState> {
       case 6:
         await settingsRepo.updateSetting(1,
             SettingsVariablesCompanion(atWillStart: Value(event.changedVar)));
+      case 7:
+        await settingsRepo.updateSetting(
+            1,
+            SettingsVariablesCompanion(
+                periodofLongBreak: Value(event.changedVar)));
+        break;
       default:
     }
     add(EmitStateWithDBVars());
@@ -78,7 +81,7 @@ class RepoBloc extends Bloc<RepoEvent, RepoState> {
         selectedBreakDurationStored: has.defaultBreakDurationStored,
         selectedLongBreakDuration: has.defaultLongBreakDurationStored,
         selectedWorkDurationStored: has.defaultFocusDurationStored,
-        windowOnTop: has.windowOnTop));
+        windowOnTop: has.windowOnTop, selectedLBperiod: has.periodofLongBreak));
   }
 
   void _onResetSettingsEvent(
@@ -90,7 +93,7 @@ class RepoBloc extends Bloc<RepoEvent, RepoState> {
             defaultNumberOfSessionsPerRound: Value(4),
             defaultBreakDurationStored: Value(5),
             defaultLongBreakDurationStored: Value(15),
-            defaultFocusDurationStored: Value(25)));
+            defaultFocusDurationStored: Value(25), periodofLongBreak: Value(4)));
     add(EmitStateWithDBVars());
   }
 }

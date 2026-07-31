@@ -8,14 +8,13 @@ import 'package:equatable/equatable.dart';
 import 'package:focuzd/blocs/pomodoro_bloc/ticker.dart';
 import 'package:focuzd/data/repo.dart';
 import 'package:focuzd/data/settings_storage/db_settings.dart';
-import 'package:focuzd/data/settings_storage/settings_vars.dart';
 part 'pomodoro_event.dart';
 part 'pomodoro_state.dart';
 
 class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
   PomodoroBloc({required Ticker ticker})
       : _ticker = ticker,
-        super(const TimerInitial(1, 1, 0, 1)) {
+        super(const TimerInitial(1, 1, 0, 1, 0)) {
     on<TimerStarted>(_onStart);
     on<TimerInit>(_onTimerInit);
     on<_TimerTicked>(_onTicked);
@@ -40,12 +39,12 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
     final workTimeDuration = stored!.defaultFocusDurationStored * 60;
     final reqRounds = stored.defaultNumberOfSessionsPerRound;
     emit(
-        TimerInitial(workTimeDuration, timesRun, reqRounds, workTimeDuration));
+        TimerInitial(workTimeDuration, timesRun, reqRounds, workTimeDuration, stored.periodofLongBreak));
   }
 
   void _onStart(TimerStarted event, Emitter<PomodoroTimerState> emit) async {
     emit(TimerRunInProgress(event.duration, state.runTimes, state.reqRounds,
-        state.selectedDuration));
+        state.selectedDuration, state.selectedLBperiod));
     if (Platform.isLinux) {
       client = await NotificationsClient();
       await client.notify(
@@ -61,7 +60,7 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
   void _onTicked(_TimerTicked event, Emitter<PomodoroTimerState> emit) {
     if (event.duration > 0) {
       emit(TimerRunInProgress(event.duration, state.runTimes, state.reqRounds,
-          state.selectedDuration));
+          state.selectedDuration, state.selectedLBperiod));
     } else {
       add(const NextPomodoroTimer());
     }
@@ -71,7 +70,7 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
     if (state is TimerRunInProgress) {
       _tickerSubscription?.pause();
       emit(TimerRunPause(state.duration, state.runTimes, state.reqRounds,
-          state.selectedDuration));
+          state.selectedDuration, state.selectedLBperiod));
     }
   }
 
@@ -79,7 +78,7 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
     if (state is TimerRunPause) {
       _tickerSubscription?.resume();
       emit(TimerRunInProgress(state.duration, state.runTimes, state.reqRounds,
-          state.selectedDuration));
+          state.selectedDuration, state.selectedLBperiod));
     }
   }
 
@@ -88,7 +87,7 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
     final stored = await settingsRepo.fetchSettings();
     final workTimeDuration = stored!.defaultFocusDurationStored * 60;
     emit(TimerInitial(workTimeDuration, state.runTimes, state.reqRounds,
-        state.selectedDuration));
+        state.selectedDuration, state.selectedLBperiod));
   }
 
   void _onNextPomodoroTimer(
@@ -98,6 +97,7 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
     final int selectedBreakDuration = selected.defaultBreakDurationStored;
     final int selectedLBDuration = selected.defaultLongBreakDurationStored;
     final int reqRound = selected.defaultNumberOfSessionsPerRound;
+    final int selectedLBperiod = selected.periodofLongBreak;
     if (timesRun >= reqRound * 2) {
       // if the goal reached then stop
       timesRun = 1;
@@ -113,15 +113,14 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
           .listen((duration) => add(_TimerTicked(duration: duration)));
 
       emit(TimerRunInProgress(selectedWorkDuration * 60, timesRun, reqRound,
-          selectedWorkDuration * 60));
+          selectedWorkDuration * 60, selectedLBperiod));
       if (Platform.isLinux) {
         client = await NotificationsClient();
         await client.notify(
             "Focus for the next ${(state.duration / 60).round()} minutes!");
       } else if (Platform.isWindows) {}
-    } else if ((timesRun % 2) != 0 && timesRun == (reqRound * 2) - 1) {
-      // its the last work session, returns LongBreak
-      // The following equation tells us when the last work duration will be: (requestedNumberOfSessions * 2) - 1
+    } else if ((timesRun % 2) != 0 && (timesRun + 1) % (selectedLBperiod * 2) == 0) {// if the current timesRun is by one smaller to a number that's perfectly divisible by the period of long break then it gives back a long break session
+      
       timesRun++;
       _tickerSubscription?.cancel();
       _tickerSubscription = _ticker
@@ -133,7 +132,8 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
         timesRun,
         state.reqRounds,
         selectedLBDuration * 60,
-      )); // The following equation tells us in what timesRun there will be a Long Break: requestedNumberOfSessions * 2
+        selectedLBperiod
+      )); 
       if (Platform.isLinux) {
         client = await NotificationsClient();
         await client.notify(
@@ -146,7 +146,7 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
           .tick(ticks: selectedBreakDuration * 60)
           .listen((duration) => add(_TimerTicked(duration: duration)));
       emit(TimerRunInProgress(selectedBreakDuration * 60, timesRun,
-          state.reqRounds, selectedBreakDuration * 60));
+          state.reqRounds, selectedBreakDuration * 60, state.selectedLBperiod));
       if (Platform.isLinux) {
         client = await NotificationsClient();
         await client.notify(

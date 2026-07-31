@@ -71,7 +71,7 @@ class _MainPageState extends State<MainPage> with ExtraFunctions {
                 Text(
                   currentSessionStatus(
                       state.runTimes,
-                      state.reqRounds,
+                      state.selectedLBperiod,
                       AppLocalizations.of(context)!.longBreakTimeLabel,
                       AppLocalizations.of(context)!.workTimeLabel,
                       AppLocalizations.of(context)!.breakTimeLabel),

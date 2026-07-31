@@ -19,20 +19,23 @@ void main() {
           .currentSessionStatus(3, 4, "longBreak", "work", "break");
       final outputLongBreak = ExtraFunctions()
           .currentSessionStatus(8, 4, "longBreak", "work", "break");
+      final outputLongBreak2 = ExtraFunctions()
+          .currentSessionStatus(16, 4, "longBreak", "work", "break");
 
       expect(outputBreak, "break");
       expect(outputWork, "work");
       expect(outputLongBreak, "longBreak");
+      expect(outputLongBreak2, "longBreak");
     });
 
     test('test endsOn', () {
       final fixedTime = DateTime(2024, 0, 0, 10, 0, 0, 0, 0);
       final whenTimerRuns = ExtraFunctions()
-          .endsOn(300, const TimerRunInProgress(200, 2, 4, 200), fixedTime);
+          .endsOn(300, const TimerRunInProgress(200, 2, 4, 200, 4), fixedTime);
       final whenInitial = ExtraFunctions()
-          .endsOn(300, const TimerInitial(300, 1, 4, 300), fixedTime);
+          .endsOn(300, const TimerInitial(300, 1, 4, 300, 4), fixedTime);
       final whenPause = ExtraFunctions()
-          .endsOn(300, const TimerRunPause(300, 1, 4, 300), fixedTime);
+          .endsOn(300, const TimerRunPause(300, 1, 4, 300, 4), fixedTime);
 
       expect(whenTimerRuns, "10:05");
       expect(whenInitial, "-- : --");

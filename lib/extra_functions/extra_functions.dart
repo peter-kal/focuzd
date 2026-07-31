@@ -15,13 +15,13 @@ mixin class ExtraFunctions {
     return "null";
   }
 
-  String currentSessionStatus(int Rn, int ReqSessions,
+  String currentSessionStatus(int Rn, int periodLB,
       String longBreakTimeLabel, String workTimeLabel, String breakTimeLabel) {
-    if ((Rn % 2) == 0 && Rn == (ReqSessions * 2)) {
+    if ((Rn % 2) == 0 && ((Rn ) % (periodLB * 2) == 0)) {
       return longBreakTimeLabel;
     } else if ((Rn % 2 != 0)) {
       return workTimeLabel;
-    } else if ((Rn % 2) == 0 && Rn != (ReqSessions * 2)) {
+    } else if ((Rn % 2) == 0 && ((Rn) % (periodLB * 2) != 0 )){
       return breakTimeLabel;
     }
     return "error";

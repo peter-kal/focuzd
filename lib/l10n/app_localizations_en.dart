@@ -59,4 +59,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get roundsLabelSettings => 'Number of Sessions';
+
+  @override
+  String get periodLB => 'Frequency of LongBreak';
 }

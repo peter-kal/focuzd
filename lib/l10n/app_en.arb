@@ -19,6 +19,7 @@
     "breakTimeLabel": "Break Time",
     "longBreakTimeLabel": "Long Break Time",
     "numberLabelSettings": "integer",
-    "roundsLabelSettings": "Number of Sessions"
+    "roundsLabelSettings": "Number of Sessions",
+    "periodLB": "Frequency of LongBreak"
 
 }
