@@ -62,4 +62,11 @@ class AppLocalizationsEl extends AppLocalizations {
 
   @override
   String get periodLB => 'Συχνότητα Μεγάλου Διάλειμματος';
+
+  @override
+  String get manualStart => 'Χειροκίνητη Εκκίνηση';
+
+  @override
+  String get infoManualStart =>
+      'Αν ενεργοποιηθεί, οι χρόνοι συγκέντρωσης θα ξεκινάνε χειροκίνητα.';
 }

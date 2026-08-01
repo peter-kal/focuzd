@@ -54,6 +54,7 @@ class RepoBloc extends Bloc<RepoEvent, RepoState> {
       case 6:
         await settingsRepo.updateSetting(1,
             SettingsVariablesCompanion(atWillStart: Value(event.changedVar)));
+        break;
       case 7:
         await settingsRepo.updateSetting(
             1,
@@ -75,13 +76,12 @@ class RepoBloc extends Bloc<RepoEvent, RepoState> {
       windowManager.focus();
       windowManager.show();
     });
-
     emit(RepoVariablesGivenState(
         requestedNumberOfSessions: has.defaultNumberOfSessionsPerRound,
         selectedBreakDurationStored: has.defaultBreakDurationStored,
         selectedLongBreakDuration: has.defaultLongBreakDurationStored,
         selectedWorkDurationStored: has.defaultFocusDurationStored,
-        windowOnTop: has.windowOnTop, selectedLBperiod: has.periodofLongBreak));
+        windowOnTop: has.windowOnTop, selectedLBperiod: has.periodofLongBreak, atWillStart: has.atWillStart));
   }
 
   void _onResetSettingsEvent(
@@ -93,7 +93,7 @@ class RepoBloc extends Bloc<RepoEvent, RepoState> {
             defaultNumberOfSessionsPerRound: Value(4),
             defaultBreakDurationStored: Value(5),
             defaultLongBreakDurationStored: Value(15),
-            defaultFocusDurationStored: Value(25), periodofLongBreak: Value(4)));
+            defaultFocusDurationStored: Value(25), periodofLongBreak: Value(4), atWillStart: Value(false)));
     add(EmitStateWithDBVars());
   }
 }

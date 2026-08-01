@@ -14,7 +14,7 @@ part 'pomodoro_state.dart';
 class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
   PomodoroBloc({required Ticker ticker})
       : _ticker = ticker,
-        super(const TimerInitial(1, 1, 0, 1, 0)) {
+        super(const TimerInitial(1, 1, 0, 1, 0, false)) {
     on<TimerStarted>(_onStart);
     on<TimerInit>(_onTimerInit);
     on<_TimerTicked>(_onTicked);
@@ -39,12 +39,12 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
     final workTimeDuration = stored!.defaultFocusDurationStored * 60;
     final reqRounds = stored.defaultNumberOfSessionsPerRound;
     emit(
-        TimerInitial(workTimeDuration, timesRun, reqRounds, workTimeDuration, stored.periodofLongBreak));
+        TimerInitial(workTimeDuration, timesRun, reqRounds, workTimeDuration, stored.periodofLongBreak, stored.atWillStart));
   }
 
   void _onStart(TimerStarted event, Emitter<PomodoroTimerState> emit) async {
     emit(TimerRunInProgress(event.duration, state.runTimes, state.reqRounds,
-        state.selectedDuration, state.selectedLBperiod));
+        state.selectedDuration, state.selectedLBperiod, state.atWillStart));
     if (Platform.isLinux) {
       client = await NotificationsClient();
       await client.notify(
@@ -60,7 +60,7 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
   void _onTicked(_TimerTicked event, Emitter<PomodoroTimerState> emit) {
     if (event.duration > 0) {
       emit(TimerRunInProgress(event.duration, state.runTimes, state.reqRounds,
-          state.selectedDuration, state.selectedLBperiod));
+          state.selectedDuration, state.selectedLBperiod, state.atWillStart));
     } else {
       add(const NextPomodoroTimer());
     }
@@ -70,7 +70,7 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
     if (state is TimerRunInProgress) {
       _tickerSubscription?.pause();
       emit(TimerRunPause(state.duration, state.runTimes, state.reqRounds,
-          state.selectedDuration, state.selectedLBperiod));
+          state.selectedDuration, state.selectedLBperiod, state.atWillStart));
     }
   }
 
@@ -78,7 +78,7 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
     if (state is TimerRunPause) {
       _tickerSubscription?.resume();
       emit(TimerRunInProgress(state.duration, state.runTimes, state.reqRounds,
-          state.selectedDuration, state.selectedLBperiod));
+          state.selectedDuration, state.selectedLBperiod, state.atWillStart));
     }
   }
 
@@ -87,7 +87,7 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
     final stored = await settingsRepo.fetchSettings();
     final workTimeDuration = stored!.defaultFocusDurationStored * 60;
     emit(TimerInitial(workTimeDuration, state.runTimes, state.reqRounds,
-        state.selectedDuration, state.selectedLBperiod));
+        state.selectedDuration, state.selectedLBperiod, state.atWillStart));
   }
 
   void _onNextPomodoroTimer(
@@ -98,6 +98,7 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
     final int selectedLBDuration = selected.defaultLongBreakDurationStored;
     final int reqRound = selected.defaultNumberOfSessionsPerRound;
     final int selectedLBperiod = selected.periodofLongBreak;
+    final bool selectedAtWillStart = selected.atWillStart;
     if (timesRun >= reqRound * 2) {
       // if the goal reached then stop
       timesRun = 1;
@@ -106,6 +107,7 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
       add(const TimerInit());
     } else if ((timesRun % 2) == 0) {
       // its break so it gives back a work session
+      //here there should be a check if manualStart has been enabled 
       timesRun++;
       _tickerSubscription?.cancel();
       _tickerSubscription = _ticker
@@ -113,7 +115,10 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
           .listen((duration) => add(_TimerTicked(duration: duration)));
 
       emit(TimerRunInProgress(selectedWorkDuration * 60, timesRun, reqRound,
-          selectedWorkDuration * 60, selectedLBperiod));
+          selectedWorkDuration * 60, selectedLBperiod, selectedAtWillStart));
+      if(selectedAtWillStart == true){
+        add(const TimerPaused());
+      }
       if (Platform.isLinux) {
         client = await NotificationsClient();
         await client.notify(
@@ -132,7 +137,8 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
         timesRun,
         state.reqRounds,
         selectedLBDuration * 60,
-        selectedLBperiod
+        selectedLBperiod,
+        selectedAtWillStart
       )); 
       if (Platform.isLinux) {
         client = await NotificationsClient();
@@ -145,8 +151,12 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
       _tickerSubscription = _ticker
           .tick(ticks: selectedBreakDuration * 60)
           .listen((duration) => add(_TimerTicked(duration: duration)));
-      emit(TimerRunInProgress(selectedBreakDuration * 60, timesRun,
-          state.reqRounds, selectedBreakDuration * 60, state.selectedLBperiod));
+      emit(TimerRunInProgress(selectedBreakDuration * 60,
+       timesRun,
+       state.reqRounds,
+       selectedBreakDuration * 60,
+       selectedLBperiod,
+       selectedAtWillStart));
       if (Platform.isLinux) {
         client = await NotificationsClient();
         await client.notify(

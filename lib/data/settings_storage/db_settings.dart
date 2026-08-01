@@ -29,7 +29,9 @@ class AppDatabase extends _$AppDatabase {
             defaultNumberOfSessionsPerRound: Value(4),
             defaultBreakDurationStored: Value(5),
             defaultLongBreakDurationStored: Value(15),
-            defaultFocusDurationStored: Value(25)));
+            defaultFocusDurationStored: Value(25),
+            periodofLongBreak: Value(4),
+            atWillStart: Value(false)));
       },
       onUpgrade: (Migrator m, int from, int to) async {
         if (from < 2) {}

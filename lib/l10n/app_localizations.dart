@@ -205,6 +205,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Frequency of LongBreak'**
   String get periodLB;
+
+  /// No description provided for @manualStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Manual Start'**
+  String get manualStart;
+
+  /// No description provided for @infoManualStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Once enabled, focus time after breaks will start manually.'**
+  String get infoManualStart;
 }
 
 class _AppLocalizationsDelegate

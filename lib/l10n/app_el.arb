@@ -20,6 +20,8 @@
     "longBreakTimeLabel": "Χρόνος Μεγάλου Διάλειμματος",
     "numberLabelSettings": "Ακέραιος",
     "roundsLabelSettings": "Αριθμός Session",
-    "periodLB": "Συχνότητα Μεγάλου Διάλειμματος"
+    "periodLB": "Συχνότητα Μεγάλου Διάλειμματος",
+    "manualStart": "Χειροκίνητη Εκκίνηση",
+    "infoManualStart": "Αν ενεργοποιηθεί, οι χρόνοι συγκέντρωσης θα ξεκινάνε χειροκίνητα."
 
 }

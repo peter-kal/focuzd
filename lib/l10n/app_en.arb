@@ -20,6 +20,8 @@
     "longBreakTimeLabel": "Long Break Time",
     "numberLabelSettings": "integer",
     "roundsLabelSettings": "Number of Sessions",
-    "periodLB": "Frequency of LongBreak"
+    "periodLB": "Frequency of LongBreak",
+    "manualStart": "Manual Start",
+    "infoManualStart": "Once enabled, focus time after breaks will start manually."
 
 }

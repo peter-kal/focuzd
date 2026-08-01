@@ -62,4 +62,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get periodLB => 'Frequency of LongBreak';
+
+  @override
+  String get manualStart => 'Manual Start';
+
+  @override
+  String get infoManualStart =>
+      'Once enabled, focus time after breaks will start manually.';
 }
