@@ -1,6 +1,6 @@
 name: focuzd
 title: Focuzd
-base: core26
+base: core24
 version: "2.0"
 license: GPL-3.0
 source-code: https://github.com/peter-kal/focuzd
