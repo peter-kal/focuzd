@@ -36,10 +36,15 @@ class AppDatabase extends _$AppDatabase {
             atWillStart: Value(false)));
       },
       onUpgrade: (Migrator m, int from, int to) async {
-        if (from < 2) {}
+        if (from < 2) {
+          await m.addColumn(settingsVariables, settingsVariables.atWillStart);
+          await m.addColumn(settingsVariables, settingsVariables.periodofLongBreak);
+        }
       },
       beforeOpen: (details) async {
-        if (kDebugMode) {}
+        if (kDebugMode) {
+          debugPrint('DB opened. Version: ${details.versionNow}');
+        }
       },
     );
   }
@@ -55,9 +60,11 @@ LazyDatabase _openConnection() {
     if(await oldPath.exists() && !await newPath.exists()){
       try{
         await oldPath.rename(newPath.path);
+        debugPrint('Migrated old DB to ${newPath.path}');
       } catch (e) {
         await oldPath.copy(newPath.path);
         await oldPath.delete();
+        debugPrint('Copied old DB to ${newPath.path} and deleted the old one');
       }
     }
 
