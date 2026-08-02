@@ -47,7 +47,7 @@ class AppDatabase extends _$AppDatabase {
 
 LazyDatabase _openConnection() {
   return LazyDatabase(() async {
-    final directory = await getApplicationDocumentsDirectory();
+    final directory = await getApplicationSupportDirectory();
 
     final oldPath = File(p.join(directory.path, 'db.sqlite'));
     final newPath = File(p.join(directory.path, 'focuzd_app_db.sqlite'));
