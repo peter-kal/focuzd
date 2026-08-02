@@ -8,11 +8,7 @@ import 'package:path/path.dart' as p;
 import 'package:focuzd/data/settings_storage/settings_vars.dart';
 part 'db_settings.g.dart';
 
-
-@DriftDatabase(tables: [
-  SettingsVariables
-
-])
+@DriftDatabase(tables: [SettingsVariables])
 class AppDatabase extends _$AppDatabase {
   static final AppDatabase instance = AppDatabase._internal();
 
@@ -38,12 +34,13 @@ class AppDatabase extends _$AppDatabase {
       onUpgrade: (Migrator m, int from, int to) async {
         if (from < 2) {
           await m.addColumn(settingsVariables, settingsVariables.atWillStart);
-          await m.addColumn(settingsVariables, settingsVariables.periodofLongBreak);
+          await m.addColumn(
+              settingsVariables, settingsVariables.periodofLongBreak);
         }
       },
       beforeOpen: (details) async {
         if (kDebugMode) {
-          debugPrint('DB opened. Version: ${details.versionNow}');
+          print('DB opened. Version: ${details.versionNow}');
         }
       },
     );
@@ -52,25 +49,49 @@ class AppDatabase extends _$AppDatabase {
 
 LazyDatabase _openConnection() {
   return LazyDatabase(() async {
-    final directory = await getApplicationSupportDirectory();
+    final snapCommon = Platform.environment['SNAP_USER_COMMON'];
+    final Directory dbDir;
+    if (snapCommon != null && snapCommon.isNotEmpty) {
+      dbDir = Directory(snapCommon);
+      if (!await dbDir.exists()) {
+        await dbDir.create(recursive: true);
+      }
+    } else {
+      dbDir = await getApplicationSupportDirectory();
+    }
 
-    final oldPath = File(p.join(directory.path, 'db.sqlite'));
-    final newPath = File(p.join(directory.path, 'focuzd_app_db.sqlite'));
+    final newFile = File(p.join(dbDir.path, 'focuzd_app_db.sqlite'));
 
-    if(await oldPath.exists() && !await newPath.exists()){
-      try{
-        await oldPath.rename(newPath.path);
-        debugPrint('Migrated old DB to ${newPath.path}');
-      } catch (e) {
-        await oldPath.copy(newPath.path);
-        await oldPath.delete();
-        debugPrint('Copied old DB to ${newPath.path} and deleted the old one');
+    if (!await newFile.exists()) {
+      final oldAppSupport = await getApplicationSupportDirectory();
+      final oldRevisionDB =
+          File(p.join(oldAppSupport.path, 'focuzd_app_db.sqlite'));
+      final oldRevisionLegacy = File(p.join(oldAppSupport.path, 'db.sqlite'));
+
+      File? sourceFile;
+      if (await oldRevisionDB.exists()) {
+        sourceFile = oldRevisionDB;
+      } else if (await oldRevisionLegacy.exists()) {
+        sourceFile = oldRevisionLegacy;
+      }
+
+      if (sourceFile != null) {
+        try {
+          await sourceFile.copy(newFile.path);
+          if (kDebugMode) {
+            print('Migrated DB from ${sourceFile.path} to ${newFile.path}');
+          }
+        } catch (e) {
+          if (kDebugMode) {
+            print('DB migration failed: $e');
+          }
+        }
       }
     }
 
     return driftDatabase(
       name: 'focuzd_app_db',
-      native: DriftNativeOptions(databaseDirectory: () async => directory),
+      native: DriftNativeOptions(databaseDirectory: () async => dbDir),
     );
   });
 }
