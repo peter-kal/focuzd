@@ -24,35 +24,44 @@ class $SettingsVariablesTable extends SettingsVariables
   late final GeneratedColumn<bool> windowOnTop = GeneratedColumn<bool>(
       'window_on_top', aliasedName, false,
       type: DriftSqlType.bool,
-      requiredDuringInsert: true,
+      requiredDuringInsert: false,
       defaultConstraints: GeneratedColumn.constraintIsAlways(
-          'CHECK ("window_on_top" IN (0, 1))'));
+          'CHECK ("window_on_top" IN (0, 1))'),
+      defaultValue: const Constant(false));
   static const VerificationMeta _defaultNumberOfSessionsPerRoundMeta =
       const VerificationMeta('defaultNumberOfSessionsPerRound');
   @override
   late final GeneratedColumn<int> defaultNumberOfSessionsPerRound =
       GeneratedColumn<int>(
           'default_number_of_sessions_per_round', aliasedName, false,
-          type: DriftSqlType.int, requiredDuringInsert: true);
+          type: DriftSqlType.int,
+          requiredDuringInsert: false,
+          defaultValue: const Constant(4));
   static const VerificationMeta _defaultBreakDurationStoredMeta =
       const VerificationMeta('defaultBreakDurationStored');
   @override
   late final GeneratedColumn<int> defaultBreakDurationStored =
       GeneratedColumn<int>('default_break_duration_stored', aliasedName, false,
-          type: DriftSqlType.int, requiredDuringInsert: true);
+          type: DriftSqlType.int,
+          requiredDuringInsert: false,
+          defaultValue: const Constant(5));
   static const VerificationMeta _defaultFocusDurationStoredMeta =
       const VerificationMeta('defaultFocusDurationStored');
   @override
   late final GeneratedColumn<int> defaultFocusDurationStored =
       GeneratedColumn<int>('default_focus_duration_stored', aliasedName, false,
-          type: DriftSqlType.int, requiredDuringInsert: true);
+          type: DriftSqlType.int,
+          requiredDuringInsert: false,
+          defaultValue: const Constant(25));
   static const VerificationMeta _defaultLongBreakDurationStoredMeta =
       const VerificationMeta('defaultLongBreakDurationStored');
   @override
   late final GeneratedColumn<int> defaultLongBreakDurationStored =
       GeneratedColumn<int>(
           'default_long_break_duration_stored', aliasedName, false,
-          type: DriftSqlType.int, requiredDuringInsert: true);
+          type: DriftSqlType.int,
+          requiredDuringInsert: false,
+          defaultValue: const Constant(15));
   static const VerificationMeta _atWillStartMeta =
       const VerificationMeta('atWillStart');
   @override
@@ -100,8 +109,6 @@ class $SettingsVariablesTable extends SettingsVariables
           _windowOnTopMeta,
           windowOnTop.isAcceptableOrUnknown(
               data['window_on_top']!, _windowOnTopMeta));
-    } else if (isInserting) {
-      context.missing(_windowOnTopMeta);
     }
     if (data.containsKey('default_number_of_sessions_per_round')) {
       context.handle(
@@ -109,8 +116,6 @@ class $SettingsVariablesTable extends SettingsVariables
           defaultNumberOfSessionsPerRound.isAcceptableOrUnknown(
               data['default_number_of_sessions_per_round']!,
               _defaultNumberOfSessionsPerRoundMeta));
-    } else if (isInserting) {
-      context.missing(_defaultNumberOfSessionsPerRoundMeta);
     }
     if (data.containsKey('default_break_duration_stored')) {
       context.handle(
@@ -118,8 +123,6 @@ class $SettingsVariablesTable extends SettingsVariables
           defaultBreakDurationStored.isAcceptableOrUnknown(
               data['default_break_duration_stored']!,
               _defaultBreakDurationStoredMeta));
-    } else if (isInserting) {
-      context.missing(_defaultBreakDurationStoredMeta);
     }
     if (data.containsKey('default_focus_duration_stored')) {
       context.handle(
@@ -127,8 +130,6 @@ class $SettingsVariablesTable extends SettingsVariables
           defaultFocusDurationStored.isAcceptableOrUnknown(
               data['default_focus_duration_stored']!,
               _defaultFocusDurationStoredMeta));
-    } else if (isInserting) {
-      context.missing(_defaultFocusDurationStoredMeta);
     }
     if (data.containsKey('default_long_break_duration_stored')) {
       context.handle(
@@ -136,8 +137,6 @@ class $SettingsVariablesTable extends SettingsVariables
           defaultLongBreakDurationStored.isAcceptableOrUnknown(
               data['default_long_break_duration_stored']!,
               _defaultLongBreakDurationStoredMeta));
-    } else if (isInserting) {
-      context.missing(_defaultLongBreakDurationStoredMeta);
     }
     if (data.containsKey('at_will_start')) {
       context.handle(
@@ -390,19 +389,14 @@ class SettingsVariablesCompanion extends UpdateCompanion<SettingsVariable> {
   });
   SettingsVariablesCompanion.insert({
     this.id = const Value.absent(),
-    required bool windowOnTop,
-    required int defaultNumberOfSessionsPerRound,
-    required int defaultBreakDurationStored,
-    required int defaultFocusDurationStored,
-    required int defaultLongBreakDurationStored,
+    this.windowOnTop = const Value.absent(),
+    this.defaultNumberOfSessionsPerRound = const Value.absent(),
+    this.defaultBreakDurationStored = const Value.absent(),
+    this.defaultFocusDurationStored = const Value.absent(),
+    this.defaultLongBreakDurationStored = const Value.absent(),
     this.atWillStart = const Value.absent(),
     this.periodofLongBreak = const Value.absent(),
-  })  : windowOnTop = Value(windowOnTop),
-        defaultNumberOfSessionsPerRound =
-            Value(defaultNumberOfSessionsPerRound),
-        defaultBreakDurationStored = Value(defaultBreakDurationStored),
-        defaultFocusDurationStored = Value(defaultFocusDurationStored),
-        defaultLongBreakDurationStored = Value(defaultLongBreakDurationStored);
+  });
   static Insertable<SettingsVariable> custom({
     Expression<int>? id,
     Expression<bool>? windowOnTop,
@@ -521,11 +515,11 @@ abstract class _$AppDatabase extends GeneratedDatabase {
 typedef $$SettingsVariablesTableCreateCompanionBuilder
     = SettingsVariablesCompanion Function({
   Value<int> id,
-  required bool windowOnTop,
-  required int defaultNumberOfSessionsPerRound,
-  required int defaultBreakDurationStored,
-  required int defaultFocusDurationStored,
-  required int defaultLongBreakDurationStored,
+  Value<bool> windowOnTop,
+  Value<int> defaultNumberOfSessionsPerRound,
+  Value<int> defaultBreakDurationStored,
+  Value<int> defaultFocusDurationStored,
+  Value<int> defaultLongBreakDurationStored,
   Value<bool> atWillStart,
   Value<int> periodofLongBreak,
 });
@@ -706,11 +700,11 @@ class $$SettingsVariablesTableTableManager extends RootTableManager<
           ),
           createCompanionCallback: ({
             Value<int> id = const Value.absent(),
-            required bool windowOnTop,
-            required int defaultNumberOfSessionsPerRound,
-            required int defaultBreakDurationStored,
-            required int defaultFocusDurationStored,
-            required int defaultLongBreakDurationStored,
+            Value<bool> windowOnTop = const Value.absent(),
+            Value<int> defaultNumberOfSessionsPerRound = const Value.absent(),
+            Value<int> defaultBreakDurationStored = const Value.absent(),
+            Value<int> defaultFocusDurationStored = const Value.absent(),
+            Value<int> defaultLongBreakDurationStored = const Value.absent(),
             Value<bool> atWillStart = const Value.absent(),
             Value<int> periodofLongBreak = const Value.absent(),
           }) =>
