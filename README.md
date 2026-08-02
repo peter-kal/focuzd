@@ -106,4 +106,7 @@ A new pomodoro app, built with Flutter, the goal is to make a feature-equivalent
 - [x] make the time changes in settings be instantly applied to the countdown 
 - [ ] add spanish language support
 - [x] update the flutter version
-- [ ] update the snap core version 
+- [x] update the snap core version 
+- [ ] Finalise migration for existing users
+- [ ] Improve testing
+- [ ] Publish 2.0
