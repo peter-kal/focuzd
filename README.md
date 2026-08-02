@@ -103,7 +103,7 @@ A new pomodoro app, built with Flutter, the goal is to make a feature-equivalent
  (Code was reverted to a previous stage of the development 19.6.2026)
 - [x] add the ability to wait after a break
 - [x] make the long break happen after selected number of sessions and not in the last one 
-- [ ] make the time changes in settings be instantly applied to the countdown 
+- [x] make the time changes in settings be instantly applied to the countdown 
 - [ ] add spanish language support
 - [x] update the flutter version
 - [ ] update the snap core version 

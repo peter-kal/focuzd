@@ -22,6 +22,7 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
     on<TimerResumed>(_onResumed);
     on<TimerReset>(_onReset);
     on<NextPomodoroTimer>(_onNextPomodoroTimer);
+    on<PomodoroSettingsChanged>(_onPomodoroSettingsChanged);
   }
   final settingsRepo = SettingsRepository(AppDatabase.instance);
   int timesRun = 1;
@@ -162,6 +163,13 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
         await client.notify(
             "Take a break for the next ${(state.duration / 60).round()} minutes!");
       }
+    }
+  }
+  
+  FutureOr<void> _onPomodoroSettingsChanged(PomodoroSettingsChanged event, Emitter<PomodoroTimerState> emit) {
+    final current = state;
+    if (current is TimerInitial) {
+    add(const TimerInit());
     }
   }
 }
