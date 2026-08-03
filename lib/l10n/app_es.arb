@@ -1,0 +1,27 @@
+{
+    "@@locale": "es",
+
+    "mainPage": "Página principal",
+    "settingsPage": "Ajustes",
+    "backArrowTooltip": "Volver",
+    "minutes": "Minutos",
+    "reset2Default": "Restablecer valores predeterminados",
+    "alwaysOnTopOption": "Ventana siempre visible",
+    "alwaysOnTopOptionDescription": "Mantiene la ventana siempre por encima de las demás",
+
+    "playButtonTooltip": "Iniciar",
+    "resumeButtonTooltip": "Reanudar",
+    "pauseButtonTooltip": "Pausar",
+    "resetSessionButtonTooltip": "Reiniciar",
+    "nextSessionButtonTooltip": "Siguiente",
+
+    "workTimeLabel": "Tiempo de enfoque",
+    "breakTimeLabel": "Tiempo de descanso",
+    "longBreakTimeLabel": "Tiempo de descanso largo",
+    "numberLabelSettings": "Número entero",
+    "roundsLabelSettings": "Número de sesiones",
+    "periodLB": "Frecuencia del descanso largo",
+    "manualStart": "Inicio manual",
+    "infoManualStart": "Una vez activado, el tiempo de enfoque después de los descansos se iniciará manualmente."
+
+}

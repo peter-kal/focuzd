@@ -43,7 +43,7 @@ class FocuzdApp extends StatelessWidget {
       builder: (context, yaru, child) {
         return MaterialApp(
           debugShowCheckedModeBanner: false,
-          supportedLocales:[Locale('en'), Locale('el')],
+          supportedLocales:[Locale('en'), Locale('es'), Locale('el')],
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           title: 'Focuzd',
           theme: yaru.theme,
