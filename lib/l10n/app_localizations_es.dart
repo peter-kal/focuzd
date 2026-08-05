@@ -9,7 +9,7 @@ class AppLocalizationsEs extends AppLocalizations {
   AppLocalizationsEs([String locale = 'es']) : super(locale);
 
   @override
-  String get mainPage => 'Main Page';
+  String get mainPage => 'Página principal';
 
   @override
   String get settingsPage => 'Ajustes';
