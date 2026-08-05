@@ -1,7 +1,8 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:drift/drift.dart';
-import 'package:drift_flutter/drift_flutter.dart';
+import 'package:drift/native.dart';
 import 'package:flutter/foundation.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as p;
@@ -22,25 +23,30 @@ class AppDatabase extends _$AppDatabase {
     return MigrationStrategy(
       onCreate: (Migrator m) async {
         await m.createAll();
-        await into(settingsVariables).insert(SettingsVariablesCompanion(
+        await into(settingsVariables).insert(
+          SettingsVariablesCompanion(
             windowOnTop: Value(false),
             defaultNumberOfSessionsPerRound: Value(4),
             defaultBreakDurationStored: Value(5),
             defaultLongBreakDurationStored: Value(15),
             defaultFocusDurationStored: Value(25),
             periodofLongBreak: Value(4),
-            atWillStart: Value(false)));
+            atWillStart: Value(false),
+          ),
+        );
       },
       onUpgrade: (Migrator m, int from, int to) async {
         if (from < 2) {
           await m.addColumn(settingsVariables, settingsVariables.atWillStart);
           await m.addColumn(
-              settingsVariables, settingsVariables.periodofLongBreak);
+            settingsVariables,
+            settingsVariables.periodofLongBreak,
+          );
         }
       },
       beforeOpen: (details) async {
         if (kDebugMode) {
-          print('DB opened. Version: ${details.versionNow}');
+          log('DB opened. Version: ${details.versionNow}');
         }
       },
     );
@@ -49,49 +55,53 @@ class AppDatabase extends _$AppDatabase {
 
 LazyDatabase _openConnection() {
   return LazyDatabase(() async {
-    final snapCommon = Platform.environment['SNAP_USER_COMMON'];
+    // the following is a migration tecnhique due to a renaming of the db file
+    // once all users switch from 1.1.1 release to 2.0 migration will be removed
+    //final snapCommon = Platform.environment[
+    //    'SNAP_USER_COMMON']; //the common folder inside the snap's folder snap/focuzd/common
+    // that is common on every revision of the snap
     final Directory dbDir;
-    if (snapCommon != null && snapCommon.isNotEmpty) {
+    /*if (snapCommon != null && snapCommon.isNotEmpty) {
+      // in case common folder exists && focuzd is snapped.
       dbDir = Directory(snapCommon);
       if (!await dbDir.exists()) {
         await dbDir.create(recursive: true);
       }
-    } else {
-      dbDir = await getApplicationSupportDirectory();
-    }
-
+    } else {*/
+    dbDir =
+        await getApplicationSupportDirectory(); //in case not snapped, not common folder
+    //}
+    print("DbDir: $dbDir");
     final newFile = File(p.join(dbDir.path, 'focuzd_app_db.sqlite'));
-
+    stdout.writeln("New File: ${newFile.path}");
     if (!await newFile.exists()) {
       final oldAppSupport = await getApplicationSupportDirectory();
-      final oldRevisionDB =
-          File(p.join(oldAppSupport.path, 'focuzd_app_db.sqlite'));
+      final oldRevisionDB = File(
+        p.join(oldAppSupport.path, 'focuzd_app_db.sqlite'),
+      );
       final oldRevisionLegacy = File(p.join(oldAppSupport.path, 'db.sqlite'));
 
       File? sourceFile;
       if (await oldRevisionDB.exists()) {
+        //focuzd_app_db.sqlite exists
         sourceFile = oldRevisionDB;
       } else if (await oldRevisionLegacy.exists()) {
-        sourceFile = oldRevisionLegacy;
+        sourceFile = oldRevisionLegacy; //db.sqlite exists
       }
 
       if (sourceFile != null) {
         try {
           await sourceFile.copy(newFile.path);
-          if (kDebugMode) {
-            print('Migrated DB from ${sourceFile.path} to ${newFile.path}');
-          }
+          stdout.writeln(
+              'Migrated DB from ${sourceFile.path} to ${newFile.path}');
         } catch (e) {
-          if (kDebugMode) {
-            print('DB migration failed: $e');
-          }
+          stdout.writeln('DB migration failed: $e');
         }
       }
     }
-
-    return driftDatabase(
-      name: 'focuzd_app_db',
-      native: DriftNativeOptions(databaseDirectory: () async => dbDir),
-    );
+    print(dbDir.toString());
+    return LazyDatabase(() async {
+      return NativeDatabase.createInBackground(newFile);
+    });
   });
 }
