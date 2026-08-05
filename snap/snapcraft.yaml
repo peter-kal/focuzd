@@ -56,7 +56,7 @@ parts:
 
   focuzd:
     plugin: nil
-    source: .
+    source: https://github.com/peter-kal/focuzd.git
     source-type: git
     after: [flutter-git]
     override-build: |
