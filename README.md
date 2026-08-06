@@ -40,4 +40,4 @@ Focuzd is a pomodoro app built for Linux, with Flutter using the Yaru theme.
 
 ## Settings
 
-![](screenshots/Screenshot%20from%202026-08-06%2013-12-30.png)  ![](screenshots/Screenshot%20from%202026-08-06%2013-12-37.png)
+![](screenshots/focuzd_settings1.png)  ![](screenshots/focuzd_settings2.png)
