@@ -15,6 +15,7 @@ Focuzd is a pomodoro app built for Linux, with Flutter using the Yaru theme.
   - [x] Focus: 25 min
   - [x] Break: 5min 
   - [x] Long Break: 15min
+- [x] Notifications for every new focus-break time
 - [x] Architectures 
   - [x] amd64
   - [x] arm64
