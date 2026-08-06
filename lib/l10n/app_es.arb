@@ -22,6 +22,8 @@
     "roundsLabelSettings": "Número de sesiones",
     "periodLB": "Frecuencia del descanso largo",
     "manualStart": "Inicio manual",
-    "infoManualStart": "Una vez activado, el tiempo de enfoque después de los descansos se iniciará manualmente."
+    "infoManualStart": "Una vez activado, el tiempo de enfoque después de los descansos se iniciará manualmente.",
+    "infoBoxTitleSettings": "Atención",
+    "infoBoxContentSettings": "Debido a errores, la configuración del usuario se perderá y se restablecerá a los valores predeterminados en la v2.0. Esto NO ocurrirá en futuras versiones."
 
 }

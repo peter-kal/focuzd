@@ -18,7 +18,8 @@ class _SettingsPageState extends State<SettingsPage> {
   Widget build(BuildContext context) {
     return BlocConsumer<RepoBloc, RepoState>(
       listener: (context, state) {
-        BlocProvider.of<PomodoroBloc>(context).add(const PomodoroSettingsChanged());
+        BlocProvider.of<PomodoroBloc>(context)
+            .add(const PomodoroSettingsChanged());
       },
       builder: (context, state) {
         if (state is RepoVariablesGivenState) {
@@ -65,20 +66,19 @@ class _SettingsPageState extends State<SettingsPage> {
                 SettingsCardSpinBox(
                     kind:
                         l10n.AppLocalizations.of(context)!.roundsLabelSettings,
-                    label:
-                        l10n.AppLocalizations.of(context)!.periodLB,
+                    label: l10n.AppLocalizations.of(context)!.periodLB,
                     changeable: 7,
                     value: state.selectedLBperiod),
-                    YaruSwitchListTile(
-                  value: state.atWillStart,
-                  title: Text(
-                      l10n.AppLocalizations.of(context)!.manualStart),
-                  subtitle: Text(l10n.AppLocalizations.of(context)!.infoManualStart),
-                  onChanged: (newValue) {
-                    BlocProvider.of<RepoBloc>(context).add(
-                        UpdateSettingVariables(
-                            selectedToChange: 6, changedVar: newValue));
-                  }),
+                YaruSwitchListTile(
+                    value: state.atWillStart,
+                    title: Text(l10n.AppLocalizations.of(context)!.manualStart),
+                    subtitle: Text(
+                        l10n.AppLocalizations.of(context)!.infoManualStart),
+                    onChanged: (newValue) {
+                      BlocProvider.of<RepoBloc>(context).add(
+                          UpdateSettingVariables(
+                              selectedToChange: 6, changedVar: newValue));
+                    }),
                 Padding(
                   padding: const EdgeInsets.all(8),
                   child: OutlinedButton.icon(
@@ -95,6 +95,16 @@ class _SettingsPageState extends State<SettingsPage> {
                       )),
                 ),
                 const Divider(),
+                Padding(
+                  padding: const EdgeInsets.all(8),
+                  child: YaruInfoBox(
+                      yaruInfoType: YaruInfoType.important,
+                      icon: const Icon(Icons.info_outline),
+                      title: Text(l10n.AppLocalizations.of(context)!
+                          .infoBoxTitleSettings),
+                      subtitle: Text(l10n.AppLocalizations.of(context)!
+                          .infoBoxContentSettings)),
+                ),
                 SizedBox(
                   height: MediaQuery.of(context).size.height / 40,
                 ),

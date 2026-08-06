@@ -22,6 +22,8 @@
     "roundsLabelSettings": "Number of Sessions",
     "periodLB": "Frequency of LongBreak",
     "manualStart": "Manual Start",
-    "infoManualStart": "Once enabled, focus time after breaks will start manually."
+    "infoManualStart": "Once enabled, focus time after breaks will start manually.",
+    "infoBoxTitleSettings": "Attention",
+    "infoBoxContentSettings": "Due to errors, user settings will be lost and restored to default in v2.0. This will NOT happen in future releases."
 
 }

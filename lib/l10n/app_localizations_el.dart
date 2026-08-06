@@ -69,4 +69,11 @@ class AppLocalizationsEl extends AppLocalizations {
   @override
   String get infoManualStart =>
       'Αν ενεργοποιηθεί, οι χρόνοι συγκέντρωσης θα ξεκινάνε χειροκίνητα.';
+
+  @override
+  String get infoBoxTitleSettings => 'Προσοχή';
+
+  @override
+  String get infoBoxContentSettings =>
+      'Λόγω προβλημάτων, οι ρυθμίσεις του χρήστη επαναφέρθηκαν στις προεπιλεγμένες στην v2.0. Αυτό ΔΕΝ θα ξαναγίνει στις επόμενες εκδόσεις.';
 }

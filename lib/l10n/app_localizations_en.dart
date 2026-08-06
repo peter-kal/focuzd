@@ -69,4 +69,11 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get infoManualStart =>
       'Once enabled, focus time after breaks will start manually.';
+
+  @override
+  String get infoBoxTitleSettings => 'Attention';
+
+  @override
+  String get infoBoxContentSettings =>
+      'Due to errors, user settings will be lost and restored to default in v2.0. This will NOT happen in future releases.';
 }

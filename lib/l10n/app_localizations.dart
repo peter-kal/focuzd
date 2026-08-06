@@ -219,6 +219,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Once enabled, focus time after breaks will start manually.'**
   String get infoManualStart;
+
+  /// No description provided for @infoBoxTitleSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Attention'**
+  String get infoBoxTitleSettings;
+
+  /// No description provided for @infoBoxContentSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Due to errors, user settings will be lost and restored to default in v2.0. This will NOT happen in future releases.'**
+  String get infoBoxContentSettings;
 }
 
 class _AppLocalizationsDelegate

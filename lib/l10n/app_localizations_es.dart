@@ -69,4 +69,11 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get infoManualStart =>
       'Una vez activado, el tiempo de enfoque después de los descansos se iniciará manualmente.';
+
+  @override
+  String get infoBoxTitleSettings => 'Atención';
+
+  @override
+  String get infoBoxContentSettings =>
+      'Debido a errores, la configuración del usuario se perderá y se restablecerá a los valores predeterminados en la v2.0. Esto NO ocurrirá en futuras versiones.';
 }
