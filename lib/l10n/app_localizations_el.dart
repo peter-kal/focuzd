@@ -61,7 +61,7 @@ class AppLocalizationsEl extends AppLocalizations {
   String get roundsLabelSettings => 'Αριθμός Session';
 
   @override
-  String get periodLB => 'Συχνότητα Μεγάλου Διάλειμματος';
+  String get periodLB => 'Συχνότητα Μεγ. Διάλειμ.';
 
   @override
   String get manualStart => 'Χειροκίνητη Εκκίνηση';

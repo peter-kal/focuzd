@@ -58,7 +58,7 @@ class SettingsCardSpinBox extends StatelessWidget {
           height: MediaQuery.of(context).size.height * 0.23,
           child: YaruSection(
               child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               YaruIconButton(
                 alignment: Alignment.topCenter,
@@ -71,14 +71,18 @@ class SettingsCardSpinBox extends StatelessWidget {
                 },
               ),
               Column(children: [
-                Text(
-                  label,
-                  style: const TextStyle(fontSize: 20),
+                SizedBox(
+                  child: Text(
+                    label,
+                    style: const TextStyle(
+                        fontSize: 18, overflow: TextOverflow.ellipsis),
+                  ),
                 ),
                 Text(
                   value.toString(),
+                  overflow: TextOverflow.ellipsis,
                   style: TextStyle(
-                      fontSize: 25, color: Theme.of(context).primaryColor),
+                      fontSize: 20, color: Theme.of(context).primaryColor),
                 ),
                 Text(kind),
               ]),

@@ -69,16 +69,20 @@ class _SettingsPageState extends State<SettingsPage> {
                     label: l10n.AppLocalizations.of(context)!.periodLB,
                     changeable: 7,
                     value: state.selectedLBperiod),
-                YaruSwitchListTile(
-                    value: state.atWillStart,
-                    title: Text(l10n.AppLocalizations.of(context)!.manualStart),
-                    subtitle: Text(
-                        l10n.AppLocalizations.of(context)!.infoManualStart),
-                    onChanged: (newValue) {
-                      BlocProvider.of<RepoBloc>(context).add(
-                          UpdateSettingVariables(
-                              selectedToChange: 6, changedVar: newValue));
-                    }),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: YaruSwitchListTile(
+                      value: state.atWillStart,
+                      title:
+                          Text(l10n.AppLocalizations.of(context)!.manualStart),
+                      subtitle: Text(
+                          l10n.AppLocalizations.of(context)!.infoManualStart),
+                      onChanged: (newValue) {
+                        BlocProvider.of<RepoBloc>(context).add(
+                            UpdateSettingVariables(
+                                selectedToChange: 6, changedVar: newValue));
+                      }),
+                ),
                 Padding(
                   padding: const EdgeInsets.all(8),
                   child: OutlinedButton.icon(
