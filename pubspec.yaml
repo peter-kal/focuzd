@@ -1,13 +1,13 @@
 name: focuzd
-description: "A pomodoro app built with flutter."
+description: "Focuzd is a pomodoro app built for Linux, with Flutter using the Yaru theme."
 publish_to: "none"
 
-version: 1.1.1
+version: 2.0.0
 
 environment:
   sdk: ">=3.4.4 <4.0.0"
 
-dependencies:
+dependencies: 
   flutter:
     sdk: flutter
 
@@ -17,16 +17,16 @@ dependencies:
   intl: any
   flutter_localizations:
     sdk: flutter
-  handy_window: ^0.4.0
+  handy_window: ^0.4.2
   path_provider: ^2.1.3
   path: ^1.9.0
   equatable: ^2.0.5
   desktop_notifications: ^0.6.3
   drift_sqflite: ^2.0.1
-  drift: 2.34.0
-  drift_flutter: ^0.3.0
+  drift: 2.34.3
+  drift_flutter: ^0.3.1
+  test: any
   path_to_regexp: ^0.4.0
-  windows_notification: ^1.3.0
 
 dev_dependencies:
   flutter_test:
@@ -35,7 +35,7 @@ dev_dependencies:
   mocktail: ^1.0.5
 
   flutter_lints: ^6.0.0
-  drift_dev: ^2.34.0
+  drift_dev: 2.34.0
   build_runner: ^2.4.12
 
 flutter:
