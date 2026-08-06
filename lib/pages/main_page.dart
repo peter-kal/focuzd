@@ -51,8 +51,11 @@ class _MainPageState extends State<MainPage> with ExtraFunctions {
             },
           ),
           appBar: YaruWindowTitleBar(
+            isMaximizable: false,
+            isMinimizable: true,
             leading: YaruIconButton(
               tooltip: AppLocalizations.of(context)!.settingsPage,
+              
               icon: const Icon(Icons.settings),
               onPressed: () {
                 BlocProvider.of<PageNavigationBloc>(context)
