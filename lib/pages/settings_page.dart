@@ -115,6 +115,7 @@ class _SettingsPageState extends State<SettingsPage> {
               ],
             ),
             appBar: YaruWindowTitleBar(
+              isMaximizable: false,
               title: Text(l10n.AppLocalizations.of(context)!.settingsPage),
               leading: YaruIconButton(
                 tooltip: l10n.AppLocalizations.of(context)!.backArrowTooltip,
