@@ -107,6 +107,6 @@ A new pomodoro app, built with Flutter, the goal is to make a feature-equivalent
 - [x] add spanish language support
 - [x] update the flutter version
 - [x] update the snap core version 
-- [ ] Finalise migration for existing users
+- [ ] ~~Finalise migration for existing users~~
 - [ ] Improve testing
 - [ ] Publish 2.0
