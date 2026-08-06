@@ -11,13 +11,31 @@ icon: snap/gui/focuzd_icon.png
 
 summary: A simple and elegant pomodoro timer app.
 description: |
-  Focuzd is a _new_ pomodoro app, built with Flutter and Yaru theme. It provides a simple and visually pleasing UI.
-  You can change the lenght, of focus, or break periods, the number of sessions, or even make the window be always on top.
-  Focuzd is **natively compiled**, far outperfoming its Electron-based alternatives1, all in a _sixth_ of the package size,
-  it _integrates_ with the theme of the Desktop, providing consistency.
-  Focuzd is also **strictly confined** meaning it doesn't access to things it **doesn't** need, like the internet, or system files.
-
-  1 more comparison data on the GitHub page
+  Focuzd is a pomodoro app built for Linux, with Flutter using the Yaru theme.
+  - [x] Follow the theme of the desktop and the accent color.
+  - [x] Manual Start(opt-in): manually start the focus time after a break (v2.0)
+  - [x] Change the frequency of Long Breaks(v2.0)
+     - [x] By Default every 4 focus times
+  - [x] Language support
+     - [x] English
+     - [x] Spanish(v2.0)
+     - [x] Greek
+  - [x] Change the duration of focus, break and Long Break time. By default:
+     - [x] Focus: 25 min
+     - [x] Break: 5min
+     - [x] Long Break: 15min
+  - [x] Notifications for every new focus-break time
+  - [x] Architectures
+     - [x] amd64
+     - [x] arm64
+  - [x] Modern Infrastructure
+     - [x] core24 snap(v2.0)
+     - [x] Flutter 3.44.8(v2.0)
+     - [x] Yaru 10.2.0(v2.0)
+  - [x] Lightweight
+     - [x] Package size: 13.1 MB(v2.0)
+     - [x] Natively Compiled
+  Suggest a feature, notify about an issue, or help with translation, in Github or mail at op9h93l23@mozmail.com .
 
 grade: stable
 confinement: strict
