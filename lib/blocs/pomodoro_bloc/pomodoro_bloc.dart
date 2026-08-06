@@ -12,8 +12,10 @@ part 'pomodoro_event.dart';
 part 'pomodoro_state.dart';
 
 class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
-  PomodoroBloc({required Ticker ticker})
+  final SettingsRepository settingsRepo;
+  PomodoroBloc({required Ticker ticker,  SettingsRepository? settingsRepo})
       : _ticker = ticker,
+        settingsRepo =  SettingsRepository(AppDatabase.instance),
         super(const TimerInitial(1, 1, 0, 1, 0, false)) {
     on<TimerStarted>(_onStart);
     on<TimerInit>(_onTimerInit);
@@ -24,7 +26,6 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
     on<NextPomodoroTimer>(_onNextPomodoroTimer);
     on<PomodoroSettingsChanged>(_onPomodoroSettingsChanged);
   }
-  final settingsRepo = SettingsRepository(AppDatabase.instance);
   int timesRun = 1;
   final Ticker _ticker;
   var client;
@@ -136,7 +137,7 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
       emit(TimerRunInProgress(
         selectedLBDuration * 60,
         timesRun,
-        state.reqRounds,
+        reqRound,
         selectedLBDuration * 60,
         selectedLBperiod,
         selectedAtWillStart
@@ -154,7 +155,7 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
           .listen((duration) => add(_TimerTicked(duration: duration)));
       emit(TimerRunInProgress(selectedBreakDuration * 60,
        timesRun,
-       state.reqRounds,
+       reqRound,
        selectedBreakDuration * 60,
        selectedLBperiod,
        selectedAtWillStart));
