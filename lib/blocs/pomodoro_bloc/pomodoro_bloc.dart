@@ -13,9 +13,9 @@ part 'pomodoro_state.dart';
 
 class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
   final SettingsRepository settingsRepo;
-  PomodoroBloc({required Ticker ticker,  SettingsRepository? settingsRepo})
+  PomodoroBloc({required Ticker ticker, SettingsRepository? settingsRepo})
       : _ticker = ticker,
-        settingsRepo =  SettingsRepository(AppDatabase.instance),
+        settingsRepo = SettingsRepository(AppDatabase.instance),
         super(const TimerInitial(1, 1, 0, 1, 0, false)) {
     on<TimerStarted>(_onStart);
     on<TimerInit>(_onTimerInit);
@@ -40,8 +40,8 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
     final stored = await settingsRepo.fetchSettings();
     final workTimeDuration = stored!.defaultFocusDurationStored * 60;
     final reqRounds = stored.defaultNumberOfSessionsPerRound;
-    emit(
-        TimerInitial(workTimeDuration, timesRun, reqRounds, workTimeDuration, stored.periodofLongBreak, stored.atWillStart));
+    emit(TimerInitial(workTimeDuration, timesRun, reqRounds, workTimeDuration,
+        stored.periodofLongBreak, stored.atWillStart));
   }
 
   void _onStart(TimerStarted event, Emitter<PomodoroTimerState> emit) async {
@@ -87,9 +87,30 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
   void _onReset(TimerReset event, Emitter<PomodoroTimerState> emit) async {
     _tickerSubscription?.cancel();
     final stored = await settingsRepo.fetchSettings();
-    final workTimeDuration = stored!.defaultFocusDurationStored * 60;
-    emit(TimerInitial(workTimeDuration, state.runTimes, state.reqRounds,
-        state.selectedDuration, state.selectedLBperiod, state.atWillStart));
+    if ((state.runTimes % 2) != 0) {
+      final workTimeDuration = stored!.defaultFocusDurationStored * 60;
+      emit(TimerInitial(workTimeDuration, state.runTimes, state.reqRounds,
+          state.selectedDuration, state.selectedLBperiod, state.atWillStart));
+    } else {
+      if ((state.runTimes % 2) == 0 &&
+          ((state.runTimes) % (state.runTimes * 2) != 0)) {
+        final breakTimeDuration = stored!.defaultBreakDurationStored * 60;
+        emit(TimerInitial(breakTimeDuration, state.runTimes, state.reqRounds,
+            state.selectedDuration, state.selectedLBperiod, state.atWillStart));
+      }
+      if ((state.runTimes % 2) == 0 &&
+          ((state.runTimes) % (state.selectedLBperiod * 2) == 0)) {
+        final longBreakTimeDuration =
+            stored!.defaultLongBreakDurationStored * 60;
+        emit(TimerInitial(
+            longBreakTimeDuration,
+            state.runTimes,
+            state.reqRounds,
+            state.selectedDuration,
+            state.selectedLBperiod,
+            state.atWillStart));
+      }
+    }
   }
 
   void _onNextPomodoroTimer(
@@ -109,7 +130,7 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
       add(const TimerInit());
     } else if ((timesRun % 2) == 0) {
       // its break so it gives back a work session
-      //here there should be a check if manualStart has been enabled 
+      //here there should be a check if manualStart has been enabled
       timesRun++;
       _tickerSubscription?.cancel();
       _tickerSubscription = _ticker
@@ -118,7 +139,7 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
 
       emit(TimerRunInProgress(selectedWorkDuration * 60, timesRun, reqRound,
           selectedWorkDuration * 60, selectedLBperiod, selectedAtWillStart));
-      if(selectedAtWillStart == true){
+      if (selectedAtWillStart == true) {
         add(const TimerPaused());
       }
       if (Platform.isLinux) {
@@ -126,22 +147,18 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
         await client.notify(
             "Focus for the next ${(state.duration / 60).round()} minutes!");
       } else if (Platform.isWindows) {}
-    } else if ((timesRun % 2) != 0 && (timesRun + 1) % (selectedLBperiod * 2) == 0) {// if the current timesRun is by one smaller to a number that's perfectly divisible by the period of long break then it gives back a long break session
-      
+    } else if ((timesRun % 2) != 0 &&
+        (timesRun + 1) % (selectedLBperiod * 2) == 0) {
+      // if the current timesRun is by one smaller to a number that's perfectly divisible by the period of long break then it gives back a long break session
+
       timesRun++;
       _tickerSubscription?.cancel();
       _tickerSubscription = _ticker
           .tick(ticks: selectedLBDuration * 60)
           .listen((duration) => add(_TimerTicked(duration: duration)));
 
-      emit(TimerRunInProgress(
-        selectedLBDuration * 60,
-        timesRun,
-        reqRound,
-        selectedLBDuration * 60,
-        selectedLBperiod,
-        selectedAtWillStart
-      )); 
+      emit(TimerRunInProgress(selectedLBDuration * 60, timesRun, reqRound,
+          selectedLBDuration * 60, selectedLBperiod, selectedAtWillStart));
       if (Platform.isLinux) {
         client = await NotificationsClient();
         await client.notify(
@@ -153,12 +170,8 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
       _tickerSubscription = _ticker
           .tick(ticks: selectedBreakDuration * 60)
           .listen((duration) => add(_TimerTicked(duration: duration)));
-      emit(TimerRunInProgress(selectedBreakDuration * 60,
-       timesRun,
-       reqRound,
-       selectedBreakDuration * 60,
-       selectedLBperiod,
-       selectedAtWillStart));
+      emit(TimerRunInProgress(selectedBreakDuration * 60, timesRun, reqRound,
+          selectedBreakDuration * 60, selectedLBperiod, selectedAtWillStart));
       if (Platform.isLinux) {
         client = await NotificationsClient();
         await client.notify(
@@ -166,11 +179,12 @@ class PomodoroBloc extends Bloc<PomodoroTimerEvent, PomodoroTimerState> {
       }
     }
   }
-  
-  FutureOr<void> _onPomodoroSettingsChanged(PomodoroSettingsChanged event, Emitter<PomodoroTimerState> emit) {
+
+  FutureOr<void> _onPomodoroSettingsChanged(
+      PomodoroSettingsChanged event, Emitter<PomodoroTimerState> emit) {
     final current = state;
     if (current is TimerInitial) {
-    add(const TimerInit());
+      add(const TimerInit());
     }
   }
 }

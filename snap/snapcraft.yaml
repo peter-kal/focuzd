@@ -1,7 +1,7 @@
 name: focuzd
 title: Focuzd
 base: core24
-version: "2.0"
+version: 2.0.1
 license: GPL-3.0
 contact: op9h93l23@mozmail.com
 source-code: https://github.com/peter-kal/focuzd
