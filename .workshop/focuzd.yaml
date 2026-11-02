@@ -1,0 +1,16 @@
+name: focuzd
+base: ubuntu@24.04
+
+sdks:
+  - name: flutter
+    channel: latest/stable 
+
+actions:
+  build: |
+    flutter build linux
+  run: |
+    flutter run -d linux
+  test: |
+    flutter test
+  deps: |
+    sudo apt update && sudo apt install -y libsqlite3-dev gsettings-desktop-schemas
