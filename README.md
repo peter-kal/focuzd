@@ -44,3 +44,6 @@ Focuzd is a pomodoro app built for Linux, with Flutter using the Yaru theme.
 ## Settings
 
 ![](screenshots/focuzd_settings1.png)  ![](screenshots/focuzd_settings2.png)
+
+###  Workshop support 
+Workshop support has been added. I provides basic actions for the flutter SDK recommended by the Canonical repo. I have also added one more action which installs sqlite and gtk deb packages in order for drift and handy_window to work. 
